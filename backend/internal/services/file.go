@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/imlargo/cnre/internal/dto"
-	"github.com/imlargo/cnre/internal/models"
-	"github.com/imlargo/cnre/pkg/storage"
-	"github.com/imlargo/cnre/pkg/utils"
+	"github.com/imlargo/go-api-template/internal/dto"
+	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/storage"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type FileService interface {

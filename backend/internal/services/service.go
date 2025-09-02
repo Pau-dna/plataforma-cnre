@@ -1,10 +1,10 @@
 package services
 
 import (
-	"github.com/imlargo/cnre/internal/cache"
-	"github.com/imlargo/cnre/internal/config"
-	"github.com/imlargo/cnre/internal/store"
-	"github.com/imlargo/cnre/pkg/kv"
+	"github.com/imlargo/go-api-template/internal/cache"
+	"github.com/imlargo/go-api-template/internal/config"
+	"github.com/imlargo/go-api-template/internal/store"
+	"github.com/imlargo/go-api-template/pkg/kv"
 	"go.uber.org/zap"
 )
 

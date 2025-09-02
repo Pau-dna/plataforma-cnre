@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/imlargo/cnre/internal/repositories"
+	"github.com/imlargo/go-api-template/internal/repositories"
 )
 
 type Store struct {

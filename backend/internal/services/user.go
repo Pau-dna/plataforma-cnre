@@ -3,8 +3,8 @@ package services
 import (
 	"errors"
 
-	"github.com/imlargo/cnre/internal/dto"
-	"github.com/imlargo/cnre/internal/models"
+	"github.com/imlargo/go-api-template/internal/dto"
+	"github.com/imlargo/go-api-template/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

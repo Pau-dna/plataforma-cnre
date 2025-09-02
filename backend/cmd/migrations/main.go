@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/imlargo/cnre/internal/config"
-	postgres "github.com/imlargo/cnre/internal/database"
+	"github.com/imlargo/go-api-template/internal/config"
+	postgres "github.com/imlargo/go-api-template/internal/database"
 )
 
 func main() {

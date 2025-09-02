@@ -1,4 +1,4 @@
-module github.com/imlargo/cnre
+module github.com/imlargo/go-api-template
 
 go 1.24.4
 

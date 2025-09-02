@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/imlargo/cnre/internal/cache"
-	"github.com/imlargo/cnre/pkg/kv"
+	"github.com/imlargo/go-api-template/internal/cache"
+	"github.com/imlargo/go-api-template/pkg/kv"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )

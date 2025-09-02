@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"github.com/imlargo/cnre/internal/models"
+	"github.com/imlargo/go-api-template/internal/models"
 	"gorm.io/gorm"
 )
 

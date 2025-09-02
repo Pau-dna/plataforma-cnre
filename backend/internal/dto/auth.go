@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/imlargo/cnre/internal/models"
+import "github.com/imlargo/go-api-template/internal/models"
 
 type LoginUser struct {
 	Email    string `json:"email" binding:"required"`
