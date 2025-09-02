@@ -7,10 +7,10 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imlargo/go-api-template/internal/dto"
-	_ "github.com/imlargo/go-api-template/internal/models"
-	"github.com/imlargo/go-api-template/internal/responses"
-	"github.com/imlargo/go-api-template/internal/services"
+	"github.com/imlargo/cnre/internal/dto"
+	_ "github.com/imlargo/cnre/internal/models"
+	"github.com/imlargo/cnre/internal/responses"
+	"github.com/imlargo/cnre/internal/services"
 )
 
 type FileHandler struct {

@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/cnre/internal/models"
 	"gorm.io/gorm/clause"
 )
 

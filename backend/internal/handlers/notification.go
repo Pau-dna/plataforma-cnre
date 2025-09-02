@@ -7,11 +7,11 @@ import (
 
 	"github.com/SherClockHolmes/webpush-go"
 	"github.com/gin-gonic/gin"
-	"github.com/imlargo/go-api-template/internal/dto"
-	"github.com/imlargo/go-api-template/internal/enums"
-	"github.com/imlargo/go-api-template/internal/models"
-	"github.com/imlargo/go-api-template/internal/responses"
-	"github.com/imlargo/go-api-template/internal/services"
+	"github.com/imlargo/cnre/internal/dto"
+	"github.com/imlargo/cnre/internal/enums"
+	"github.com/imlargo/cnre/internal/models"
+	"github.com/imlargo/cnre/internal/responses"
+	"github.com/imlargo/cnre/internal/services"
 )
 
 type NotificationHandler struct {

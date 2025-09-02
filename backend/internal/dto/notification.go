@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/imlargo/go-api-template/internal/models"
+import "github.com/imlargo/cnre/internal/models"
 
 type SendNotificationRequestPayload struct {
 	UserID       uint                `json:"user_id" binding:"required"`

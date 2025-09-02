@@ -5,10 +5,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/imlargo/go-api-template/internal/enums"
-	"github.com/imlargo/go-api-template/internal/models"
-	"github.com/imlargo/go-api-template/pkg/push"
-	"github.com/imlargo/go-api-template/pkg/sse"
+	"github.com/imlargo/cnre/internal/enums"
+	"github.com/imlargo/cnre/internal/models"
+	"github.com/imlargo/cnre/pkg/push"
+	"github.com/imlargo/cnre/pkg/sse"
 )
 
 type NotificationService interface {

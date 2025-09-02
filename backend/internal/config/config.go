@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	"github.com/imlargo/go-api-template/pkg/env"
+	"github.com/imlargo/cnre/pkg/env"
 )
 
 type AppConfig struct {

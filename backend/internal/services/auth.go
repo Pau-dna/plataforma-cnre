@@ -4,9 +4,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/imlargo/go-api-template/internal/dto"
-	"github.com/imlargo/go-api-template/internal/models"
-	"github.com/imlargo/go-api-template/pkg/jwt"
+	"github.com/imlargo/cnre/internal/dto"
+	"github.com/imlargo/cnre/internal/models"
+	"github.com/imlargo/cnre/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 

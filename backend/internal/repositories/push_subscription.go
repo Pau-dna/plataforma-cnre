@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/cnre/internal/models"
 )
 
 type PushNotificationSubscriptionRepository interface {

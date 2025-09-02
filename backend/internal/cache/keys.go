@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/imlargo/go-api-template/pkg/kv"
+	"github.com/imlargo/cnre/pkg/kv"
 )
 
 type CacheKeys struct {
