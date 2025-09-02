@@ -1,1 +1,1 @@
-# plataforma-cnre
+# Go api template
