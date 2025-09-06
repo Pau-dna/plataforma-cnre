@@ -15,10 +15,10 @@
 	const links: NavLink[] = [
 		{
 			name: 'Inicio',
-			href: '/inicio',
+			href: '/home',
 		},
 		{
-			href: '/mis-cursos',
+			href: '/my-courses',
 			name: 'Mis Cursos',
 		}
 	];
