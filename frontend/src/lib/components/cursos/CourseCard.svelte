@@ -13,7 +13,7 @@
 <a href="/courses/{course.id}">
 	<Card.Root class="pt-0 hover:shadow-lg">
 		<!-- Header con gradiente -->
-		<div class="h-44 w-full rounded-t-xl bg-gradient-to-r from-indigo-400 to-pink-400"></div>
+		<div class="h-44 w-full rounded-t-xl bg-gradient-to-r from-sky-500 to-pink-500"></div>
 
 		<Card.Header>
 			<Card.Title class="text-lg font-bold">{course.title}</Card.Title>
