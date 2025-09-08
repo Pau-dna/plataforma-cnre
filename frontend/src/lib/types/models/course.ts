@@ -68,14 +68,6 @@ export interface Evaluation extends BaseContent {
 // Union type for module content
 export type ModuleContent = Content | Evaluation;
 
-// Module interface
-export interface Module extends BaseEntity {
-	title: string;
-	description?: string;
-	order: number;
-	contents: ModuleContent[];
-	course_id: number;
-}
 
 // Course interface
 export interface Course extends BaseEntity {
@@ -86,6 +78,15 @@ export interface Course extends BaseEntity {
 	modules: Module[];
 	student_count?: number;
 	module_count?: number;
+}
+
+// Module interface
+export interface Module extends BaseEntity {
+	title: string;
+	description?: string;
+	order: number;
+	contents: ModuleContent[];
+	course_id: number;
 }
 
 // User progress tracking
