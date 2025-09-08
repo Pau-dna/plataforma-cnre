@@ -17,8 +17,7 @@
 	<Card.Footer>
 		<Button class="w-full bg-pink-500 hover:bg-pink-900">
 			<span>Continuar con Google</span>
-            <ArrowRight />
-            </Button
-		>
+			<ArrowRight />
+		</Button>
 	</Card.Footer>
 </Card.Root>

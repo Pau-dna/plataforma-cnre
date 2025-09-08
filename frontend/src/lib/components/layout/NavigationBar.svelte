@@ -36,7 +36,7 @@
 						class={`relative flex items-center justify-center gap-2 border-b-2 px-2 py-6 text-base font-medium transition-colors duration-200  ${
 							activeRoute === link.href
 								? 'border-b-2 border-sky-500'
-								: 'border-transparent text-primary/80 hover:border-gray-200 hover:text-primary'
+								: 'text-primary/80 hover:text-primary border-transparent hover:border-gray-200'
 						}`}
 					>
 						<span>{link.name}</span>
