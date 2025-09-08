@@ -2,7 +2,7 @@ package internal
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/imlargo/go-api-template/docs"
+	"github.com/imlargo/go-api-template/api/docs"
 	"github.com/imlargo/go-api-template/internal/cache"
 	"github.com/imlargo/go-api-template/internal/config"
 	"github.com/imlargo/go-api-template/internal/handlers"
