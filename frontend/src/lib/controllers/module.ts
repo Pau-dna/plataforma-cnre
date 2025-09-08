@@ -8,16 +8,32 @@ export class ModuleController {
 				order: 1,
 				course_id: courseID,
 				contents: [],
-				title: 'Module 1',
-				description: 'Description for Module 1'
+				title: 'Introducción al CNRE',
+				description: 'Bienvenida y presentación general del CNRE Medellín 2025.'
 			},
 			{
 				id: 2,
 				order: 2,
 				course_id: courseID,
 				contents: [],
-				title: 'Module 2',
-				description: 'Description for Module 2'
+				title: 'Competencias Técnicas',
+				description: 'Formación en habilidades técnicas requeridas para el personal del CNRE.'
+			},
+			{
+				id: 3,
+				order: 3,
+				course_id: courseID,
+				contents: [],
+				title: 'Gestión Administrativa',
+				description: 'Módulo sobre procesos administrativos y gestión interna.'
+			},
+			{
+				id: 4,
+				order: 4,
+				course_id: courseID,
+				contents: [],
+				title: 'Evaluación y Seguimiento',
+				description: 'Herramientas y metodologías para la evaluación y seguimiento del desempeño.'
 			}
 		];
 	}
