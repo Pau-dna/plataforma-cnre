@@ -116,6 +116,7 @@
 	* {
 		@apply border-border outline-ring/50;
 	}
+
 	body {
 		@apply bg-background text-foreground;
 	}
@@ -127,6 +128,10 @@
 
 .text-h2 {
 	@apply text-2xl font-bold;
+}
+
+.text-subtitle {
+	@apply text-muted-foreground text-lg font-semibold;
 }
 
 .form-card {
