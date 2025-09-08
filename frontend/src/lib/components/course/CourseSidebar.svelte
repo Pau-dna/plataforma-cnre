@@ -34,11 +34,16 @@
 				plan: 'Free'
 			}
 		],
-		navMain: [
+		main: [
 			{
-				title: 'Playground',
+				title: 'Resumen',
 				url: '#',
-				icon: SquareTerminalIcon,
+				icon: Home,
+			},
+			{
+				title: 'Modulos',
+				url: '#',
+				icon: Book,
 				isActive: true,
 				items: [
 					{
@@ -55,88 +60,13 @@
 					}
 				]
 			},
-			{
-				title: 'Models',
-				url: '#',
-				icon: BotIcon,
-				items: [
-					{
-						title: 'Genesis',
-						url: '#'
-					},
-					{
-						title: 'Explorer',
-						url: '#'
-					},
-					{
-						title: 'Quantum',
-						url: '#'
-					}
-				]
-			},
-			{
-				title: 'Documentation',
-				url: '#',
-				icon: BookOpenIcon,
-				items: [
-					{
-						title: 'Introduction',
-						url: '#'
-					},
-					{
-						title: 'Get Started',
-						url: '#'
-					},
-					{
-						title: 'Tutorials',
-						url: '#'
-					},
-					{
-						title: 'Changelog',
-						url: '#'
-					}
-				]
-			},
-			{
-				title: 'Settings',
-				url: '#',
-				icon: Settings2Icon,
-				items: [
-					{
-						title: 'General',
-						url: '#'
-					},
-					{
-						title: 'Team',
-						url: '#'
-					},
-					{
-						title: 'Billing',
-						url: '#'
-					},
-					{
-						title: 'Limits',
-						url: '#'
-					}
-				]
-			}
 		],
 		projects: [
 			{
-				name: 'Design Engineering',
+				name: 'Evaluaciones',
 				url: '#',
 				icon: FrameIcon
 			},
-			{
-				name: 'Sales & Marketing',
-				url: '#',
-				icon: ChartPieIcon
-			},
-			{
-				name: 'Travel',
-				url: '#',
-				icon: MapIcon
-			}
 		]
 	};
 </script>
@@ -148,6 +78,7 @@
 	import TeamSwitcher from './team-switcher.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
+	import { Book, Home } from '@lucide/svelte';
 
 	let {
 		ref = $bindable(null),
@@ -157,11 +88,13 @@
 </script>
 
 <Sidebar.Root {collapsible} {...restProps}>
+	<!--
 	<Sidebar.Header>
-		<TeamSwitcher teams={data.teams} />
+		<TeamSwitcher />
 	</Sidebar.Header>
+	-->
 	<Sidebar.Content>
-		<NavMain items={data.navMain} />
+		<NavMain items={data.main} />
 		<NavProjects projects={data.projects} />
 	</Sidebar.Content>
 	<Sidebar.Footer>
