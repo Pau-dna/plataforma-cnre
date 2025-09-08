@@ -6,10 +6,10 @@
 	let { data, children }: LayoutProps = $props();
 </script>
 
-<div class="relative border rounded-md h-full min-h-auto">
+<div class="relative border rounded-md h-full min-h-auto overflow-hidden">
 	<Sidebar.Provider>
 		<CourseSidebar />
-		<main>
+		<main class="p-4">
 			<Sidebar.Trigger />
 			<div>
 				{@render children?.()}
