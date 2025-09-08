@@ -11,7 +11,7 @@
 	<Sidebar.Provider>
 		<CourseSidebar course={data.course} modules={data.modules} />
 		<main class="flex w-full flex-col gap-y-12 p-8">
-			<div class="flex gap-x-2 items-center">
+			<div class="flex items-center gap-x-2">
 				<Sidebar.Trigger />
 				<Separator orientation="vertical" />
 			</div>

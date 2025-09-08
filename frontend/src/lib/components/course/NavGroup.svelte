@@ -48,7 +48,7 @@
 
 {#snippet simpleItem(item: NavItem)}
 	<Sidebar.MenuItem>
-		<Sidebar.MenuButton>
+		<Sidebar.MenuButton isActive={activePath === item.url}>
 			{#snippet child({ props })}
 				<a href={item.url} {...props}>
 					<item.icon />
@@ -80,7 +80,7 @@
 					<Sidebar.MenuSub>
 						{#each item.items ?? [] as subItem (subItem.title)}
 							<Sidebar.MenuSubItem>
-								<Sidebar.MenuSubButton>
+								<Sidebar.MenuSubButton isActive={activePath === subItem.url}>
 									{#snippet child({ props })}
 										<a href={subItem.url} {...props}>
 											<span>{subItem.title}</span>

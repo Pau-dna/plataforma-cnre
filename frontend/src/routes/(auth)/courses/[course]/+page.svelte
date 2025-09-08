@@ -4,5 +4,4 @@
 	let { data }: PageProps = $props();
 </script>
 
-
 teamo

@@ -8,7 +8,7 @@
 	type Props = {
 		course: Course;
 		modules: Module[];
-	}
+	};
 
 	let {
 		ref = $bindable(null),
@@ -32,7 +32,7 @@
 				active: true,
 				items: modules.map((m) => ({
 					title: m.title,
-					url: `/courses/${course.id.toString()}/${m.id}`,
+					url: `/courses/${course.id.toString()}/${m.id}`
 				}))
 			}
 		],
