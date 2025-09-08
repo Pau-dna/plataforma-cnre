@@ -27,7 +27,7 @@
 							<Breadcrumb.Separator />
 							<Breadcrumb.Item>
 								<Breadcrumb.Link href="/docs/components"
-									>{data.modules.find((m) => m.id === parseInt(page.params.module || "-1"))
+									>{data.modules.find((m) => m.id === parseInt(page.params.module || '-1'))
 										?.title}</Breadcrumb.Link
 								>
 							</Breadcrumb.Item>
