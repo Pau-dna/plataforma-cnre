@@ -91,42 +91,40 @@ export interface Module extends BaseEntity {
 
 // User progress tracking
 export interface UserProgress extends BaseEntity {
-	userId: string;
-	courseId: string;
-	moduleId: string;
-	contentId: string;
-	completedAt?: Date;
+	user_id: number;
+	course_id: number;
+	module_id: number;
+	content_id: number;
+	completed_at?: string;
 	score?: number;
 	attempts: number;
-	timeSpent?: number; // in minutes
 }
 
 // Course enrollment
 export interface Enrollment extends BaseEntity {
-	userId: string;
-	courseId: string;
-	enrolledAt: Date;
-	completedAt?: Date;
-	progress: number; // percentage 0-100
-	lastAccessedAt?: Date;
+	user_id: number;
+	course_id: number;
+	enrolled_at: string;
+	completed_at?: string;
+	progress: number;
 }
 
 // Evaluation attempt
 export interface EvaluationAttempt extends BaseEntity {
-	userId: string;
-	evaluationId: string;
+	user_id: number;
+	evaluation_id: number;
 	answers: {
-		questionId: string;
-		selectedAnswerIds: string[];
-		isCorrect: boolean;
+		question_id: number;
+		selected_answer_ids: number[];
+		is_correct: boolean;
 		points: number;
 	}[];
 	score: number;
-	totalPoints: number;
+	total_points: number;
 	passed: boolean;
-	startedAt: Date;
-	submittedAt?: Date;
-	timeSpent?: number; // in minutes
+	started_at: Date;
+	submitted_at?: Date;
+	time_spent?: number; // in minutes
 }
 
 // User interface
@@ -136,7 +134,6 @@ export interface User extends BaseEntity {
 	lastName: string;
 	avatarUrl?: string;
 	role: 'student' | 'instructor' | 'admin';
-	isActive: boolean;
 }
 
 // Instructor interface (extends User)
