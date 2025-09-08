@@ -82,11 +82,8 @@ export interface Module extends BaseEntity {
 	title: string;
 	description?: string;
 	order: number;
-	status: ModuleStatus;
 	contents: ModuleContent[];
-	prerequisites?: string[]; // Module IDs
-	estimatedDuration?: number; // in minutes
-	courseId: string;
+	course_id: number;
 }
 
 // Course interface

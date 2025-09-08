@@ -10,41 +10,20 @@
 	import Settings2Icon from '@lucide/svelte/icons/settings-2';
 	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
 
+	const x = $state(12)
 	// This is sample data.
 	const data = {
-		user: {
-			name: 'shadcn',
-			email: 'm@example.com',
-			avatar: '/avatars/shadcn.jpg'
-		},
-		teams: [
-			{
-				name: 'Acme Inc',
-				logo: GalleryVerticalEndIcon,
-				plan: 'Enterprise'
-			},
-			{
-				name: 'Acme Corp.',
-				logo: AudioWaveformIcon,
-				plan: 'Startup'
-			},
-			{
-				name: 'Evil Corp.',
-				logo: CommandIcon,
-				plan: 'Free'
-			}
-		],
 		main: [
 			{
 				title: 'Resumen',
 				url: '#',
-				icon: Home,
+				icon: Home
 			},
 			{
 				title: 'Modulos',
 				url: '#',
 				icon: Book,
-				isActive: true,
+				active: true,
 				items: [
 					{
 						title: 'History',
@@ -59,26 +38,23 @@
 						url: '#'
 					}
 				]
-			},
+			}
 		],
-		projects: [
+		info: [
 			{
-				name: 'Evaluaciones',
+				title: 'Evaluaciones',
 				url: '#',
 				icon: FrameIcon
-			},
+			}
 		]
 	};
 </script>
 
 <script lang="ts">
-	import NavMain from './nav-main.svelte';
-	import NavProjects from './nav-projects.svelte';
-	import NavUser from './nav-user.svelte';
-	import TeamSwitcher from './team-switcher.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
 	import { Book, Home } from '@lucide/svelte';
+	import NavGroup from './NavGroup.svelte';
 
 	let {
 		ref = $bindable(null),
@@ -94,11 +70,8 @@
 	</Sidebar.Header>
 	-->
 	<Sidebar.Content>
-		<NavMain items={data.main} />
-		<NavProjects projects={data.projects} />
+		<NavGroup title="Curso" items={data.main} />
+		<NavGroup title="Informacion" items={data.info} />
 	</Sidebar.Content>
-	<Sidebar.Footer>
-		<NavUser user={data.user} />
-	</Sidebar.Footer>
 	<Sidebar.Rail />
 </Sidebar.Root>
