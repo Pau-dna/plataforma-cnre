@@ -56,5 +56,8 @@
 		"onlyBuiltDependencies": [
 			"esbuild"
 		]
+	},
+	"dependencies": {
+		"svelte-auth-tools": "^0.1.0"
 	}
 }
