@@ -134,15 +134,3 @@ export interface User extends BaseEntity {
 	avatarUrl?: string;
 	role: 'student' | 'instructor' | 'admin';
 }
-
-// Instructor interface (extends User)
-export interface Instructor extends User {
-	role: 'instructor';
-	bio?: string;
-	specializations: string[];
-	socialLinks?: {
-		linkedin?: string;
-		twitter?: string;
-		website?: string;
-	};
-}
