@@ -1,22 +1,28 @@
-<script lang="ts" module>
-	import AudioWaveformIcon from '@lucide/svelte/icons/audio-waveform';
-	import BookOpenIcon from '@lucide/svelte/icons/book-open';
-	import BotIcon from '@lucide/svelte/icons/bot';
-	import ChartPieIcon from '@lucide/svelte/icons/chart-pie';
-	import CommandIcon from '@lucide/svelte/icons/command';
-	import FrameIcon from '@lucide/svelte/icons/frame';
-	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
-	import MapIcon from '@lucide/svelte/icons/map';
-	import Settings2Icon from '@lucide/svelte/icons/settings-2';
-	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
+<script lang="ts">
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import type { ComponentProps } from 'svelte';
+	import { Book, Home } from '@lucide/svelte';
+	import NavGroup from './NavGroup.svelte';
+	import type { Course, Module } from '$lib/types/models/course';
 
-	const x = $state(12)
-	// This is sample data.
-	const data = {
+	type Props = {
+		course: Course;
+		modules: Module[];
+	}
+
+	let {
+		ref = $bindable(null),
+		collapsible = 'icon',
+		course,
+		modules = [],
+		...restProps
+	}: ComponentProps<typeof Sidebar.Root> & Props = $props();
+
+	const data = $derived({
 		main: [
 			{
 				title: 'Resumen',
-				url: '#',
+				url: `/courses/${course.id.toString()}`,
 				icon: Home
 			},
 			{
@@ -24,43 +30,20 @@
 				url: '#',
 				icon: Book,
 				active: true,
-				items: [
-					{
-						title: 'History',
-						url: '#'
-					},
-					{
-						title: 'Starred',
-						url: '#'
-					},
-					{
-						title: 'Settings',
-						url: '#'
-					}
-				]
+				items: modules.map((m) => ({
+					title: m.title,
+					url: `/courses/${course.id.toString()}/module/${m.id}`,
+				}))
 			}
 		],
 		info: [
 			{
 				title: 'Evaluaciones',
 				url: '#',
-				icon: FrameIcon
+				icon: Book
 			}
 		]
-	};
-</script>
-
-<script lang="ts">
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import type { ComponentProps } from 'svelte';
-	import { Book, Home } from '@lucide/svelte';
-	import NavGroup from './NavGroup.svelte';
-
-	let {
-		ref = $bindable(null),
-		collapsible = 'icon',
-		...restProps
-	}: ComponentProps<typeof Sidebar.Root> = $props();
+	});
 </script>
 
 <Sidebar.Root {collapsible} {...restProps}>

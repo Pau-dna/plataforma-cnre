@@ -8,6 +8,7 @@
 	import ForwardIcon from '@lucide/svelte/icons/forward';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import type { Icon as IconType } from '@lucide/svelte';
+	import { page } from '$app/state';
 
 	type NavItem = {
 		title: string;
@@ -15,7 +16,7 @@
 		// this should be `Component` after @lucide/svelte updates types
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		icon: typeof IconType;
-		active?: boolean;
+		collapsed?: boolean;
 		items?: {
 			title: string;
 			url: string;
@@ -26,6 +27,8 @@
 		title: string;
 		items: NavItem[];
 	};
+
+	const activePath = $derived(page.url.pathname);
 
 	const { title, items }: Props = $props();
 </script>
@@ -57,7 +60,7 @@
 {/snippet}
 
 {#snippet nestedItem(item: NavItem)}
-	<Collapsible.Root open={item.active} class="group/collapsible">
+	<Collapsible.Root open={item.collapsed} class="group/collapsible">
 		{#snippet child({ props })}
 			<Sidebar.MenuItem {...props}>
 				<Collapsible.Trigger>
