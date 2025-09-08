@@ -46,7 +46,7 @@
 		</div>
 	</div>
 
-	<div class="py-4">
+	<div class="flex max-h-max">
 		<DropdownAvatar />
 	</div>
 </nav>
