@@ -1,18 +1,12 @@
 // Base types and enums
 export enum QuestionType {
-	SINGLE_CHOICE = 'single_choice',
-	MULTIPLE_CHOICE = 'multiple_choice'
+	SINGLE = 'single_choice',
+	MULTIPLE = 'multiple_choice'
 }
 
 export enum ContentType {
 	CONTENT = 'content',
 	EVALUATION = 'evaluation'
-}
-
-export enum CourseStatus {
-	DRAFT = 'draft',
-	PUBLISHED = 'published',
-	ARCHIVED = 'archived'
 }
 
 export enum ModuleStatus {
@@ -23,7 +17,7 @@ export enum ModuleStatus {
 
 // Base interface for entities with common properties
 interface BaseEntity {
-	id: string;
+	id: number;
 	created_at: string;
 	updated_at: string;
 }
@@ -42,7 +36,6 @@ export interface Question extends BaseEntity {
 	answers: Answer[];
 	explanation?: string;
 	points: number;
-	order: number;
 }
 
 // Base content interface
@@ -50,9 +43,7 @@ interface BaseContent extends BaseEntity {
 	title: string;
 	description?: string;
 	type: ContentType;
-	order: number;
 	isRequired: boolean;
-	estimatedDuration?: number; // in minutes
 }
 
 // Content (lessons, videos, readings, etc.)
@@ -93,7 +84,6 @@ export interface Course extends BaseEntity {
 	shortDescription?: string;
 	imageUrl?: string;
 	modules: Module[];
-	instructorId: string;
 	student_count?: number;
 	module_count?: number;
 }
@@ -158,81 +148,4 @@ export interface Instructor extends User {
 		twitter?: string;
 		website?: string;
 	};
-}
-
-// API Response types
-export interface PaginatedResponse<T> {
-	data: T[];
-	total: number;
-	page: number;
-	limit: number;
-	totalPages: number;
-}
-
-export interface ApiResponse<T> {
-	success: boolean;
-	data?: T;
-	error?: string;
-	message?: string;
-}
-
-// DTOs (Data Transfer Objects) for API operations
-export interface CreateCourseDto {
-	title: string;
-	description: string;
-	shortDescription?: string;
-	imageUrl?: string;
-	instructorId: string;
-	price?: number;
-	currency?: string;
-	tags: string[];
-	difficulty: 'beginner' | 'intermediate' | 'advanced';
-	language: string;
-}
-
-export interface UpdateCourseDto extends Partial<CreateCourseDto> {
-	status?: CourseStatus;
-}
-
-export interface CreateModuleDto {
-	title: string;
-	description?: string;
-	order: number;
-	courseId: string;
-	prerequisites?: string[];
-}
-
-export interface CreateContentDto {
-	title: string;
-	description?: string;
-	type: ContentType.CONTENT;
-	order: number;
-	body: string;
-	mediaUrl?: string;
-	resources?: string[];
-	isRequired: boolean;
-	estimatedDuration?: number;
-}
-
-export interface CreateEvaluationDto {
-	title: string;
-	description?: string;
-	type: ContentType.EVALUATION;
-	order: number;
-	passingScore: number;
-	maxAttempts?: number;
-	timeLimit?: number;
-	shuffleQuestions: boolean;
-	shuffleAnswers: boolean;
-	isRequired: boolean;
-	estimatedDuration?: number;
-}
-
-export interface CreateQuestionDto {
-	text: string;
-	type: QuestionType;
-	explanation?: string;
-	points: number;
-	order: number;
-	answers: Omit<Answer, 'id' | 'createdAt' | 'updatedAt'>[];
 }
