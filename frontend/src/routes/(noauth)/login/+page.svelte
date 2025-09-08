@@ -5,6 +5,6 @@
 	let { data }: PageProps = $props();
 </script>
 
-<div class="flex min-h-screen h-screen items-center justify-center">
+<div class="flex h-screen min-h-screen items-center justify-center">
 	<LoginCard />
 </div>
