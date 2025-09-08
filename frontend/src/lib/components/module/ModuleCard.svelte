@@ -8,9 +8,10 @@
 		id: number;
 		title: string;
 		description: string;
+		actDate?: string;
 	};
 
-	const { id, title, description }: Props = $props();
+	const { id, title, description, actDate }: Props = $props();
 </script>
 
 <Card.Root>
@@ -54,14 +55,17 @@
 			</div>
 		</div>
 	</Card.Header>
-	<Card.Content class="flex gap-4">
-		<div class="flex items-center gap-2">
-			<CirclePlay class="text-muted-foreground h-4 w-4 leading-none" />
-			<span class="text-muted-foreground text-sm leading-none">Video Incluido</span>
+	<Card.Content class="flex justify-between w-full">
+		<div class="flex items-center gap-4">
+			<div class="flex items-center gap-2">
+				<CirclePlay class="text-muted-foreground h-4 w-4 leading-none" />
+				<span class="text-muted-foreground text-sm leading-none">Video Incluido</span>
+			</div>
+			<div class="flex items-center gap-2 text-cyan-900">
+				<BookOpen class="h-4 w-4 leading-none" />
+				<span class="text-sm leading-none">Ver Contenido</span>
+			</div>
 		</div>
-		<div class="flex items-center gap-2 text-cyan-900">
-			<BookOpen class="h-4 w-4 leading-none" />
-			<span class="text-sm leading-none">Ver Contenido</span>
-		</div>
+        <span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
 	</Card.Content>
 </Card.Root>
