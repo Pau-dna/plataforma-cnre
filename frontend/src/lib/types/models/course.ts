@@ -16,7 +16,7 @@ export enum ModuleStatus {
 }
 
 // Base interface for entities with common properties
-interface BaseEntity {
+export interface BaseEntity {
 	id: number;
 	created_at: string;
 	updated_at: string;
@@ -124,13 +124,4 @@ export interface UserProgress extends BaseEntity {
 	completed_at?: string;
 	score?: number;
 	attempts: number;
-}
-
-// User interface
-export interface User extends BaseEntity {
-	email: string;
-	firstName: string;
-	lastName: string;
-	avatarUrl?: string;
-	role: 'student' | 'instructor' | 'admin';
 }
