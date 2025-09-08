@@ -4,12 +4,17 @@
 	import { Clock, Ellipsis, Users } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import EditCourse from './EditCourse.svelte';
+	import DeleteCourse from './DeleteCourse.svelte';
 
 	type Props = {
 		course: Course;
 	};
 
 	const { course }: Props = $props();
+
+	let openEdit = $state(false);
+	let openDelete = $state(false);
 </script>
 
 <a href="/courses/{course.id}">
@@ -28,10 +33,14 @@
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
 						<DropdownMenu.Group>
-							<DropdownMenu.Item>Ver</DropdownMenu.Item>
-							<DropdownMenu.Item>Editar</DropdownMenu.Item>
+							<DropdownMenu.Item>
+								<a href="/admin/courses/{course.id}">Ver Módulos</a>
+							</DropdownMenu.Item>
+							<DropdownMenu.Item onclick={() => (openEdit = true)}>Editar</DropdownMenu.Item>
 							<DropdownMenu.Separator />
-							<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
+							<DropdownMenu.Item class="text-destructive" onclick={() => (openDelete = true)}
+								>Eliminar</DropdownMenu.Item
+							>
 						</DropdownMenu.Group>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
@@ -62,3 +71,6 @@
 		</Card.Header>
 	</Card.Root>
 </a>
+
+<EditCourse bind:openEdit></EditCourse>
+<DeleteCourse bind:openDelete></DeleteCourse>
