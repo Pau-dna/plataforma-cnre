@@ -6,7 +6,7 @@
 	let { data, children }: LayoutProps = $props();
 </script>
 
-<div class="relative">
+<div class="relative border rounded-md h-full min-h-auto">
 	<Sidebar.Provider>
 		<CourseSidebar />
 		<main>
