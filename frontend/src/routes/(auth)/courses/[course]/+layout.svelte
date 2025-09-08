@@ -9,7 +9,7 @@
 
 <div class="min-h-auto relative h-full overflow-hidden rounded-md border">
 	<Sidebar.Provider>
-		<CourseSidebar />
+		<CourseSidebar course={data.course} modules={data.modules} />
 		<main class="flex w-full flex-col gap-y-12 p-8">
 			<div class="flex gap-x-2 items-center">
 				<Sidebar.Trigger />

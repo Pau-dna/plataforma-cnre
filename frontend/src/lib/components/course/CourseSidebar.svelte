@@ -32,7 +32,7 @@
 				active: true,
 				items: modules.map((m) => ({
 					title: m.title,
-					url: `/courses/${course.id.toString()}/module/${m.id}`,
+					url: `/courses/${course.id.toString()}/${m.id}`,
 				}))
 			}
 		],
