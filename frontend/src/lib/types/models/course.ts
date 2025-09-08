@@ -22,6 +22,32 @@ interface BaseEntity {
 	updated_at: string;
 }
 
+
+// Base content interface
+interface BaseContent extends BaseEntity {
+	order: number;
+	title: string;
+	description?: string;
+	type: ContentType;
+}
+
+// Content (lessons, videos, readings, etc.)
+export interface Content extends BaseContent {
+	type: ContentType.CONTENT;
+	body: string;
+	mediaUrl?: string;
+}
+
+// Evaluation (quizzes, exams, etc.)
+export interface Evaluation extends BaseContent {
+	type: ContentType.EVALUATION;
+	questions: Question[];
+	question_count: number;
+	passing_score: number;
+	max_attempts?: number;
+	time_limit?: number; // in minutes
+}
+
 // Answer interface for question options
 export interface Answer extends BaseEntity {
 	text: string;
@@ -36,33 +62,6 @@ export interface Question extends BaseEntity {
 	answers: Answer[];
 	explanation?: string;
 	points: number;
-}
-
-// Base content interface
-interface BaseContent extends BaseEntity {
-	title: string;
-	description?: string;
-	type: ContentType;
-	isRequired: boolean;
-}
-
-// Content (lessons, videos, readings, etc.)
-export interface Content extends BaseContent {
-	type: ContentType.CONTENT;
-	body: string;
-	mediaUrl?: string;
-	resources?: string[];
-}
-
-// Evaluation (quizzes, exams, etc.)
-export interface Evaluation extends BaseContent {
-	type: ContentType.EVALUATION;
-	questions: Question[];
-	passingScore: number;
-	maxAttempts?: number;
-	timeLimit?: number; // in minutes
-	shuffleQuestions: boolean;
-	shuffleAnswers: boolean;
 }
 
 // Union type for module content
