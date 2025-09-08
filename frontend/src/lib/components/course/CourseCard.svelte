@@ -1,7 +1,9 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import type { Course } from '$lib/types/models/course';
-	import { Clock, Users } from '@lucide/svelte';
+	import { Clock, Ellipsis, Users } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	type Props = {
 		course: Course;
@@ -16,7 +18,24 @@
 		<div class="h-44 w-full rounded-t-xl bg-gradient-to-r from-sky-500 to-pink-500"></div>
 
 		<Card.Header>
-			<Card.Title class="text-lg font-bold">{course.title}</Card.Title>
+			<div class="flex items-center justify-between">
+				<Card.Title class="text-lg font-bold">{course.title}</Card.Title>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Button size="sm" variant="ghost">
+							<Ellipsis class="h-4 w-4 leading-none" />
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content>
+						<DropdownMenu.Group>
+							<DropdownMenu.Item>Ver</DropdownMenu.Item>
+							<DropdownMenu.Item>Editar</DropdownMenu.Item>
+							<DropdownMenu.Separator />
+							<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
+						</DropdownMenu.Group>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			</div>
 			<Card.Description>
 				<div class="flex flex-col gap-4">
 					<span class="line-clamp-2">{course.description}</span>

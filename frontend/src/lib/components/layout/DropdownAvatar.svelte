@@ -11,12 +11,9 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
-			<DropdownMenu.Label>My Account</DropdownMenu.Label>
+			<DropdownMenu.Label>Mi cuenta</DropdownMenu.Label>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item>Profile</DropdownMenu.Item>
-			<DropdownMenu.Item>Billing</DropdownMenu.Item>
-			<DropdownMenu.Item>Team</DropdownMenu.Item>
-			<DropdownMenu.Item>Subscription</DropdownMenu.Item>
+			<DropdownMenu.Item>Cerrar Sesión</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

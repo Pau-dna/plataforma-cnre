@@ -5,10 +5,11 @@ export class CourseController {
 		return [
 			{
 				id: 1,
-				title: 'Capacitación CNRE Medellín 2025',
-				description: 'Curso de formación para el personal del CNRE en Medellín, enfocado en competencias técnicas y administrativas para el año 2025.',
-				student_count: 80,
-				module_count: 6
+				title: 'Inducción al CNRE 2025',
+				description: 'Curso introductorio al CNRE para estudiantes de la unal.',
+				student_count: 120,
+				module_count: 10,
+				modules: [],
 			}
 		];
 	}

@@ -18,8 +18,8 @@ export enum ModuleStatus {
 // Base interface for entities with common properties
 export interface BaseEntity {
 	id: number;
-	created_at: string;
-	updated_at: string;
+	created_at?: string;
+	updated_at?: string;
 }
 
 

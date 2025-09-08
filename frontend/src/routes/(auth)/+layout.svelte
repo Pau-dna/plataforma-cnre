@@ -20,6 +20,10 @@
 		{
 			href: '/my-courses',
 			name: 'Mis Cursos'
+		},
+		{
+			href: '/admin/courses',
+			name: 'Admin'
 		}
 	];
 </script>
