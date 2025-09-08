@@ -7,13 +7,13 @@ type Question struct {
 	BaseModel
 	Text         string             `json:"text" gorm:"type:text;not null"`
 	Type         enums.QuestionType `json:"type" gorm:"not null"`
-	Explanation  *string            `json:"explanation" gorm:"type:text"`
+	Explanation  string             `json:"explanation" gorm:"type:text"`
 	Points       int                `json:"points" gorm:"not null;default:1"`
 	EvaluationID uint               `json:"evaluation_id" gorm:"not null"`
 
 	// Relaciones
-	Evaluation Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
-	Answers    []Answer   `json:"answers" gorm:"foreignKey:QuestionID"`
+	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
+	Answers    []*Answer   `json:"answers" gorm:"foreignKey:QuestionID"`
 }
 
 func (Question) TableName() string {

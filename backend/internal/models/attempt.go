@@ -47,12 +47,12 @@ type EvaluationAttempt struct {
 	TotalPoints  int            `json:"total_points" gorm:"not null"`
 	Passed       bool           `json:"passed" gorm:"not null;default:false"`
 	StartedAt    time.Time      `json:"started_at" gorm:"not null"`
-	SubmittedAt  *time.Time     `json:"submitted_at"`
-	TimeSpent    *int           `json:"time_spent"` // en minutos
+	SubmittedAt  time.Time      `json:"submitted_at"`
+	TimeSpent    int            `json:"time_spent"` // en minutos
 
 	// Relaciones
-	User       User       `json:"user" gorm:"foreignKey:UserID"`
-	Evaluation Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
+	User       *User       `json:"user" gorm:"foreignKey:UserID"`
+	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
 }
 
 func (EvaluationAttempt) TableName() string {

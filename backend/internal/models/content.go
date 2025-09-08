@@ -7,15 +7,15 @@ type Content struct {
 	BaseModel
 	Order       int               `json:"order" gorm:"not null"`
 	Title       string            `json:"title" gorm:"not null"`
-	Description *string           `json:"description" gorm:"type:text"`
+	Description string            `json:"description" gorm:"type:text"`
 	Type        enums.ContentType `json:"type" gorm:"not null;default:'content'"`
 	Body        string            `json:"body" gorm:"type:text;not null"`
-	MediaURL    *string           `json:"mediaUrl" gorm:"column:media_url"`
+	MediaURL    string            `json:"mediaUrl" gorm:"column:media_url"`
 	ModuleID    uint              `json:"module_id" gorm:"not null"`
 
 	// Relaciones
-	Module       Module         `json:"module" gorm:"foreignKey:ModuleID"`
-	UserProgress []UserProgress `json:"user_progress" gorm:"foreignKey:ContentID"`
+	Module       *Module         `json:"module" gorm:"foreignKey:ModuleID"`
+	UserProgress []*UserProgress `json:"user_progress" gorm:"foreignKey:ContentID"`
 }
 
 func (Content) TableName() string {

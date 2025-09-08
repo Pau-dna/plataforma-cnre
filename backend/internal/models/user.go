@@ -8,13 +8,11 @@ type User struct {
 	Email     string         `json:"email" gorm:"uniqueIndex;not null"`
 	FirstName string         `json:"firstName" gorm:"not null"`
 	LastName  string         `json:"lastName" gorm:"not null"`
-	AvatarURL *string        `json:"avatarUrl" gorm:"column:avatar_url"`
+	AvatarURL string         `json:"avatarUrl" gorm:"not null"`
 	Role      enums.UserRole `json:"role" gorm:"not null;default:'student'"`
 
 	// Relaciones
-	Enrollments        []Enrollment        `json:"enrollments" gorm:"foreignKey:UserID"`
-	EvaluationAttempts []EvaluationAttempt `json:"evaluation_attempts" gorm:"foreignKey:UserID"`
-	UserProgress       []UserProgress      `json:"user_progress" gorm:"foreignKey:UserID"`
+	Enrollments []*Enrollment `json:"enrollments" gorm:"foreignKey:UserID"`
 }
 
 func (User) TableName() string {
