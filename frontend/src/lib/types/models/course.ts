@@ -89,17 +89,6 @@ export interface Module extends BaseEntity {
 	course_id: number;
 }
 
-// User progress tracking
-export interface UserProgress extends BaseEntity {
-	user_id: number;
-	course_id: number;
-	module_id: number;
-	content_id: number;
-	completed_at?: string;
-	score?: number;
-	attempts: number;
-}
-
 // Course enrollment
 export interface Enrollment extends BaseEntity {
 	user_id: number;
@@ -125,6 +114,17 @@ export interface EvaluationAttempt extends BaseEntity {
 	started_at: Date;
 	submitted_at?: Date;
 	time_spent?: number; // in minutes
+}
+
+// User progress tracking
+export interface UserProgress extends BaseEntity {
+	user_id: number;
+	course_id: number;
+	module_id: number;
+	content_id: number;
+	completed_at?: string;
+	score?: number;
+	attempts: number;
 }
 
 // User interface
