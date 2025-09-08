@@ -5,6 +5,7 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Bell, type Icon as IconType } from '@lucide/svelte';
+	import DropdownAvatar from './DropdownAvatar.svelte';
 
 	type NavLink = {
 		href: string;
@@ -23,7 +24,7 @@
 <nav class="flex items-center justify-between border-b md:px-12 xl:px-24">
 	<div class="flex items-center gap-x-20">
 		<div class="flex shrink-0 text-lg font-semibold">
-			<a href="/home" class="flex gap-4 shrink-0 py-0">
+			<a href="/home" class="flex shrink-0 gap-4 py-0">
 				<img src="/images/logo.png" alt="CNRE Logo" class="h-14 w-auto" />
 			</a>
 		</div>
@@ -46,8 +47,6 @@
 	</div>
 
 	<div class="py-4">
-		<Avatar.Root class="size-10">
-			<Avatar.Fallback class="bg-gradient-to-r from-sky-500 to-pink-500"></Avatar.Fallback>
-		</Avatar.Root>
+		<DropdownAvatar />
 	</div>
 </nav>
