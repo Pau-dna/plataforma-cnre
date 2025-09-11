@@ -5,7 +5,8 @@ import "github.com/imlargo/go-api-template/internal/enums"
 type User struct {
 	BaseModel
 
-	Email     string         `json:"email" gorm:"uniqueIndex;not null"`
+	Email     string `json:"email" gorm:"uniqueIndex;not null"`
+	Password  string
 	FirstName string         `json:"firstName" gorm:"not null"`
 	LastName  string         `json:"lastName" gorm:"not null"`
 	AvatarURL string         `json:"avatarUrl" gorm:"not null"`
