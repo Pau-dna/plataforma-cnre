@@ -19,3 +19,11 @@ type User struct {
 func (User) TableName() string {
 	return "users"
 }
+
+func (User) ValidateUserCreation() error {
+	return nil
+}
+
+func (User) ValidatePassword() error {
+	return nil
+}

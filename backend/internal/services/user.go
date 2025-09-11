@@ -29,7 +29,6 @@ func NewUserService(service *Service) UserService {
 func (s *userService) CreateUser(data *dto.RegisterUser) (*models.User, error) {
 	// Validate user data
 	user := &models.User{
-		Name:     data.Name,
 		Email:    data.Email,
 		Password: data.Password,
 	}
