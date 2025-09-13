@@ -12,6 +12,15 @@ func Migrate(db *gorm.DB) error {
 		&models.Notification{},
 		&models.PushNotificationSubscription{},
 		&models.File{},
+		&models.Answer{},
+		&models.EvaluationAttempt{},
+		&models.Content{},
+		&models.Course{},
+		&models.Enrollment{},
+		&models.Evaluation{},
+		&models.Module{},
+		&models.UserProgress{},
+		&models.Question{},
 	)
 
 	return err
