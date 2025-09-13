@@ -1,55 +1,4 @@
-package main
 
-import (
-	"fmt"
-	"log"
-	"os"
-	"strings"
-)
-
-func main() {
-
-	models := []string{
-		"Answer",
-		"EvaluationAttempt",
-		"Content",
-		"Course",
-		"Enrollment",
-		"Evaluation",
-		"Module",
-		"UserProgress",
-		"Question",
-	}
-
-	for _, model := range models {
-		templateContent := renderTemplate(model)
-		if err := createFile(model, templateContent); err != nil {
-			log.Fatalln(err.Error())
-		}
-	}
-
-}
-
-func createFile(model string, content string) error {
-
-	folder := "internal/repositories/"
-
-	tmpFile, err := os.Create(fmt.Sprintf("%s/%s.go", folder, strings.ToLower(model)))
-	if err != nil {
-		return err
-	}
-
-	if _, err := tmpFile.WriteString(content); err != nil {
-		return err
-	}
-
-	tmpFile.Close()
-	return nil
-}
-
-func renderTemplate(modelName string) string {
-
-	template := `
 package repositories
 
 import (
@@ -106,12 +55,4 @@ func (r *courseRepository) GetAll() ([]*models.Course, error) {
 		return nil, err
 	}
 	return courses, nil
-}
-`
-
-	template = strings.ReplaceAll(template, "Course", modelName)
-	template = strings.ReplaceAll(template, "course", strings.ToLower(modelName))
-
-	return template
-
 }
