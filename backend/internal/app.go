@@ -54,7 +54,7 @@ func (app *Application) Mount() {
 	authService := services.NewAuthService(serviceContainer, userService, jwtAuth)
 	fileService := services.NewFileService(serviceContainer, app.Storage)
 	notificationService := services.NewNotificationService(serviceContainer, sseManager, pushNotificationDispatcher)
-	
+
 	// Platform services
 	courseService := services.NewCourseService(serviceContainer)
 	moduleService := services.NewModuleService(serviceContainer)
@@ -71,7 +71,7 @@ func (app *Application) Mount() {
 	authHandler := handlers.NewAuthHandler(handlerContainer, authService)
 	notificationHandler := handlers.NewNotificationHandler(handlerContainer, notificationService)
 	fileHandler := handlers.NewFileHandler(handlerContainer, fileService)
-	
+
 	// Platform handlers
 	courseHandler := handlers.NewCourseHandler(handlerContainer, courseService)
 	moduleHandler := handlers.NewModuleHandler(handlerContainer, moduleService)

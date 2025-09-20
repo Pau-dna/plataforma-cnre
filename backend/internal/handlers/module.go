@@ -222,9 +222,15 @@ func (h *ModuleHandler) ReorderModules(c *gin.Context) {
 	}
 
 	// Convert to the expected type
-	var convertedOrders []struct{ ID uint; Order int }
+	var convertedOrders []struct {
+		ID    uint
+		Order int
+	}
 	for _, order := range moduleOrders {
-		convertedOrders = append(convertedOrders, struct{ ID uint; Order int }{
+		convertedOrders = append(convertedOrders, struct {
+			ID    uint
+			Order int
+		}{
 			ID:    order.ID,
 			Order: order.Order,
 		})

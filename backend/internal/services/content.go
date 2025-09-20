@@ -12,7 +12,10 @@ type ContentService interface {
 	UpdateContent(id uint, content *models.Content) (*models.Content, error)
 	DeleteContent(id uint) error
 	GetContentsByModule(moduleID uint) ([]*models.Content, error)
-	ReorderContent(moduleID uint, contentOrders []struct{ ID uint; Order int }) error
+	ReorderContent(moduleID uint, contentOrders []struct {
+		ID    uint
+		Order int
+	}) error
 }
 
 type contentService struct {
@@ -93,7 +96,10 @@ func (s *contentService) GetContentsByModule(moduleID uint) ([]*models.Content, 
 	return moduleContents, nil
 }
 
-func (s *contentService) ReorderContent(moduleID uint, contentOrders []struct{ ID uint; Order int }) error {
+func (s *contentService) ReorderContent(moduleID uint, contentOrders []struct {
+	ID    uint
+	Order int
+}) error {
 	// Verify module exists
 	_, err := s.store.Modules.Get(moduleID)
 	if err != nil {
@@ -106,7 +112,7 @@ func (s *contentService) ReorderContent(moduleID uint, contentOrders []struct{ I
 		if err != nil {
 			continue // Skip invalid content
 		}
-		
+
 		if content.ModuleID != moduleID {
 			continue // Skip content from other modules
 		}

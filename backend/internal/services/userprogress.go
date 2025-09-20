@@ -42,14 +42,14 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 		// Update existing progress
 		existing.CompletedAt = time.Now()
 		existing.Attempts++
-		
+
 		if err := s.store.UserProgresss.Update(existing); err != nil {
 			return nil, fmt.Errorf("failed to update progress: %w", err)
 		}
-		
+
 		// Update course progress
 		s.updateCourseProgress(userID, courseID)
-		
+
 		return existing, nil
 	}
 
@@ -82,7 +82,7 @@ func (s *userProgressService) MarkContentIncomplete(userID, courseID, moduleID, 
 
 	// Reset completion
 	existing.CompletedAt = time.Time{}
-	
+
 	if err := s.store.UserProgresss.Update(existing); err != nil {
 		return fmt.Errorf("failed to update progress: %w", err)
 	}
@@ -158,7 +158,7 @@ func (s *userProgressService) CalculateCourseProgress(userID, courseID uint) (fl
 		if err != nil {
 			continue
 		}
-		
+
 		// Consider module complete if 100% progress
 		if moduleProgress >= 100.0 {
 			completedModules++

@@ -202,7 +202,7 @@ func (s *evaluationAttemptService) ScoreAttempt(attemptID uint) (*models.Evaluat
 	// Score each answer
 	for i, answer := range attempt.Answers {
 		isCorrect, points, err := s.answerService.ValidateAnswers(
-			answer.QuestionID, 
+			answer.QuestionID,
 			answer.SelectedAnswerIDs,
 		)
 		if err != nil {
@@ -215,7 +215,7 @@ func (s *evaluationAttemptService) ScoreAttempt(attemptID uint) (*models.Evaluat
 		attempt.Answers[i].Points = points
 
 		totalScore += points
-		
+
 		// Get question to add to total points
 		question, err := s.store.Questions.Get(answer.QuestionID)
 		if err == nil {
@@ -226,7 +226,7 @@ func (s *evaluationAttemptService) ScoreAttempt(attemptID uint) (*models.Evaluat
 	// Update attempt with scores
 	attempt.Score = totalScore
 	attempt.TotalPoints = totalPoints
-	
+
 	// Check if passed based on passing score
 	if totalPoints > 0 {
 		percentage := float64(totalScore) / float64(totalPoints) * 100

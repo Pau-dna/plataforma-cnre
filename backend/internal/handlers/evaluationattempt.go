@@ -46,8 +46,8 @@ func (h *EvaluationAttemptHandler) StartAttempt(c *gin.Context) {
 	attempt, err := h.evaluationAttemptService.StartAttempt(attemptData.UserID, attemptData.EvaluationID)
 	if err != nil {
 		h.logger.Errorf("Failed to start attempt: %v", err)
-		if err.Error() == "cannot start attempt: maximum attempts reached" || 
-		   err.Error() == "cannot start attempt: attempt already in progress" {
+		if err.Error() == "cannot start attempt: maximum attempts reached" ||
+			err.Error() == "cannot start attempt: attempt already in progress" {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}

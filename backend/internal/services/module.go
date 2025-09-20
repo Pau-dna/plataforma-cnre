@@ -13,7 +13,10 @@ type ModuleService interface {
 	DeleteModule(id uint) error
 	GetModulesByCourse(courseID uint) ([]*models.Module, error)
 	GetModuleWithContent(id uint) (*models.Module, error)
-	ReorderModules(courseID uint, moduleOrders []struct{ ID uint; Order int }) error
+	ReorderModules(courseID uint, moduleOrders []struct {
+		ID    uint
+		Order int
+	}) error
 }
 
 type moduleService struct {
@@ -97,12 +100,15 @@ func (s *moduleService) GetModuleWithContent(id uint) (*models.Module, error) {
 	if err != nil {
 		return nil, fmt.Errorf("module not found: %w", err)
 	}
-	
+
 	// For now, return the module - would need to implement preloading in repository
 	return module, nil
 }
 
-func (s *moduleService) ReorderModules(courseID uint, moduleOrders []struct{ ID uint; Order int }) error {
+func (s *moduleService) ReorderModules(courseID uint, moduleOrders []struct {
+	ID    uint
+	Order int
+}) error {
 	// Verify course exists
 	_, err := s.store.Courses.Get(courseID)
 	if err != nil {
@@ -115,7 +121,7 @@ func (s *moduleService) ReorderModules(courseID uint, moduleOrders []struct{ ID 
 		if err != nil {
 			continue // Skip invalid modules
 		}
-		
+
 		if module.CourseID != courseID {
 			continue // Skip modules from other courses
 		}

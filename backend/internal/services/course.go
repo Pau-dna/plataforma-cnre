@@ -81,7 +81,7 @@ func (s *courseService) GetCourseWithModules(id uint) (*models.Course, error) {
 	if err != nil {
 		return nil, fmt.Errorf("course not found: %w", err)
 	}
-	
+
 	// For now, return the course - would need to implement preloading in repository
 	return course, nil
 }

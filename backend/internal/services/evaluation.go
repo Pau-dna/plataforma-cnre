@@ -101,7 +101,7 @@ func (s *evaluationService) GetEvaluationWithQuestions(id uint) (*models.Evaluat
 	if err != nil {
 		return nil, fmt.Errorf("evaluation not found: %w", err)
 	}
-	
+
 	// For now, return the evaluation - would need to implement preloading in repository
 	return evaluation, nil
 }

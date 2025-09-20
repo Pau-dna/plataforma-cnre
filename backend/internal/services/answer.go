@@ -106,7 +106,7 @@ func (s *answerService) ValidateAnswers(questionID uint, selectedAnswerIDs []uin
 	// Create maps for easy lookup
 	answerMap := make(map[uint]*models.Answer)
 	correctAnswerIDs := make(map[uint]bool)
-	
+
 	for _, answer := range answers {
 		answerMap[answer.ID] = answer
 		if answer.IsCorrect {
@@ -122,7 +122,7 @@ func (s *answerService) ValidateAnswers(questionID uint, selectedAnswerIDs []uin
 
 	// Check if the selection matches the correct answers exactly
 	isCorrect := true
-	
+
 	// Check if all correct answers are selected
 	for correctID := range correctAnswerIDs {
 		if !selectedMap[correctID] {
@@ -130,7 +130,7 @@ func (s *answerService) ValidateAnswers(questionID uint, selectedAnswerIDs []uin
 			break
 		}
 	}
-	
+
 	// Check if any incorrect answers are selected
 	if isCorrect {
 		for _, selectedID := range selectedAnswerIDs {

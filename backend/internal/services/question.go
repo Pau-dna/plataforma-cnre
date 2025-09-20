@@ -97,7 +97,7 @@ func (s *questionService) GetQuestionWithAnswers(id uint) (*models.Question, err
 	if err != nil {
 		return nil, fmt.Errorf("question not found: %w", err)
 	}
-	
+
 	// For now, return the question - would need to implement preloading in repository
 	return question, nil
 }
