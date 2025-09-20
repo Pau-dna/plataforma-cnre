@@ -1,11 +1,11 @@
-import type { BaseEntity } from "./course";
+import type { BaseEntity, UserRole, Enrollment } from './course';
 
-// User interface
+// User interface - matches backend User model
 export interface User extends BaseEntity {
-    id: number;
 	email: string;
-	firstName: string;
-	lastName: string;
-	avatarUrl?: string;
-	role: 'student' | 'instructor' | 'admin';
+	first_name: string;
+	last_name: string;
+	avatar_url?: string;
+	role: UserRole;
+	enrollments?: Enrollment[];
 }

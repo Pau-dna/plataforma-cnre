@@ -72,7 +72,7 @@
 				</div>
 			</div>
 
-			{#if content.mediaUrl}
+			{#if content.type === 'content' && content.media_url}
 				<div class="text-muted-foreground flex flex-shrink-0 items-center gap-1">
 					<Video class="size-4" />
 					<span class="text-xs">Video</span>
@@ -121,7 +121,7 @@
 
 		<div class="flex items-center justify-between">
 			<div class="text-muted-foreground text-xs">
-				Actualizado: {new Date(content.updated_at).toLocaleDateString('es-ES')}
+				Actualizado: {content.updated_at ? new Date(content.updated_at).toLocaleDateString('es-ES') : 'N/A'}
 			</div>
 
 			<Button
