@@ -11,6 +11,7 @@ type ModuleRepository interface {
 	Create(module *models.Module) error
 	Update(module *models.Module) error
 	Delete(id uint) error
+	GetAll() ([]*models.Module, error)
 }
 
 type moduleRepository struct {

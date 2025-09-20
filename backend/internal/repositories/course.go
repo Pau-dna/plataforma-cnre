@@ -11,6 +11,7 @@ type CourseRepository interface {
 	Create(course *models.Course) error
 	Update(course *models.Course) error
 	Delete(id uint) error
+	GetAll() ([]*models.Course, error)
 }
 
 type courseRepository struct {

@@ -11,6 +11,7 @@ type EvaluationRepository interface {
 	Create(evaluation *models.Evaluation) error
 	Update(evaluation *models.Evaluation) error
 	Delete(id uint) error
+	GetAll() ([]*models.Evaluation, error)
 }
 
 type evaluationRepository struct {

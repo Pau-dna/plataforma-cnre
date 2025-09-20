@@ -11,6 +11,7 @@ type UserProgressRepository interface {
 	Create(userprogress *models.UserProgress) error
 	Update(userprogress *models.UserProgress) error
 	Delete(id uint) error
+	GetAll() ([]*models.UserProgress, error)
 }
 
 type userprogressRepository struct {

@@ -11,6 +11,7 @@ type QuestionRepository interface {
 	Create(question *models.Question) error
 	Update(question *models.Question) error
 	Delete(id uint) error
+	GetAll() ([]*models.Question, error)
 }
 
 type questionRepository struct {

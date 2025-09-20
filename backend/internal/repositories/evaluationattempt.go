@@ -11,6 +11,7 @@ type EvaluationAttemptRepository interface {
 	Create(evaluationattempt *models.EvaluationAttempt) error
 	Update(evaluationattempt *models.EvaluationAttempt) error
 	Delete(id uint) error
+	GetAll() ([]*models.EvaluationAttempt, error)
 }
 
 type evaluationattemptRepository struct {

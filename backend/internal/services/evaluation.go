@@ -1,0 +1,107 @@
+package services
+
+import (
+	"fmt"
+
+	"github.com/imlargo/go-api-template/internal/models"
+)
+
+type EvaluationService interface {
+	CreateEvaluation(evaluation *models.Evaluation) (*models.Evaluation, error)
+	GetEvaluation(id uint) (*models.Evaluation, error)
+	UpdateEvaluation(id uint, evaluation *models.Evaluation) (*models.Evaluation, error)
+	DeleteEvaluation(id uint) error
+	GetEvaluationsByModule(moduleID uint) ([]*models.Evaluation, error)
+	GetEvaluationWithQuestions(id uint) (*models.Evaluation, error)
+}
+
+type evaluationService struct {
+	*Service
+}
+
+func NewEvaluationService(service *Service) EvaluationService {
+	return &evaluationService{
+		Service: service,
+	}
+}
+
+func (s *evaluationService) CreateEvaluation(evaluation *models.Evaluation) (*models.Evaluation, error) {
+	// Verify module exists
+	_, err := s.store.Modules.Get(evaluation.ModuleID)
+	if err != nil {
+		return nil, fmt.Errorf("module not found: %w", err)
+	}
+
+	if err := s.store.Evaluations.Create(evaluation); err != nil {
+		return nil, fmt.Errorf("failed to create evaluation: %w", err)
+	}
+	return evaluation, nil
+}
+
+func (s *evaluationService) GetEvaluation(id uint) (*models.Evaluation, error) {
+	evaluation, err := s.store.Evaluations.Get(id)
+	if err != nil {
+		return nil, fmt.Errorf("evaluation not found: %w", err)
+	}
+	return evaluation, nil
+}
+
+func (s *evaluationService) UpdateEvaluation(id uint, evaluationData *models.Evaluation) (*models.Evaluation, error) {
+	existingEvaluation, err := s.store.Evaluations.Get(id)
+	if err != nil {
+		return nil, fmt.Errorf("evaluation not found: %w", err)
+	}
+
+	// Update fields
+	existingEvaluation.Title = evaluationData.Title
+	existingEvaluation.Description = evaluationData.Description
+	existingEvaluation.Order = evaluationData.Order
+	existingEvaluation.QuestionCount = evaluationData.QuestionCount
+	existingEvaluation.PassingScore = evaluationData.PassingScore
+	existingEvaluation.MaxAttempts = evaluationData.MaxAttempts
+	existingEvaluation.TimeLimit = evaluationData.TimeLimit
+	existingEvaluation.Type = evaluationData.Type
+
+	if err := s.store.Evaluations.Update(existingEvaluation); err != nil {
+		return nil, fmt.Errorf("failed to update evaluation: %w", err)
+	}
+
+	return existingEvaluation, nil
+}
+
+func (s *evaluationService) DeleteEvaluation(id uint) error {
+	if err := s.store.Evaluations.Delete(id); err != nil {
+		return fmt.Errorf("failed to delete evaluation: %w", err)
+	}
+	return nil
+}
+
+func (s *evaluationService) GetEvaluationsByModule(moduleID uint) ([]*models.Evaluation, error) {
+	// This would require a repository method to filter by module ID
+	// For now, we'll implement a basic version
+	evaluations, err := s.store.Evaluations.GetAll()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get evaluations: %w", err)
+	}
+
+	// Filter by module ID
+	var moduleEvaluations []*models.Evaluation
+	for _, evaluation := range evaluations {
+		if evaluation.ModuleID == moduleID {
+			moduleEvaluations = append(moduleEvaluations, evaluation)
+		}
+	}
+
+	return moduleEvaluations, nil
+}
+
+func (s *evaluationService) GetEvaluationWithQuestions(id uint) (*models.Evaluation, error) {
+	// This would require a repository method to preload questions
+	evaluation, err := s.store.Evaluations.Get(id)
+	if err != nil {
+		return nil, fmt.Errorf("evaluation not found: %w", err)
+	}
+	
+	// For now, return the evaluation - would need to implement preloading in repository
+	return evaluation, nil
+}

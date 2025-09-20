@@ -11,6 +11,7 @@ type EnrollmentRepository interface {
 	Create(enrollment *models.Enrollment) error
 	Update(enrollment *models.Enrollment) error
 	Delete(id uint) error
+	GetAll() ([]*models.Enrollment, error)
 }
 
 type enrollmentRepository struct {
