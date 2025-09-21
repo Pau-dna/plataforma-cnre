@@ -72,7 +72,7 @@
 				</div>
 			</div>
 
-			{#if content.type === 'content' && content.media_url}
+			{#if content.type === ContentType.CONTENT && content.media_url}
 				<div class="text-muted-foreground flex flex-shrink-0 items-center gap-1">
 					<Video class="size-4" />
 					<span class="text-xs">Video</span>

@@ -1,4 +1,4 @@
-import { apiClient } from '$lib/client';
+import { BaseController } from './base';
 import type {
 	Question,
 	CreateQuestionDTO,
@@ -8,69 +8,69 @@ import type {
 	UpdateAnswerDTO
 } from '$lib/types';
 
-export class QuestionController {
+export class QuestionController extends BaseController {
 	/**
 	 * Get a specific question by ID
 	 */
 	async getQuestion(id: number): Promise<Question> {
-		return apiClient.get<Question>(`/api/v1/questions/${id}`);
+		return this.get<Question>(`/api/v1/questions/${id}`);
 	}
 
 	/**
 	 * Create new question
 	 */
 	async createQuestion(questionData: CreateQuestionDTO): Promise<Question> {
-		return apiClient.post<Question>('/api/v1/questions', questionData);
+		return this.post<Question>('/api/v1/questions', questionData);
 	}
 
 	/**
 	 * Update existing question
 	 */
 	async updateQuestion(id: number, questionData: UpdateQuestionDTO): Promise<Question> {
-		return apiClient.put<Question>(`/api/v1/questions/${id}`, questionData);
+		return this.put<Question>(`/api/v1/questions/${id}`, questionData);
 	}
 
 	/**
 	 * Delete question
 	 */
 	async deleteQuestion(id: number): Promise<void> {
-		return apiClient.delete(`/api/v1/questions/${id}`);
+		return this.delete(`/api/v1/questions/${id}`);
 	}
 }
 
-export class AnswerController {
+export class AnswerController extends BaseController {
 	/**
 	 * Get a specific answer by ID
 	 */
 	async getAnswer(id: number): Promise<Answer> {
-		return apiClient.get<Answer>(`/api/v1/answers/${id}`);
+		return this.get<Answer>(`/api/v1/answers/${id}`);
 	}
 
 	/**
 	 * Create new answer
 	 */
 	async createAnswer(answerData: CreateAnswerDTO): Promise<Answer> {
-		return apiClient.post<Answer>('/api/v1/answers', answerData);
+		return this.post<Answer>('/api/v1/answers', answerData);
 	}
 
 	/**
 	 * Update existing answer
 	 */
 	async updateAnswer(id: number, answerData: UpdateAnswerDTO): Promise<Answer> {
-		return apiClient.put<Answer>(`/api/v1/answers/${id}`, answerData);
+		return this.put<Answer>(`/api/v1/answers/${id}`, answerData);
 	}
 
 	/**
 	 * Delete answer
 	 */
 	async deleteAnswer(id: number): Promise<void> {
-		return apiClient.delete(`/api/v1/answers/${id}`);
+		return this.delete(`/api/v1/answers/${id}`);
 	}
 
 	/**
 	 * Get all answers for a specific question
 	 */
 	async getAnswersByQuestion(questionId: number): Promise<Answer[]> {
-		return apiClient.get<Answer[]>(`/api/v1/questions/${questionId}/answers`);
+		return this.get<Answer[]>(`/api/v1/questions/${questionId}/answers`);
 	}
 }

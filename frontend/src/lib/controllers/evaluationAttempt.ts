@@ -1,51 +1,51 @@
-import { apiClient } from '$lib/client';
+import { BaseController } from './base';
 import type {
 	EvaluationAttempt,
 	StartEvaluationAttemptDTO,
 	SubmitEvaluationAttemptDTO
 } from '$lib/types';
 
-export class EvaluationAttemptController {
+export class EvaluationAttemptController extends BaseController {
 	/**
 	 * Start a new evaluation attempt
 	 */
 	async startAttempt(attemptData: StartEvaluationAttemptDTO): Promise<EvaluationAttempt> {
-		return apiClient.post<EvaluationAttempt>('/api/v1/evaluation-attempts/start', attemptData);
+		return this.post<EvaluationAttempt>('/api/v1/evaluation-attempts/start', attemptData);
 	}
 
 	/**
 	 * Submit evaluation attempt with answers
 	 */
 	async submitAttempt(attemptId: number, submissionData: SubmitEvaluationAttemptDTO): Promise<EvaluationAttempt> {
-		return apiClient.post<EvaluationAttempt>(`/api/v1/evaluation-attempts/${attemptId}/submit`, submissionData);
+		return this.post<EvaluationAttempt>(`/api/v1/evaluation-attempts/${attemptId}/submit`, submissionData);
 	}
 
 	/**
 	 * Get a specific evaluation attempt by ID
 	 */
 	async getAttempt(id: number): Promise<EvaluationAttempt> {
-		return apiClient.get<EvaluationAttempt>(`/api/v1/evaluation-attempts/${id}`);
+		return this.get<EvaluationAttempt>(`/api/v1/evaluation-attempts/${id}`);
 	}
 
 	/**
 	 * Get all attempts for a user and evaluation
 	 */
 	async getUserAttempts(userId: number, evaluationId: number): Promise<EvaluationAttempt[]> {
-		return apiClient.get<EvaluationAttempt[]>(`/api/v1/users/${userId}/evaluations/${evaluationId}/attempts`);
+		return this.get<EvaluationAttempt[]>(`/api/v1/users/${userId}/evaluations/${evaluationId}/attempts`);
 	}
 
 	/**
 	 * Check if user can attempt an evaluation
 	 */
 	async canUserAttempt(userId: number, evaluationId: number): Promise<{ can_attempt: boolean; reason: string }> {
-		return apiClient.get<{ can_attempt: boolean; reason: string }>(`/api/v1/users/${userId}/evaluations/${evaluationId}/can-attempt`);
+		return this.get<{ can_attempt: boolean; reason: string }>(`/api/v1/users/${userId}/evaluations/${evaluationId}/can-attempt`);
 	}
 
 	/**
 	 * Score an evaluation attempt (admin only)
 	 */
 	async scoreAttempt(attemptId: number): Promise<EvaluationAttempt> {
-		return apiClient.post<EvaluationAttempt>(`/api/v1/evaluation-attempts/${attemptId}/score`);
+		return this.post<EvaluationAttempt>(`/api/v1/evaluation-attempts/${attemptId}/score`);
 	}
 
 	/**

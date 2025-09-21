@@ -1,4 +1,5 @@
 // DTOs for API requests and responses
+import { ContentType, QuestionType } from '../models/course';
 
 export interface CreateCourseDTO {
 	title: string;
@@ -31,7 +32,7 @@ export interface CreateContentDTO {
 	order: number;
 	title: string;
 	description?: string;
-	type: 'content';
+	type: ContentType.CONTENT;
 	body: string;
 	media_url?: string;
 	module_id: number;
@@ -49,7 +50,7 @@ export interface CreateEvaluationDTO {
 	order: number;
 	title: string;
 	description?: string;
-	type: 'evaluation';
+	type: ContentType.EVALUATION;
 	question_count: number;
 	passing_score: number;
 	max_attempts?: number;
@@ -69,7 +70,7 @@ export interface UpdateEvaluationDTO {
 
 export interface CreateQuestionDTO {
 	text: string;
-	type: 'single_choice' | 'multiple_choice';
+	type: QuestionType;
 	explanation?: string;
 	points: number;
 	evaluation_id: number;
@@ -77,7 +78,7 @@ export interface CreateQuestionDTO {
 
 export interface UpdateQuestionDTO {
 	text?: string;
-	type?: 'single_choice' | 'multiple_choice';
+	type?: QuestionType;
 	explanation?: string;
 	points?: number;
 }

@@ -1,58 +1,58 @@
-import { apiClient } from '$lib/client';
+import { BaseController } from './base';
 import type {
 	Enrollment,
 	CreateEnrollmentDTO,
 	UpdateEnrollmentProgressDTO
 } from '$lib/types';
 
-export class EnrollmentController {
+export class EnrollmentController extends BaseController {
 	/**
 	 * Get a specific enrollment by ID
 	 */
 	async getEnrollment(id: number): Promise<Enrollment> {
-		return apiClient.get<Enrollment>(`/api/v1/enrollments/${id}`);
+		return this.get<Enrollment>(`/api/v1/enrollments/${id}`);
 	}
 
 	/**
 	 * Create new enrollment (enroll user in course)
 	 */
 	async createEnrollment(enrollmentData: CreateEnrollmentDTO): Promise<Enrollment> {
-		return apiClient.post<Enrollment>('/api/v1/enrollments', enrollmentData);
+		return this.post<Enrollment>('/api/v1/enrollments', enrollmentData);
 	}
 
 	/**
 	 * Delete enrollment (unenroll user from course)
 	 */
 	async deleteEnrollment(id: number): Promise<void> {
-		return apiClient.delete(`/api/v1/enrollments/${id}`);
+		return this.delete(`/api/v1/enrollments/${id}`);
 	}
 
 	/**
 	 * Get all enrollments for a specific user
 	 */
 	async getUserEnrollments(userId: number): Promise<Enrollment[]> {
-		return apiClient.get<Enrollment[]>(`/api/v1/users/${userId}/enrollments`);
+		return this.get<Enrollment[]>(`/api/v1/users/${userId}/enrollments`);
 	}
 
 	/**
 	 * Get all enrollments for a specific course
 	 */
 	async getCourseEnrollments(courseId: number): Promise<Enrollment[]> {
-		return apiClient.get<Enrollment[]>(`/api/v1/courses/${courseId}/enrollments`);
+		return this.get<Enrollment[]>(`/api/v1/courses/${courseId}/enrollments`);
 	}
 
 	/**
 	 * Complete enrollment (mark course as completed)
 	 */
 	async completeEnrollment(userId: number, courseId: number): Promise<void> {
-		return apiClient.post(`/api/v1/users/${userId}/courses/${courseId}/complete`);
+		return this.post(`/api/v1/users/${userId}/courses/${courseId}/complete`);
 	}
 
 	/**
 	 * Update enrollment progress
 	 */
 	async updateProgress(userId: number, courseId: number, progressData: UpdateEnrollmentProgressDTO): Promise<void> {
-		return apiClient.put(`/api/v1/users/${userId}/courses/${courseId}/progress`, progressData);
+		return this.put(`/api/v1/users/${userId}/courses/${courseId}/progress`, progressData);
 	}
 
 	/**
