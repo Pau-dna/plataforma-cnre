@@ -46,6 +46,20 @@ export class QuestionController extends BaseController {
 	async deleteQuestion(id: number): Promise<void> {
 		return this.delete(`/api/v1/questions/${id}`);
 	}
+
+	/**
+	 * Get questions by evaluation
+	 */
+	async getQuestionsByEvaluation(evaluationId: number): Promise<Question[]> {
+		return this.get<Question[]>(`/api/v1/evaluations/${evaluationId}/questions`);
+	}
+
+	/**
+	 * Get question with answers
+	 */
+	async getQuestionWithAnswers(questionId: number): Promise<Question> {
+		return this.get<Question>(`/api/v1/questions/${questionId}/answers`);
+	}
 }
 
 export class AnswerController extends BaseController {
