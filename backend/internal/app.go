@@ -106,7 +106,7 @@ func (app *Application) Mount() {
 
 	app.Router.GET("/api/v1/notifications/subscribe", notificationHandler.SubscribeSSE)
 
-	v1 := app.Router.Group("/api/v1", authMiddleware)
+	v1 := app.Router.Group("/api/v1")
 
 	// Files
 	v1.GET("/files/:id/download", fileHandler.DownloadFile)
