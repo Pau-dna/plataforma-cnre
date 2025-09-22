@@ -24,6 +24,13 @@ export class UserController extends BaseController {
 	}
 
 	/**
+	 * Partially update a user (PATCH)
+	 */
+	async updateUserPatch(id: number, userData: Partial<User>): Promise<User> {
+		return this.patch<User>(`/api/v1/users/${id}`, userData);
+	}
+
+	/**
 	 * Delete user
 	 */
 	async deleteUser(id: number): Promise<void> {

@@ -38,6 +38,13 @@ export class CourseController extends BaseController {
 	}
 
 	/**
+	 * Partially update an existing course (PATCH)
+	 */
+	async updateCoursePatch(id: number, courseData: Partial<UpdateCourseDTO>): Promise<Course> {
+		return this.patch<Course>(`/api/v1/courses/${id}`, courseData);
+	}
+
+	/**
 	 * Delete a course
 	 */
 	async deleteCourse(id: number): Promise<void> {

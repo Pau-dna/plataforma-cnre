@@ -45,6 +45,13 @@ export class ModuleController extends BaseController {
 	}
 
 	/**
+	 * Partially update an existing module (PATCH)
+	 */
+	async updateModulePatch(id: number, moduleData: Partial<UpdateModuleDTO>): Promise<Module> {
+		return this.patch<Module>(`/api/v1/modules/${id}`, moduleData);
+	}
+
+	/**
 	 * Delete a module
 	 */
 	async deleteModule(id: number): Promise<void> {

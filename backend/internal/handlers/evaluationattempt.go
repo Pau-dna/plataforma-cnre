@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -124,6 +125,47 @@ func (h *EvaluationAttemptHandler) GetAttempt(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, attempt)
+}
+
+// @Summary		Update evaluation attempt
+// @Router			/api/v1/evaluation-attempts/{id} [patch]
+// @Description	Update an evaluation attempt by ID
+// @Tags		evaluation-attempts
+// @Param id path int true "Attempt ID"
+// @Accept		json
+// @Param payload body dto.UpdateEvaluationAttemptRequest true "Attempt data"
+// @Produce		json
+// @Success		200	{object}	models.EvaluationAttempt	"Attempt updated successfully"
+// @Failure		400	{object}	responses.ErrorResponse	"Bad Request"
+// @Failure		404	{object}	responses.ErrorResponse	"Attempt not found"
+// @Failure		500	{object}	responses.ErrorResponse	"Internal Server Error"
+// @Security     BearerAuth
+func (h *EvaluationAttemptHandler) UpdateEvaluationAttemptPatch(c *gin.Context) {
+	attemptID := c.Param("id")
+	if attemptID == "" {
+		responses.ErrorBadRequest(c, "Attempt ID is required")
+		return
+	}
+
+	attemptIDInt, err := strconv.Atoi(attemptID)
+	if err != nil {
+		responses.ErrorBadRequest(c, "Invalid Attempt ID: "+err.Error())
+		return
+	}
+
+	var payload map[string]interface{}
+	if err := c.BindJSON(&payload); err != nil {
+		responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+		return
+	}
+
+	attempt, err := h.evaluationAttemptService.UpdateEvaluationAttemptPatch(uint(attemptIDInt), payload)
+	if err != nil {
+		responses.ErrorInternalServerWithMessage(c, err.Error())
+		return
+	}
+
+	responses.Ok(c, attempt)
 }
 
 // @Summary Get user evaluation attempts
