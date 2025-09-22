@@ -206,6 +206,42 @@ func (h *EnrollmentHandler) GetCourseEnrollments(c *gin.Context) {
 	c.JSON(http.StatusOK, enrollments)
 }
 
+// @Summary Get user course enrollment
+// @Description Get enrollment for a specific user and course
+// @Tags enrollments
+// @Produce json
+// @Param userId path int true "User ID"
+// @Param courseId path int true "Course ID"
+// @Success 200 {object} models.Enrollment
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/users/{userId}/courses/{courseId}/enrollment [get]
+func (h *EnrollmentHandler) GetUserCourseEnrollment(c *gin.Context) {
+	userIDStr := c.Param("userId")
+	userID, err := strconv.ParseUint(userIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	courseIDStr := c.Param("courseId")
+	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		return
+	}
+
+	enrollment, err := h.enrollmentService.GetUserCourseEnrollment(uint(userID), uint(courseID))
+	if err != nil {
+		h.logger.Errorf("Failed to get user course enrollment: %v", err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "Enrollment not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, enrollment)
+}
+
 // @Summary Complete enrollment
 // @Description Mark an enrollment as completed
 // @Tags enrollments
