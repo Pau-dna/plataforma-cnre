@@ -146,7 +146,7 @@ func (h *EvaluationHandler) DeleteEvaluation(c *gin.Context) {
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/modules/{moduleId}/evaluations [get]
 func (h *EvaluationHandler) GetEvaluationsByModule(c *gin.Context) {
-	moduleIDStr := c.Param("moduleId")
+	moduleIDStr := c.Param("id")
 	moduleID, err := strconv.ParseUint(moduleIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
