@@ -35,9 +35,7 @@
 	}
 
 	// Format the date for display
-	const formattedDate = actDate 
-		? new Date(actDate).toLocaleDateString('es-ES')
-		: 'N/A';
+	const formattedDate = actDate ? new Date(actDate).toLocaleDateString('es-ES') : 'N/A';
 </script>
 
 <Card.Root>
@@ -74,7 +72,7 @@
 					<ArrowDown class="h-4 w-4" />
 				</Button>
 			</div>
-			<div class="flex flex-col gap-1 flex-1">
+			<div class="flex flex-1 flex-col gap-1">
 				<div class="flex items-center gap-2">
 					<Card.Title class="text-lg">{content.title}</Card.Title>
 					<Badge variant="secondary" class="flex items-center gap-1">

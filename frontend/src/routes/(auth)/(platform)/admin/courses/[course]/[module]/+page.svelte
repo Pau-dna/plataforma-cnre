@@ -83,7 +83,10 @@
 	<div class="flex flex-col gap-2">
 		<div class="flex items-center justify-between">
 			<h1 class="text-h1">Contenidos del Módulo</h1>
-			<Button href="/admin/courses/{courseId}/{module.id}/new-content" class="bg-pink-500 hover:bg-pink-900">
+			<Button
+				href="/admin/courses/{courseId}/{module.id}/new-content"
+				class="bg-pink-500 hover:bg-pink-900"
+			>
 				<Plus class="h-4 w-4 leading-none" />
 				<span class="leading-none">Crear Contenido</span>
 			</Button>
@@ -104,11 +107,14 @@
 				canMoveDown={index < contents.length - 1}
 			/>
 		{/each}
-		
+
 		{#if contents.length === 0}
 			<div class="flex flex-col items-center justify-center py-12 text-center">
-				<p class="text-muted-foreground text-lg mb-4">Este módulo no tiene contenidos aún</p>
-				<Button href="/admin/courses/{courseId}/{module.id}/new-content" class="bg-pink-500 hover:bg-pink-900">
+				<p class="text-muted-foreground mb-4 text-lg">Este módulo no tiene contenidos aún</p>
+				<Button
+					href="/admin/courses/{courseId}/{module.id}/new-content"
+					class="bg-pink-500 hover:bg-pink-900"
+				>
 					<Plus class="h-4 w-4 leading-none" />
 					<span class="leading-none">Crear Primer Contenido</span>
 				</Button>

@@ -104,5 +104,15 @@
 				canMoveDown={index < modules.length - 1}
 			/>
 		{/each}
+
+		{#if modules.length === 0}
+			<div class="flex flex-col items-center justify-center py-12 text-center">
+				<p class="text-muted-foreground mb-4 text-lg">Este curso no tiene módulos aún</p>
+				<Button href="/admin/courses/{course.id}/new-module" class="bg-pink-500 hover:bg-pink-900">
+					<Plus class="h-4 w-4 leading-none" />
+					<span class="leading-none">Crear Primer Módulo</span>
+				</Button>
+			</div>
+		{/if}
 	</div>
 </div>

@@ -64,9 +64,13 @@
 		<Card.Content class="flex flex-col gap-6">
 			<div class="flex flex-col gap-2">
 				<Label for="title">Título del contenido *</Label>
-				<Input id="title" placeholder="Ingrese el título del contenido" bind:value={formdata.title} />
+				<Input
+					id="title"
+					placeholder="Ingrese el título del contenido"
+					bind:value={formdata.title}
+				/>
 			</div>
-			
+
 			<div class="flex flex-col gap-2">
 				<Label for="description">Descripción</Label>
 				<Textarea
@@ -88,21 +92,21 @@
 
 			<div class="flex flex-col gap-2">
 				<Label for="media_url">URL de multimedia (opcional)</Label>
-				<Input 
-					id="media_url" 
-					placeholder="https://ejemplo.com/video.mp4 o https://ejemplo.com/imagen.jpg" 
-					bind:value={formdata.media_url} 
+				<Input
+					id="media_url"
+					placeholder="https://ejemplo.com/video.mp4 o https://ejemplo.com/imagen.jpg"
+					bind:value={formdata.media_url}
 				/>
 			</div>
 
 			<div class="flex flex-col gap-2">
 				<Label for="order">Orden</Label>
-				<Input 
-					id="order" 
-					type="number" 
+				<Input
+					id="order"
+					type="number"
 					min="1"
-					placeholder="Orden de aparición del contenido" 
-					bind:value={formdata.order} 
+					placeholder="Orden de aparición del contenido"
+					bind:value={formdata.order}
 				/>
 			</div>
 		</Card.Content>

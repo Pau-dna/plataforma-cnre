@@ -131,7 +131,9 @@
 				variant="ghost"
 				size="sm"
 				class="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-				href={content.type === ContentType.EVALUATION ? `/courses/${page.params.course}/${page.params.module}/${content.id}/start` : `/courses/${page.params.course}/${page.params.module}/${content.id}`}
+				href={content.type === ContentType.EVALUATION
+					? `/courses/${page.params.course}/${page.params.module}/${content.id}/start`
+					: `/courses/${page.params.course}/${page.params.module}/${content.id}`}
 			>
 				{content.type === ContentType.EVALUATION ? 'Iniciar Evaluación' : 'Ver Contenido'}
 			</Button>

@@ -16,10 +16,16 @@
 	<div class="flex flex-col gap-y-4">
 		<h2 class="text-muted-foreground font-medium">Contenidos</h2>
 
-		<div class="flex flex-col gap-y-2">
-			{#each data.contents as content (content.id)}
-				<Content {content} active={false} />
-			{/each}
-		</div>
+		{#if data.contents.length === 0}
+			<div class="flex flex-col items-center justify-center py-12 text-center">
+				<p class="text-muted-foreground text-lg">Este módulo no tiene contenidos disponibles aún</p>
+			</div>
+		{:else}
+			<div class="flex flex-col gap-y-2">
+				{#each data.contents as content (content.id)}
+					<Content {content} active={false} />
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
