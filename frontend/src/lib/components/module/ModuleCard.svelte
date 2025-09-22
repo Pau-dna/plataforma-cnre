@@ -16,7 +16,15 @@
 		canMoveDown?: boolean;
 	};
 
-	const { module, actDate, onupdate, onmoveup, onmovedown, canMoveUp = true, canMoveDown = true }: Props = $props();
+	const {
+		module,
+		actDate,
+		onupdate,
+		onmoveup,
+		onmovedown,
+		canMoveUp = true,
+		canMoveDown = true
+	}: Props = $props();
 	let openEdit = $state(false);
 
 	function handleModuleUpdate(updated: Module) {
@@ -51,7 +59,7 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.Group>
 						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
-						<DropdownMenu.Item onclick={() => openEdit = true}>Editar</DropdownMenu.Item>
+						<DropdownMenu.Item onclick={() => (openEdit = true)}>Editar</DropdownMenu.Item>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
 					</DropdownMenu.Group>

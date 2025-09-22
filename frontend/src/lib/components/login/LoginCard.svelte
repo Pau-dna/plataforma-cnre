@@ -36,7 +36,6 @@
 		document.body.appendChild(form);
 		form.submit();
 	}
-
 </script>
 
 <Card.Root class="w-md border-sky-500/25 shadow-lg shadow-sky-500/25">

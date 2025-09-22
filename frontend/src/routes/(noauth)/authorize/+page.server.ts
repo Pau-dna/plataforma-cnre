@@ -14,7 +14,6 @@ type GoogleOAuthResponse = {
 };
 
 export const load = (async ({ url, cookies }) => {
-
 	const isAuthenticated = authCookiesManager.isAuthenticated(cookies);
 	const redirectParam = url.searchParams.get('redirect');
 	let redirectTo: null | string = null;
@@ -39,16 +38,11 @@ export const load = (async ({ url, cookies }) => {
 
 	const authController = new AuthController();
 
-
 	let authData: null | SignInResponse = null;
-	let destination = "/logout";
+	let destination = '/logout';
 	try {
 		const response = await authController.loginWithGoogle(credentials.code);
-		authCookiesManager.login(
-			cookies,
-			response.tokens.access_token,
-			response.tokens.refresh_token,
-		);
+		authCookiesManager.login(cookies, response.tokens.access_token, response.tokens.refresh_token);
 
 		authData = response;
 		console.log(response);
@@ -60,11 +54,11 @@ export const load = (async ({ url, cookies }) => {
 		console.log(error);
 	}
 
-	if (destination !== "/logout" && authData) {
+	if (destination !== '/logout' && authData) {
 		// Try to enroll
 		try {
 			console.log(authData.tokens.access_token);
-			const enrollmentController = new EnrollmentController(authData.tokens.access_token)
+			const enrollmentController = new EnrollmentController(authData.tokens.access_token);
 			await enrollmentController.enrollInCourse(1, authData.user.id);
 		} catch (error) {
 			console.log('Auto-enrollment failed:', error);

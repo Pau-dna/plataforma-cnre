@@ -33,7 +33,10 @@ export class QuestionController extends BaseController {
 	/**
 	 * Partially update a question (PATCH)
 	 */
-	async updateQuestionPatch(id: number, questionData: Partial<UpdateQuestionDTO>): Promise<Question> {
+	async updateQuestionPatch(
+		id: number,
+		questionData: Partial<UpdateQuestionDTO>
+	): Promise<Question> {
 		return this.patch<Question>(`/api/v1/questions/${id}`, questionData);
 	}
 

@@ -7,7 +7,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const isLogin =
 		event.url.pathname === '/login' ||
 		event.url.pathname === '/authorize' ||
-		event.url.pathname === '/logout'
+		event.url.pathname === '/logout';
 
 	if (isLogin) {
 		if (event.url.pathname === '/login' && event.request.method === 'GET') {
@@ -37,8 +37,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.refreshToken = authTokens?.refreshToken;
 
 	try {
-        const authController = new AuthController(authTokens.accessToken)
-		const user = await authController.getUserInfo() as User;
+		const authController = new AuthController(authTokens.accessToken);
+		const user = (await authController.getUserInfo()) as User;
 		event.locals.user = user;
 		const response = await resolve(event);
 		return response;

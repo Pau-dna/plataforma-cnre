@@ -4,9 +4,8 @@
 
 	let { data }: PageProps = $props();
 
-	let courses = $state((data?.enrollments || []).map(enrollment => enrollment.course));
+	let courses = $state((data?.enrollments || []).map((enrollment) => enrollment.course));
 </script>
-
 
 <div class="flex flex-col gap-6">
 	<h1 class="text-h1">Mis Cursos</h1>

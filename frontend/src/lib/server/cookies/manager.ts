@@ -1,4 +1,4 @@
-import { AuthCookiesManager } from "./cookies";
+import { AuthCookiesManager } from './cookies';
 
 export const authCookiesManager = new AuthCookiesManager({
 	cookies: {

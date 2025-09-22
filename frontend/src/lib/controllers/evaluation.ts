@@ -33,7 +33,10 @@ export class EvaluationController extends BaseController {
 	/**
 	 * Partially update existing evaluation (PATCH)
 	 */
-	async updateEvaluationPatch(id: number, evaluationData: Partial<UpdateEvaluationDTO>): Promise<Evaluation> {
+	async updateEvaluationPatch(
+		id: number,
+		evaluationData: Partial<UpdateEvaluationDTO>
+	): Promise<Evaluation> {
 		return this.patch<Evaluation>(`/api/v1/evaluations/${id}`, evaluationData);
 	}
 

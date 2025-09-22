@@ -65,7 +65,10 @@ export class EnrollmentController extends BaseController {
 	/**
 	 * Partially update an enrollment directly (PATCH)
 	 */
-	async updateEnrollmentPatch(id: number, enrollmentData: { progress?: number; is_complete?: boolean }): Promise<Enrollment> {
+	async updateEnrollmentPatch(
+		id: number,
+		enrollmentData: { progress?: number; is_complete?: boolean }
+	): Promise<Enrollment> {
 		return this.patch<Enrollment>(`/api/v1/enrollments/${id}`, enrollmentData);
 	}
 

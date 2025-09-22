@@ -16,10 +16,10 @@
 
 	let submitting = $state(false);
 	const formdata = $state<CreateModuleDTO>({
-		title: "",
-		description: "",
+		title: '',
+		description: '',
 		order: 0,
-		course_id: parseInt(page.params.course as string),
+		course_id: parseInt(page.params.course as string)
 	});
 
 	const moduleController = new ModuleController();
@@ -62,12 +62,16 @@
 			</div>
 			<div class="flex flex-col gap-2">
 				<Label for="description">Descripción</Label>
-				<Textarea id="description" placeholder="Ingrese la descripción del módulo" bind:value={formdata.description} />
+				<Textarea
+					id="description"
+					placeholder="Ingrese la descripción del módulo"
+					bind:value={formdata.description}
+				/>
 			</div>
 		</Card.Content>
 		<Card.Footer>
-			<Button 
-				onclick={handleSubmit} 
+			<Button
+				onclick={handleSubmit}
 				disabled={submitting}
 				class="w-full bg-pink-500 hover:bg-pink-900"
 			>

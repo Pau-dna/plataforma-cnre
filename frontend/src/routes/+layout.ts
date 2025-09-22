@@ -11,11 +11,7 @@ export const load = (async ({ data }) => {
 		if (user === undefined || accessToken === undefined) {
 			authStore.logout();
 		} else {
-			authStore.login(
-				accessToken, 
-				accessToken, 
-				user
-			);
+			authStore.login(accessToken, accessToken, user);
 		}
 	}
 

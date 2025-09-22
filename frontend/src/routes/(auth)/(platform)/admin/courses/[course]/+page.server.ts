@@ -2,15 +2,14 @@ import { CourseController, ModuleController } from '$lib';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ params }) => {
+	const courseController = new CourseController();
+	const moduleController = new ModuleController();
 
-    const courseController = new CourseController();
-    const moduleController = new ModuleController();
+	const course = await courseController.getCourse(Number(params.course));
+	const modules = await moduleController.getModulesByCourse(course.id);
 
-    const course = await courseController.getCourse(Number(params.course));
-    const modules = await moduleController.getModulesByCourse(course.id);
-    
-    return {
-        course,
-        modules
-    };
+	return {
+		course,
+		modules
+	};
 }) satisfies PageServerLoad;
