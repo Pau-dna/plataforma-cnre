@@ -1,23 +1,23 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { ArrowDown, ArrowUp, BookOpen, CirclePlay, Ellipsis, GripVertical } from '@lucide/svelte';
+	import { ArrowDown, ArrowUp, FileText, Ellipsis, GripVertical } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import EditModule from './EditModule.svelte';
-	import type { Module } from '$lib/types';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import type { Content } from '$lib/types';
 
 	type Props = {
-		module: Module;
+		content: Content;
 		actDate?: string;
-		onupdate?: (module: Module) => void;
-		onmoveup?: (module: Module) => void;
-		onmovedown?: (module: Module) => void;
+		onupdate?: (content: Content) => void;
+		onmoveup?: (content: Content) => void;
+		onmovedown?: (content: Content) => void;
 		canMoveUp?: boolean;
 		canMoveDown?: boolean;
 	};
 
 	const {
-		module,
+		content,
 		actDate,
 		onupdate,
 		onmoveup,
@@ -25,19 +25,19 @@
 		canMoveUp = true,
 		canMoveDown = true
 	}: Props = $props();
-	let openEdit = $state(false);
-
-	function handleModuleUpdate(updated: Module) {
-		onupdate?.(updated);
-	}
 
 	function handleMoveUp() {
-		onmoveup?.(module);
+		onmoveup?.(content);
 	}
 
 	function handleMoveDown() {
-		onmovedown?.(module);
+		onmovedown?.(content);
 	}
+
+	// Format the date for display
+	const formattedDate = actDate 
+		? new Date(actDate).toLocaleDateString('es-ES')
+		: 'N/A';
 </script>
 
 <Card.Root>
@@ -47,8 +47,7 @@
 				<Button size="sm" variant="ghost" class="bg-muted">
 					<GripVertical class="text-muted-foreground h-4 w-4" />
 				</Button>
-
-				<span class="text-muted-foreground font-semibold">Módulo {module.id}</span>
+				<span class="text-muted-foreground font-semibold">Contenido #{content.order}</span>
 			</div>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
@@ -59,7 +58,7 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.Group>
 						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
-						<DropdownMenu.Item onclick={() => (openEdit = true)}>Editar</DropdownMenu.Item>
+						<DropdownMenu.Item>Editar</DropdownMenu.Item>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
 					</DropdownMenu.Group>
@@ -75,26 +74,35 @@
 					<ArrowDown class="h-4 w-4" />
 				</Button>
 			</div>
-			<div class="flex flex-col gap-1">
-				<Card.Title class="text-lg">{module.title}</Card.Title>
-				<Card.Description>{module.description}</Card.Description>
+			<div class="flex flex-col gap-1 flex-1">
+				<div class="flex items-center gap-2">
+					<Card.Title class="text-lg">{content.title}</Card.Title>
+					<Badge variant="secondary" class="flex items-center gap-1">
+						<FileText class="h-3 w-3" />
+						<span>Contenido</span>
+					</Badge>
+				</div>
+				{#if content.description}
+					<Card.Description>{content.description}</Card.Description>
+				{/if}
 			</div>
 		</div>
 	</Card.Header>
 	<Card.Content class="flex w-full justify-between">
 		<div class="flex items-center gap-4">
-			<Button 
-				href="/admin/courses/{module.course_id}/{module.id}" 
-				variant="ghost" 
-				size="sm"
-				class="flex items-center gap-2 text-blue-800 hover:text-blue-900 hover:bg-blue-50"
-			>
-				<BookOpen class="h-4 w-4 leading-none" />
-				<span class="text-sm leading-none">Gestionar Contenidos</span>
-			</Button>
+			{#if content.media_url}
+				<div class="flex items-center gap-2 text-blue-800">
+					<FileText class="h-4 w-4 leading-none" />
+					<span class="text-sm leading-none">Con multimedia</span>
+				</div>
+			{/if}
+			{#if content.body}
+				<div class="flex items-center gap-2 text-green-800">
+					<FileText class="h-4 w-4 leading-none" />
+					<span class="text-sm leading-none">{content.body.length} caracteres</span>
+				</div>
+			{/if}
 		</div>
-		<span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
+		<span class="text-muted-foreground text-sm leading-none">Actualizado el {formattedDate}</span>
 	</Card.Content>
 </Card.Root>
-
-<EditModule {module} bind:openEdit onupdate={handleModuleUpdate} />

@@ -11,11 +11,12 @@ export type {
 	EvaluationAttempt,
 	UserProgress,
 	ModuleContent,
-	QuestionType,
-	ContentType,
 	ModuleStatus,
 	UserRole
 } from './models/course';
+
+// Export enums as values
+export { ContentType, QuestionType } from './models/course';
 
 export type { User } from './models/user';
 export * from './dto';
