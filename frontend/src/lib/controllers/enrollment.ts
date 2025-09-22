@@ -38,6 +38,13 @@ export class EnrollmentController extends BaseController {
 	}
 
 	/**
+	 * Get enrollment for a specific user and course
+	 */
+	async getUserCourseEnrollment(userId: number, courseId: number): Promise<Enrollment> {
+		return this.get<Enrollment>(`/api/v1/users/${userId}/courses/${courseId}/enrollment`);
+	}
+
+	/**
 	 * Complete enrollment (mark course as completed)
 	 */
 	async completeEnrollment(userId: number, courseId: number): Promise<void> {
@@ -74,8 +81,8 @@ export class EnrollmentController extends BaseController {
 	 */
 	async isUserEnrolled(userId: number, courseId: number): Promise<boolean> {
 		try {
-			const enrollments = await this.getUserEnrollments(userId);
-			return enrollments.some((enrollment) => enrollment.course_id === courseId);
+			await this.getUserCourseEnrollment(userId, courseId);
+			return true;
 		} catch (error) {
 			return false;
 		}
