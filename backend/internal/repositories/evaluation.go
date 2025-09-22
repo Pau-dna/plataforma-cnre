@@ -9,6 +9,7 @@ type EvaluationRepository interface {
 	Get(id uint) (*models.Evaluation, error)
 	Create(evaluation *models.Evaluation) error
 	Update(evaluation *models.Evaluation) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Evaluation, error)
 }

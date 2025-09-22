@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -81,6 +82,47 @@ func (h *EnrollmentHandler) GetEnrollment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, enrollment)
+}
+
+// @Summary		Update enrollment
+// @Router			/api/v1/enrollments/{id} [patch]
+// @Description	Update an enrollment by ID
+// @Tags		enrollments
+// @Param id path int true "Enrollment ID"
+// @Accept		json
+// @Param payload body dto.UpdateEnrollmentRequest true "Enrollment data"
+// @Produce		json
+// @Success		200	{object}	models.Enrollment	"Enrollment updated successfully"
+// @Failure		400	{object}	responses.ErrorResponse	"Bad Request"
+// @Failure		404	{object}	responses.ErrorResponse	"Enrollment not found"
+// @Failure		500	{object}	responses.ErrorResponse	"Internal Server Error"
+// @Security     BearerAuth
+func (h *EnrollmentHandler) UpdateEnrollmentPatch(c *gin.Context) {
+	enrollmentID := c.Param("id")
+	if enrollmentID == "" {
+		responses.ErrorBadRequest(c, "Enrollment ID is required")
+		return
+	}
+
+	enrollmentIDInt, err := strconv.Atoi(enrollmentID)
+	if err != nil {
+		responses.ErrorBadRequest(c, "Invalid Enrollment ID: "+err.Error())
+		return
+	}
+
+	var payload map[string]interface{}
+	if err := c.BindJSON(&payload); err != nil {
+		responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+		return
+	}
+
+	enrollment, err := h.enrollmentService.UpdateEnrollmentPatch(uint(enrollmentIDInt), payload)
+	if err != nil {
+		responses.ErrorInternalServerWithMessage(c, err.Error())
+		return
+	}
+
+	responses.Ok(c, enrollment)
 }
 
 // @Summary Delete enrollment

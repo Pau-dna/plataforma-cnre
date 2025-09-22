@@ -9,6 +9,7 @@ type UserProgressRepository interface {
 	Get(id uint) (*models.UserProgress, error)
 	Create(userprogress *models.UserProgress) error
 	Update(userprogress *models.UserProgress) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.UserProgress, error)
 }

@@ -9,6 +9,7 @@ type QuestionRepository interface {
 	Get(id uint) (*models.Question, error)
 	Create(question *models.Question) error
 	Update(question *models.Question) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Question, error)
 }

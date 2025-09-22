@@ -1,16 +1,20 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type EnrollmentService interface {
 	CreateEnrollment(userID, courseID uint) (*models.Enrollment, error)
 	GetEnrollment(id uint) (*models.Enrollment, error)
 	UpdateEnrollment(id uint, enrollment *models.Enrollment) (*models.Enrollment, error)
+	UpdateEnrollmentPatch(id uint, data map[string]interface{}) (*models.Enrollment, error)
 	DeleteEnrollment(id uint) error
 	GetUserEnrollments(userID uint) ([]*models.Enrollment, error)
 	GetCourseEnrollments(courseID uint) ([]*models.Enrollment, error)
@@ -85,6 +89,28 @@ func (s *enrollmentService) UpdateEnrollment(id uint, enrollmentData *models.Enr
 	}
 
 	return existingEnrollment, nil
+}
+
+func (s *enrollmentService) UpdateEnrollmentPatch(enrollmentID uint, data map[string]interface{}) (*models.Enrollment, error) {
+	if enrollmentID == 0 {
+		return nil, errors.New("enrollment ID cannot be zero")
+	}
+
+	var enrollment dto.UpdateEnrollmentRequest
+	if err := utils.MapToStructStrict(data, &enrollment); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.Enrollments.Patch(enrollmentID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.Enrollments.Get(enrollmentID)
+	if err != nil {
+		return nil, errors.New("enrollment not found")
+	}
+
+	return updated, nil
 }
 
 func (s *enrollmentService) DeleteEnrollment(id uint) error {

@@ -1,15 +1,19 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type EvaluationService interface {
 	CreateEvaluation(evaluation *models.Evaluation) (*models.Evaluation, error)
 	GetEvaluation(id uint) (*models.Evaluation, error)
 	UpdateEvaluation(id uint, evaluation *models.Evaluation) (*models.Evaluation, error)
+	UpdateEvaluationPatch(id uint, data map[string]interface{}) (*models.Evaluation, error)
 	DeleteEvaluation(id uint) error
 	GetEvaluationsByModule(moduleID uint) ([]*models.Evaluation, error)
 	GetEvaluationWithQuestions(id uint) (*models.Evaluation, error)
@@ -67,6 +71,28 @@ func (s *evaluationService) UpdateEvaluation(id uint, evaluationData *models.Eva
 	}
 
 	return existingEvaluation, nil
+}
+
+func (s *evaluationService) UpdateEvaluationPatch(evaluationID uint, data map[string]interface{}) (*models.Evaluation, error) {
+	if evaluationID == 0 {
+		return nil, errors.New("evaluation ID cannot be zero")
+	}
+
+	var evaluation dto.UpdateEvaluationRequest
+	if err := utils.MapToStructStrict(data, &evaluation); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.Evaluations.Patch(evaluationID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.Evaluations.Get(evaluationID)
+	if err != nil {
+		return nil, errors.New("evaluation not found")
+	}
+
+	return updated, nil
 }
 
 func (s *evaluationService) DeleteEvaluation(id uint) error {

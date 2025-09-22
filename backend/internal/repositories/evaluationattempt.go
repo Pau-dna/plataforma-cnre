@@ -9,6 +9,7 @@ type EvaluationAttemptRepository interface {
 	Get(id uint) (*models.EvaluationAttempt, error)
 	Create(evaluationattempt *models.EvaluationAttempt) error
 	Update(evaluationattempt *models.EvaluationAttempt) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.EvaluationAttempt, error)
 }

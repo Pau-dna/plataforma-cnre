@@ -31,6 +31,13 @@ export class QuestionController extends BaseController {
 	}
 
 	/**
+	 * Partially update a question (PATCH)
+	 */
+	async updateQuestionPatch(id: number, questionData: Partial<UpdateQuestionDTO>): Promise<Question> {
+		return this.patch<Question>(`/api/v1/questions/${id}`, questionData);
+	}
+
+	/**
 	 * Delete question
 	 */
 	async deleteQuestion(id: number): Promise<void> {
@@ -58,6 +65,13 @@ export class AnswerController extends BaseController {
 	 */
 	async updateAnswer(id: number, answerData: UpdateAnswerDTO): Promise<Answer> {
 		return this.put<Answer>(`/api/v1/answers/${id}`, answerData);
+	}
+
+	/**
+	 * Partially update an answer (PATCH)
+	 */
+	async updateAnswerPatch(id: number, answerData: Partial<UpdateAnswerDTO>): Promise<Answer> {
+		return this.patch<Answer>(`/api/v1/answers/${id}`, answerData);
 	}
 
 	/**

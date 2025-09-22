@@ -9,6 +9,7 @@ type ModuleRepository interface {
 	Get(id uint) (*models.Module, error)
 	Create(module *models.Module) error
 	Update(module *models.Module) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Module, error)
 }

@@ -9,6 +9,7 @@ type EnrollmentRepository interface {
 	Get(id uint) (*models.Enrollment, error)
 	Create(enrollment *models.Enrollment) error
 	Update(enrollment *models.Enrollment) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Enrollment, error)
 }

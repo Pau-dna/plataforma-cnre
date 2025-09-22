@@ -137,12 +137,14 @@ func (app *Application) Mount() {
 	v1.GET("/courses", courseHandler.GetAllCourses)
 	v1.GET("/courses/:id", courseHandler.GetCourse)
 	v1.PUT("/courses/:id", courseHandler.UpdateCourse)
+	v1.PATCH("/courses/:id", courseHandler.UpdateCoursePatch)
 	v1.DELETE("/courses/:id", courseHandler.DeleteCourse)
 
 	// Modules
 	v1.POST("/modules", moduleHandler.CreateModule)
 	v1.GET("/modules/:id", moduleHandler.GetModule)
 	v1.PUT("/modules/:id", moduleHandler.UpdateModule)
+	v1.PATCH("/modules/:id", moduleHandler.UpdateModulePatch)
 	v1.DELETE("/modules/:id", moduleHandler.DeleteModule)
 	v1.GET("/courses/:id/modules", moduleHandler.GetModulesByCourse)
 	v1.POST("/courses/:id/modules/reorder", moduleHandler.ReorderModules)
@@ -151,6 +153,7 @@ func (app *Application) Mount() {
 	v1.POST("/content", contentHandler.CreateContent)
 	v1.GET("/content/:id", contentHandler.GetContent)
 	v1.PUT("/content/:id", contentHandler.UpdateContent)
+	v1.PATCH("/content/:id", contentHandler.UpdateContentPatch)
 	v1.DELETE("/content/:id", contentHandler.DeleteContent)
 	v1.GET("/modules/:id/content", contentHandler.GetContentsByModule)
 
@@ -158,12 +161,14 @@ func (app *Application) Mount() {
 	v1.POST("/evaluations", evaluationHandler.CreateEvaluation)
 	v1.GET("/evaluations/:id", evaluationHandler.GetEvaluation)
 	v1.PUT("/evaluations/:id", evaluationHandler.UpdateEvaluation)
+	v1.PATCH("/evaluations/:id", evaluationHandler.UpdateEvaluationPatch)
 	v1.DELETE("/evaluations/:id", evaluationHandler.DeleteEvaluation)
 	v1.GET("/modules/:id/evaluations", evaluationHandler.GetEvaluationsByModule)
 
 	// Enrollments
 	v1.POST("/enrollments", enrollmentHandler.CreateEnrollment)
 	v1.GET("/enrollments/:id", enrollmentHandler.GetEnrollment)
+	v1.PATCH("/enrollments/:id", enrollmentHandler.UpdateEnrollmentPatch)
 	v1.DELETE("/enrollments/:id", enrollmentHandler.DeleteEnrollment)
 	v1.GET("/users/:userId/enrollments", enrollmentHandler.GetUserEnrollments)
 	v1.GET("/courses/:id/enrollments", enrollmentHandler.GetCourseEnrollments)
@@ -174,6 +179,7 @@ func (app *Application) Mount() {
 	v1.POST("/evaluation-attempts/start", evaluationAttemptHandler.StartAttempt)
 	v1.POST("/evaluation-attempts/:id/submit", evaluationAttemptHandler.SubmitAttempt)
 	v1.GET("/evaluation-attempts/:id", evaluationAttemptHandler.GetAttempt)
+	v1.PATCH("/evaluation-attempts/:id", evaluationAttemptHandler.UpdateEvaluationAttemptPatch)
 	v1.GET("/users/:userId/evaluations/:evaluationId/attempts", evaluationAttemptHandler.GetUserAttempts)
 	v1.GET("/users/:userId/evaluations/:evaluationId/can-attempt", evaluationAttemptHandler.CanUserAttempt)
 	v1.POST("/evaluation-attempts/:id/score", evaluationAttemptHandler.ScoreAttempt)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/imlargo/go-api-template/internal/models"
+"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -108,6 +109,47 @@ func (h *ContentHandler) UpdateContent(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedContent)
+}
+
+// @SummaryUpdate content
+// @Router/api/v1/contents/{id} [patch]
+// @DescriptionUpdate a content by ID
+// @Tagscontents
+// @Param id path int true "Content ID"
+// @Acceptjson
+// @Param payload body dto.UpdateContentRequest true "Content data"
+// @Producejson
+// @Success200{object}models.Content"Content updated successfully"
+// @Failure400{object}responses.ErrorResponse"Bad Request"
+// @Failure404{object}responses.ErrorResponse"Content not found"
+// @Failure500{object}responses.ErrorResponse"Internal Server Error"
+// @Security     BearerAuth
+func (h *ContentHandler) UpdateContentPatch(c *gin.Context) {
+contentID := c.Param("id")
+if contentID == "" {
+responses.ErrorBadRequest(c, "Content ID is required")
+return
+}
+
+contentIDInt, err := strconv.Atoi(contentID)
+if err != nil {
+responses.ErrorBadRequest(c, "Invalid Content ID: "+err.Error())
+return
+}
+
+var payload map[string]interface{}
+if err := c.BindJSON(&payload); err != nil {
+responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+return
+}
+
+content, err := h.contentService.UpdateContentPatch(uint(contentIDInt), payload)
+if err != nil {
+responses.ErrorInternalServerWithMessage(c, err.Error())
+return
+}
+
+responses.Ok(c, content)
 }
 
 // @Summary Delete content

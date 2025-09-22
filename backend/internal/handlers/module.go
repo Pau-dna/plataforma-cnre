@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/imlargo/go-api-template/internal/models"
+"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -109,6 +110,47 @@ func (h *ModuleHandler) UpdateModule(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedModule)
+}
+
+// @SummaryUpdate module
+// @Router/api/v1/modules/{id} [patch]
+// @DescriptionUpdate a module by ID
+// @Tagsmodules
+// @Param id path int true "Module ID"
+// @Acceptjson
+// @Param payload body dto.UpdateModuleRequest true "Module data"
+// @Producejson
+// @Success200{object}models.Module"Module updated successfully"
+// @Failure400{object}responses.ErrorResponse"Bad Request"
+// @Failure404{object}responses.ErrorResponse"Module not found"
+// @Failure500{object}responses.ErrorResponse"Internal Server Error"
+// @Security     BearerAuth
+func (h *ModuleHandler) UpdateModulePatch(c *gin.Context) {
+moduleID := c.Param("id")
+if moduleID == "" {
+responses.ErrorBadRequest(c, "Module ID is required")
+return
+}
+
+moduleIDInt, err := strconv.Atoi(moduleID)
+if err != nil {
+responses.ErrorBadRequest(c, "Invalid Module ID: "+err.Error())
+return
+}
+
+var payload map[string]interface{}
+if err := c.BindJSON(&payload); err != nil {
+responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+return
+}
+
+module, err := h.moduleService.UpdateModulePatch(uint(moduleIDInt), payload)
+if err != nil {
+responses.ErrorInternalServerWithMessage(c, err.Error())
+return
+}
+
+responses.Ok(c, module)
 }
 
 // @Summary Delete module

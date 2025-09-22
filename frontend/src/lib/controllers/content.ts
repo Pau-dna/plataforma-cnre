@@ -37,6 +37,13 @@ export class ContentController extends BaseController {
 	}
 
 	/**
+	 * Partially update existing content (PATCH)
+	 */
+	async updateContentPatch(id: number, contentData: Partial<UpdateContentDTO>): Promise<Content> {
+		return this.patch<Content>(`/api/v1/content/${id}`, contentData);
+	}
+
+	/**
 	 * Delete content
 	 */
 	async deleteContent(id: number): Promise<void> {

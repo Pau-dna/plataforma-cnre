@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -109,6 +110,47 @@ func (h *CourseHandler) UpdateCourse(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedCourse)
+}
+
+// @Summary		Update course
+// @Router			/api/v1/courses/{id} [patch]
+// @Description	Update a course by ID
+// @Tags		courses
+// @Param id path int true "Course ID"
+// @Accept		json
+// @Param payload body dto.UpdateCourseRequest true "Course data"
+// @Produce		json
+// @Success		200	{object}	models.Course	"Course updated successfully"
+// @Failure		400	{object}	responses.ErrorResponse	"Bad Request"
+// @Failure		404	{object}	responses.ErrorResponse	"Course not found"
+// @Failure		500	{object}	responses.ErrorResponse	"Internal Server Error"
+// @Security     BearerAuth
+func (h *CourseHandler) UpdateCoursePatch(c *gin.Context) {
+	courseID := c.Param("id")
+	if courseID == "" {
+		responses.ErrorBadRequest(c, "Course ID is required")
+		return
+	}
+
+	courseIDInt, err := strconv.Atoi(courseID)
+	if err != nil {
+		responses.ErrorBadRequest(c, "Invalid Course ID: "+err.Error())
+		return
+	}
+
+	var payload map[string]interface{}
+	if err := c.BindJSON(&payload); err != nil {
+		responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+		return
+	}
+
+	course, err := h.courseService.UpdateCoursePatch(uint(courseIDInt), payload)
+	if err != nil {
+		responses.ErrorInternalServerWithMessage(c, err.Error())
+		return
+	}
+
+	responses.Ok(c, course)
 }
 
 // @Summary Delete course

@@ -1,15 +1,19 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type ModuleService interface {
 	CreateModule(module *models.Module) (*models.Module, error)
 	GetModule(id uint) (*models.Module, error)
 	UpdateModule(id uint, module *models.Module) (*models.Module, error)
+	UpdateModulePatch(id uint, data map[string]interface{}) (*models.Module, error)
 	DeleteModule(id uint) error
 	GetModulesByCourse(courseID uint) ([]*models.Module, error)
 	GetModuleWithContent(id uint) (*models.Module, error)
@@ -66,6 +70,28 @@ func (s *moduleService) UpdateModule(id uint, moduleData *models.Module) (*model
 	}
 
 	return existingModule, nil
+}
+
+func (s *moduleService) UpdateModulePatch(moduleID uint, data map[string]interface{}) (*models.Module, error) {
+	if moduleID == 0 {
+		return nil, errors.New("module ID cannot be zero")
+	}
+
+	var module dto.UpdateModuleRequest
+	if err := utils.MapToStructStrict(data, &module); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.Modules.Patch(moduleID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.Modules.Get(moduleID)
+	if err != nil {
+		return nil, errors.New("module not found")
+	}
+
+	return updated, nil
 }
 
 func (s *moduleService) DeleteModule(id uint) error {

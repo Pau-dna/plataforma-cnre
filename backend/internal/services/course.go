@@ -1,15 +1,19 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type CourseService interface {
 	CreateCourse(course *models.Course) (*models.Course, error)
 	GetCourse(id uint) (*models.Course, error)
 	UpdateCourse(id uint, course *models.Course) (*models.Course, error)
+	UpdateCoursePatch(id uint, data map[string]interface{}) (*models.Course, error)
 	DeleteCourse(id uint) error
 	GetAllCourses() ([]*models.Course, error)
 	GetCourseWithModules(id uint) (*models.Course, error)
@@ -58,6 +62,28 @@ func (s *courseService) UpdateCourse(id uint, courseData *models.Course) (*model
 	}
 
 	return existingCourse, nil
+}
+
+func (s *courseService) UpdateCoursePatch(courseID uint, data map[string]interface{}) (*models.Course, error) {
+	if courseID == 0 {
+		return nil, errors.New("course ID cannot be zero")
+	}
+
+	var course dto.UpdateCourseRequest
+	if err := utils.MapToStructStrict(data, &course); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.Courses.Patch(courseID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.Courses.Get(courseID)
+	if err != nil {
+		return nil, errors.New("course not found")
+	}
+
+	return updated, nil
 }
 
 func (s *courseService) DeleteCourse(id uint) error {

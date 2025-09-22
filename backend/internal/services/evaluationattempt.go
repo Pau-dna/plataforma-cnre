@@ -1,16 +1,20 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type EvaluationAttemptService interface {
 	StartAttempt(userID, evaluationID uint) (*models.EvaluationAttempt, error)
 	SubmitAttempt(attemptID uint, answers []models.AttemptAnswer) (*models.EvaluationAttempt, error)
 	GetAttempt(id uint) (*models.EvaluationAttempt, error)
+	UpdateEvaluationAttemptPatch(id uint, data map[string]interface{}) (*models.EvaluationAttempt, error)
 	GetUserAttempts(userID, evaluationID uint) ([]*models.EvaluationAttempt, error)
 	CanUserAttempt(userID, evaluationID uint) (bool, string, error)
 	ScoreAttempt(attemptID uint) (*models.EvaluationAttempt, error)
@@ -122,6 +126,28 @@ func (s *evaluationAttemptService) GetAttempt(id uint) (*models.EvaluationAttemp
 		return nil, fmt.Errorf("attempt not found: %w", err)
 	}
 	return attempt, nil
+}
+
+func (s *evaluationAttemptService) UpdateEvaluationAttemptPatch(attemptID uint, data map[string]interface{}) (*models.EvaluationAttempt, error) {
+	if attemptID == 0 {
+		return nil, errors.New("attempt ID cannot be zero")
+	}
+
+	var attempt dto.UpdateEvaluationAttemptRequest
+	if err := utils.MapToStructStrict(data, &attempt); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.EvaluationAttempts.Patch(attemptID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.EvaluationAttempts.Get(attemptID)
+	if err != nil {
+		return nil, errors.New("attempt not found")
+	}
+
+	return updated, nil
 }
 
 func (s *evaluationAttemptService) GetUserAttempts(userID, evaluationID uint) ([]*models.EvaluationAttempt, error) {

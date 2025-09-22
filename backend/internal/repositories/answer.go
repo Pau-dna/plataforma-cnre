@@ -9,6 +9,7 @@ type AnswerRepository interface {
 	Get(id uint) (*models.Answer, error)
 	Create(answer *models.Answer) error
 	Update(answer *models.Answer) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Answer, error)
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/imlargo/go-api-template/internal/models"
+"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -108,6 +109,47 @@ func (h *EvaluationHandler) UpdateEvaluation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedEvaluation)
+}
+
+// @SummaryUpdate evaluation
+// @Router/api/v1/evaluations/{id} [patch]
+// @DescriptionUpdate a evaluation by ID
+// @Tagsevaluations
+// @Param id path int true "Evaluation ID"
+// @Acceptjson
+// @Param payload body dto.UpdateEvaluationRequest true "Evaluation data"
+// @Producejson
+// @Success200{object}models.Evaluation"Evaluation updated successfully"
+// @Failure400{object}responses.ErrorResponse"Bad Request"
+// @Failure404{object}responses.ErrorResponse"Evaluation not found"
+// @Failure500{object}responses.ErrorResponse"Internal Server Error"
+// @Security     BearerAuth
+func (h *EvaluationHandler) UpdateEvaluationPatch(c *gin.Context) {
+evaluationID := c.Param("id")
+if evaluationID == "" {
+responses.ErrorBadRequest(c, "Evaluation ID is required")
+return
+}
+
+evaluationIDInt, err := strconv.Atoi(evaluationID)
+if err != nil {
+responses.ErrorBadRequest(c, "Invalid Evaluation ID: "+err.Error())
+return
+}
+
+var payload map[string]interface{}
+if err := c.BindJSON(&payload); err != nil {
+responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+return
+}
+
+evaluation, err := h.evaluationService.UpdateEvaluationPatch(uint(evaluationIDInt), payload)
+if err != nil {
+responses.ErrorInternalServerWithMessage(c, err.Error())
+return
+}
+
+responses.Ok(c, evaluation)
 }
 
 // @Summary Delete evaluation
