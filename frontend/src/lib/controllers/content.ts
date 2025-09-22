@@ -55,7 +55,7 @@ export class ContentController extends BaseController {
 	 */
 	async reorderContent(moduleId: number, contentOrders: ReorderItemDTO[]): Promise<void> {
 		for (const content of contentOrders) {
-			await this.updateContentPatch(content.id, {
+			this.updateContentPatch(content.id, {
 				order: content.order
 			});
 		}
