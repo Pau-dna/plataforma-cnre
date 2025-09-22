@@ -7,10 +7,10 @@
 
 	let { data }: PageProps = $props();
 
-	let courses = $state(data.courses)
+	let courses = $state(data.courses);
 
 	function handleUpdate(updated: Course) {
-		const index = courses.findIndex(c => c.id === updated.id);
+		const index = courses.findIndex((c) => c.id === updated.id);
 		courses[index] = updated;
 	}
 </script>
@@ -18,10 +18,12 @@
 <div class="flex flex-col gap-6">
 	<div class="flex items-center justify-between">
 		<h1 class="text-h1">Administrar Cursos</h1>
+		<!--
 		<Button href="/admin/courses/create" class="bg-pink-500 hover:bg-pink-900">
 			<Plus class="h-4 w-4 leading-none" />
 			<span class="leading-none">Crear Curso</span>
 		</Button>
+		-->
 	</div>
 	{#if courses.length === 0}
 		<p>No estás inscrito en ningún curso.</p>
