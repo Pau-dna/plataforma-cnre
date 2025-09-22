@@ -71,7 +71,7 @@ func (r *enrollmentRepository) GetAll() ([]*models.Enrollment, error) {
 
 func (r *enrollmentRepository) GetByUserID(userID uint) ([]*models.Enrollment, error) {
 	var enrollments []*models.Enrollment
-	if err := r.db.Where("user_id = ?", userID).Find(&enrollments).Error; err != nil {
+	if err := r.db.Preload("Course").Where("user_id = ?", userID).Find(&enrollments).Error; err != nil {
 		return nil, err
 	}
 	return enrollments, nil
@@ -79,7 +79,7 @@ func (r *enrollmentRepository) GetByUserID(userID uint) ([]*models.Enrollment, e
 
 func (r *enrollmentRepository) GetByCourseID(courseID uint) ([]*models.Enrollment, error) {
 	var enrollments []*models.Enrollment
-	if err := r.db.Where("course_id = ?", courseID).Find(&enrollments).Error; err != nil {
+	if err := r.db.Preload("Course").Where("course_id = ?", courseID).Find(&enrollments).Error; err != nil {
 		return nil, err
 	}
 	return enrollments, nil

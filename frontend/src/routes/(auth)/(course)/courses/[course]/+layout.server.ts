@@ -8,14 +8,14 @@ export const load = (async ({ params, locals }) => {
 	const moduleController = new ModuleController(locals?.accessToken || "");
 	const enrollmentController = new EnrollmentController(locals?.accessToken || "");
 
-	const [course, modules, enrollment] = await Promise.all([
-		courseController.getCourse(parseInt(params.course)),
+	const [enrollment, modules] = await Promise.all([
+		enrollmentController.getUserCourseEnrollment(locals.user.id, parseInt(params.course)),
 		moduleController.getModulesByCourse(parseInt(params.course)),
-		enrollmentController.getUserCourseEnrollment(locals.user.id, parseInt(params.course))
 	])
+
 	
 	return {
-		course,
+		course: enrollment.course as Course,
 		modules,
 		enrollment
 	};
