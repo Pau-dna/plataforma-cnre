@@ -1,11 +1,12 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
-	import type { Course } from '$lib/types/models/course';
+	import { UserRole, type Course } from '$lib/types/models/course';
 	import { Clock, Ellipsis, Users } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import EditCourse from './EditCourse.svelte';
 	import DeleteCourse from './DeleteCourse.svelte';
+	import { authStore } from '$lib/stores/auth.svelte';
 
 	type Props = {
 		course: Course;
@@ -26,25 +27,28 @@
 		<Card.Header>
 			<div class="flex items-center justify-between">
 				<Card.Title class="text-lg font-bold">{course.title}</Card.Title>
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger>
-						<Button size="sm" variant="ghost">
-							<Ellipsis class="h-4 w-4 leading-none" />
-						</Button>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content>
-						<DropdownMenu.Group>
-							<DropdownMenu.Item>
-								<a href="/admin/courses/{course.id}">Ver Módulos</a>
-							</DropdownMenu.Item>
-							<DropdownMenu.Item onclick={() => (openEdit = true)}>Editar</DropdownMenu.Item>
-							<DropdownMenu.Separator />
-							<DropdownMenu.Item class="text-destructive" onclick={() => (openDelete = true)}
-								>Eliminar</DropdownMenu.Item
-							>
-						</DropdownMenu.Group>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
+
+				{#if authStore.user?.role === UserRole.ADMIN || authStore.user?.role === UserRole.INSTRUCTOR}
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							<Button size="sm" variant="ghost">
+								<Ellipsis class="h-4 w-4 leading-none" />
+							</Button>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content>
+							<DropdownMenu.Group>
+								<DropdownMenu.Item>
+									<a href="/admin/courses/{course.id}">Ver Módulos</a>
+								</DropdownMenu.Item>
+								<DropdownMenu.Item onclick={() => (openEdit = true)}>Editar</DropdownMenu.Item>
+								<DropdownMenu.Separator />
+								<DropdownMenu.Item class="text-destructive" onclick={() => (openDelete = true)}
+									>Eliminar</DropdownMenu.Item
+								>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				{/if}
 			</div>
 			<Card.Description>
 				<div class="flex flex-col gap-4">
@@ -73,5 +77,5 @@
 	</Card.Root>
 </a>
 
-<EditCourse {onupdate} course={course} bind:openEdit></EditCourse>
+<EditCourse {onupdate} {course} bind:openEdit></EditCourse>
 <DeleteCourse bind:openDelete></DeleteCourse>
