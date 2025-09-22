@@ -1,9 +1,5 @@
 import { BaseController } from './base';
-import type {
-	Evaluation,
-	CreateEvaluationDTO,
-	UpdateEvaluationDTO
-} from '$lib/types';
+import type { Evaluation, CreateEvaluationDTO, UpdateEvaluationDTO } from '$lib/types';
 
 export class EvaluationController extends BaseController {
 	/**

@@ -1,5 +1,5 @@
-import type { User } from "$lib/types/models/user";
-import type { AuthTokens } from "$lib/types/tokens";
+import type { User } from '$lib/types/models/user';
+import type { AuthTokens } from '$lib/types/tokens';
 
 /**
  * A generic authentication store for managing user sessiwon and tokens.

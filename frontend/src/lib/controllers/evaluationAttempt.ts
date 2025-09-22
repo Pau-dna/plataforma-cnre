@@ -16,8 +16,14 @@ export class EvaluationAttemptController extends BaseController {
 	/**
 	 * Submit evaluation attempt with answers
 	 */
-	async submitAttempt(attemptId: number, submissionData: SubmitEvaluationAttemptDTO): Promise<EvaluationAttempt> {
-		return this.post<EvaluationAttempt>(`/api/v1/evaluation-attempts/${attemptId}/submit`, submissionData);
+	async submitAttempt(
+		attemptId: number,
+		submissionData: SubmitEvaluationAttemptDTO
+	): Promise<EvaluationAttempt> {
+		return this.post<EvaluationAttempt>(
+			`/api/v1/evaluation-attempts/${attemptId}/submit`,
+			submissionData
+		);
 	}
 
 	/**
@@ -31,14 +37,21 @@ export class EvaluationAttemptController extends BaseController {
 	 * Get all attempts for a user and evaluation
 	 */
 	async getUserAttempts(userId: number, evaluationId: number): Promise<EvaluationAttempt[]> {
-		return this.get<EvaluationAttempt[]>(`/api/v1/users/${userId}/evaluations/${evaluationId}/attempts`);
+		return this.get<EvaluationAttempt[]>(
+			`/api/v1/users/${userId}/evaluations/${evaluationId}/attempts`
+		);
 	}
 
 	/**
 	 * Check if user can attempt an evaluation
 	 */
-	async canUserAttempt(userId: number, evaluationId: number): Promise<{ can_attempt: boolean; reason: string }> {
-		return this.get<{ can_attempt: boolean; reason: string }>(`/api/v1/users/${userId}/evaluations/${evaluationId}/can-attempt`);
+	async canUserAttempt(
+		userId: number,
+		evaluationId: number
+	): Promise<{ can_attempt: boolean; reason: string }> {
+		return this.get<{ can_attempt: boolean; reason: string }>(
+			`/api/v1/users/${userId}/evaluations/${evaluationId}/can-attempt`
+		);
 	}
 
 	/**
@@ -54,10 +67,10 @@ export class EvaluationAttemptController extends BaseController {
 	async getLatestAttempt(userId: number, evaluationId: number): Promise<EvaluationAttempt | null> {
 		const attempts = await this.getUserAttempts(userId, evaluationId);
 		if (attempts.length === 0) return null;
-		
+
 		// Sort by started_at descending and return the most recent
-		return attempts.sort((a, b) => 
-			new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
+		return attempts.sort(
+			(a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
 		)[0];
 	}
 
@@ -66,22 +79,25 @@ export class EvaluationAttemptController extends BaseController {
 	 */
 	async hasUserPassed(userId: number, evaluationId: number): Promise<boolean> {
 		const attempts = await this.getUserAttempts(userId, evaluationId);
-		return attempts.some(attempt => attempt.passed && attempt.submitted_at);
+		return attempts.some((attempt) => attempt.passed && attempt.submitted_at);
 	}
 
 	/**
 	 * Helper method to get user's best score for an evaluation
 	 */
-	async getBestScore(userId: number, evaluationId: number): Promise<{ score: number; total_points: number } | null> {
+	async getBestScore(
+		userId: number,
+		evaluationId: number
+	): Promise<{ score: number; total_points: number } | null> {
 		const attempts = await this.getUserAttempts(userId, evaluationId);
-		const completedAttempts = attempts.filter(attempt => attempt.submitted_at);
-		
+		const completedAttempts = attempts.filter((attempt) => attempt.submitted_at);
+
 		if (completedAttempts.length === 0) return null;
-		
-		const bestAttempt = completedAttempts.reduce((best, current) => 
+
+		const bestAttempt = completedAttempts.reduce((best, current) =>
 			current.score > best.score ? current : best
 		);
-		
+
 		return {
 			score: bestAttempt.score,
 			total_points: bestAttempt.total_points

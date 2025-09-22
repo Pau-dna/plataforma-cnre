@@ -1,11 +1,5 @@
 import { BaseController } from './base';
-import type {
-	Course,
-	CreateCourseDTO,
-	UpdateCourseDTO,
-	Module,
-	Enrollment
-} from '$lib/types';
+import type { Course, CreateCourseDTO, UpdateCourseDTO, Module, Enrollment } from '$lib/types';
 
 export class CourseController extends BaseController {
 	/**

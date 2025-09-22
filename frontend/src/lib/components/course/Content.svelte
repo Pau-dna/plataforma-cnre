@@ -113,7 +113,7 @@
 			</div>
 		{/if}
 
-        <!--
+		<!--
 		{#if content.body && content.type === ContentType.CONTENT}
 			<p class="text-muted-foreground mb-4 line-clamp-2 text-sm">{content.body}</p>
 		{/if}
@@ -121,7 +121,9 @@
 
 		<div class="flex items-center justify-between">
 			<div class="text-muted-foreground text-xs">
-				Actualizado: {content.updated_at ? new Date(content.updated_at).toLocaleDateString('es-ES') : 'N/A'}
+				Actualizado: {content.updated_at
+					? new Date(content.updated_at).toLocaleDateString('es-ES')
+					: 'N/A'}
 			</div>
 
 			<Button

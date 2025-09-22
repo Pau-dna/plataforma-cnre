@@ -19,7 +19,12 @@ export class UserProgressController extends BaseController {
 	/**
 	 * Mark content as completed
 	 */
-	async markContentComplete(userId: number, courseId: number, moduleId: number, contentId: number): Promise<UserProgress> {
+	async markContentComplete(
+		userId: number,
+		courseId: number,
+		moduleId: number,
+		contentId: number
+	): Promise<UserProgress> {
 		return this.post<UserProgress>('/api/v1/user-progress/complete', {
 			user_id: userId,
 			course_id: courseId,
@@ -31,7 +36,12 @@ export class UserProgressController extends BaseController {
 	/**
 	 * Mark content as incomplete
 	 */
-	async markContentIncomplete(userId: number, courseId: number, moduleId: number, contentId: number): Promise<void> {
+	async markContentIncomplete(
+		userId: number,
+		courseId: number,
+		moduleId: number,
+		contentId: number
+	): Promise<void> {
 		return this.post('/api/v1/user-progress/incomplete', {
 			user_id: userId,
 			course_id: courseId,
@@ -59,7 +69,9 @@ export class UserProgressController extends BaseController {
 	 */
 	async isContentCompleted(userId: number, contentId: number): Promise<boolean> {
 		try {
-			const progress = await this.get<UserProgress>(`/api/v1/users/${userId}/content/${contentId}/progress`);
+			const progress = await this.get<UserProgress>(
+				`/api/v1/users/${userId}/content/${contentId}/progress`
+			);
 			return !!progress.completed_at;
 		} catch (error) {
 			return false;
@@ -73,7 +85,7 @@ export class UserProgressController extends BaseController {
 		if (contentIds.length === 0) return 0;
 
 		const completionChecks = await Promise.all(
-			contentIds.map(contentId => this.isContentCompleted(userId, contentId))
+			contentIds.map((contentId) => this.isContentCompleted(userId, contentId))
 		);
 
 		const completedCount = completionChecks.filter(Boolean).length;

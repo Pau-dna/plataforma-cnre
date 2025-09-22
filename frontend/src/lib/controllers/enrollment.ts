@@ -1,9 +1,5 @@
 import { BaseController } from './base';
-import type {
-	Enrollment,
-	CreateEnrollmentDTO,
-	UpdateEnrollmentProgressDTO
-} from '$lib/types';
+import type { Enrollment, CreateEnrollmentDTO, UpdateEnrollmentProgressDTO } from '$lib/types';
 
 export class EnrollmentController extends BaseController {
 	/**
@@ -51,7 +47,11 @@ export class EnrollmentController extends BaseController {
 	/**
 	 * Update enrollment progress
 	 */
-	async updateProgress(userId: number, courseId: number, progressData: UpdateEnrollmentProgressDTO): Promise<void> {
+	async updateProgress(
+		userId: number,
+		courseId: number,
+		progressData: UpdateEnrollmentProgressDTO
+	): Promise<void> {
 		return this.put(`/api/v1/users/${userId}/courses/${courseId}/progress`, progressData);
 	}
 
@@ -68,7 +68,7 @@ export class EnrollmentController extends BaseController {
 	async isUserEnrolled(userId: number, courseId: number): Promise<boolean> {
 		try {
 			const enrollments = await this.getUserEnrollments(userId);
-			return enrollments.some(enrollment => enrollment.course_id === courseId);
+			return enrollments.some((enrollment) => enrollment.course_id === courseId);
 		} catch (error) {
 			return false;
 		}
