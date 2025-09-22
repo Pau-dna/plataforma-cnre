@@ -18,7 +18,6 @@ export interface UpdateCourseDTO {
 export interface CreateModuleDTO {
 	title: string;
 	description?: string;
-	order: number;
 	course_id: number;
 }
 

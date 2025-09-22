@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/imlargo/go-api-template/internal/models"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -14,6 +15,7 @@ type ModuleRepository interface {
 	GetAll() ([]*models.Module, error)
 	GetByCourseID(courseID uint) ([]*models.Module, error)
 	GetWithContent(id uint) (*models.Module, error)
+	GetMaxOrderByCourseID(courseID uint) (int, error)
 }
 
 type moduleRepository struct {
@@ -27,7 +29,23 @@ func NewModuleRepository(r *Repository) ModuleRepository {
 }
 
 func (r *moduleRepository) Create(module *models.Module) error {
-	return r.db.Create(module).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Get the maximum order for this course
+		var maxOrder int
+		err := tx.Model(&models.Module{}).
+			Where("course_id = ?", module.CourseID).
+			Select("COALESCE(MAX(\"order\"), 0)").
+			Scan(&maxOrder).Error
+		if err != nil {
+			return err
+		}
+
+		// Set the next order
+		module.Order = maxOrder + 1
+
+		// Create the module
+		return tx.Create(module).Error
+	})
 }
 
 func (r *moduleRepository) Get(id uint) (*models.Module, error) {
@@ -74,4 +92,13 @@ func (r *moduleRepository) GetWithContent(id uint) (*models.Module, error) {
 		return nil, err
 	}
 	return &module, nil
+}
+
+func (r *moduleRepository) GetMaxOrderByCourseID(courseID uint) (int, error) {
+	var maxOrder int
+	err := r.db.Model(&models.Module{}).
+		Where("course_id = ?", courseID).
+		Select("COALESCE(MAX(\"order\"), 0)").
+		Scan(&maxOrder).Error
+	return maxOrder, err
 }
