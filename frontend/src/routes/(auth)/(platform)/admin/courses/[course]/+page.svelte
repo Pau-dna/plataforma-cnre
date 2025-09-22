@@ -10,74 +10,72 @@
 	let { data }: PageProps = $props();
 
 	const course = $state(data.course);
-	const modules = $state(data.modules);
+	let modules = $state(data.modules);
 	const moduleController = new ModuleController();
 
 	function handleModuleUpdate(updated: Module) {
 		// Find and update the module in the array
-		const index = modules.findIndex(m => m.id === updated.id);
+		const index = modules.findIndex((m) => m.id === updated.id);
 		if (index !== -1) {
 			modules[index] = updated;
 		}
 	}
 
-	async function handleMoveUp(module: Module) {
-		const currentIndex = modules.findIndex(m => m.id === module.id);
+	async function handleMoveUp(modulo: Module) {
+		const currentIndex = modules.findIndex((m) => m.id === modulo.id);
 		if (currentIndex <= 0) return; // Can't move up if it's the first module
-		
+
 		const previousModule = modules[currentIndex - 1];
-		
-		// Create reorder data - swap the orders
-		const reorderData: ReorderItemDTO[] = [
-			{ id: module.id, order: previousModule.order },
-			{ id: previousModule.id, order: module.order }
-		];
-		
+
 		try {
-			await moduleController.reorderModules(course.id, reorderData);
-			
+			// Create reorder data - swap the orders
+			moduleController.reorderModules(course.id, [
+				{ id: modulo.id, order: previousModule.order },
+				{ id: previousModule.id, order: modulo.order }
+			]);
+
 			// Update local state - swap the modules and their orders
-			const updatedModule = { ...module, order: previousModule.order };
-			const updatedPreviousModule = { ...previousModule, order: module.order };
-			
-			modules[currentIndex] = updatedModule;
-			modules[currentIndex - 1] = updatedPreviousModule;
-			
+			const updatedModule = { ...modulo, order: previousModule.order };
+			const updatedPreviousModule = { ...previousModule, order: modulo.order };
+
+			modules[currentIndex] = updatedPreviousModule;
+			modules[currentIndex - 1] = updatedModule;
+
 			// Re-sort modules by order to ensure consistency
-			modules.sort((a, b) => a.order - b.order);
+			modules = modules.toSorted((a, b) => a.order - b.order);
 		} catch (error) {
 			console.error('Error moving module up:', error);
 		}
 	}
 
-	async function handleMoveDown(module: Module) {
-		const currentIndex = modules.findIndex(m => m.id === module.id);
+	async function handleMoveDown(modulo: Module) {
+		const currentIndex = modules.findIndex((m) => m.id === modulo.id);
 		if (currentIndex >= modules.length - 1) return; // Can't move down if it's the last module
-		
+
 		const nextModule = modules[currentIndex + 1];
-		
-		// Create reorder data - swap the orders
-		const reorderData: ReorderItemDTO[] = [
-			{ id: module.id, order: nextModule.order },
-			{ id: nextModule.id, order: module.order }
-		];
-		
+
 		try {
-			await moduleController.reorderModules(course.id, reorderData);
-			
+			// Create reorder data - swap the orders
+			moduleController.reorderModules(course.id, [
+				{ id: modulo.id, order: nextModule.order },
+				{ id: nextModule.id, order: modulo.order }
+			]);
+
 			// Update local state - swap the modules and their orders
-			const updatedModule = { ...module, order: nextModule.order };
-			const updatedNextModule = { ...nextModule, order: module.order };
-			
-			modules[currentIndex] = updatedModule;
-			modules[currentIndex + 1] = updatedNextModule;
-			
+			const updatedModule = { ...modulo, order: nextModule.order };
+			const updatedNextModule = { ...nextModule, order: modulo.order };
+
+			modules[currentIndex] = updatedNextModule;
+			modules[currentIndex + 1] = updatedModule;
+
 			// Re-sort modules by order to ensure consistency
-			modules.sort((a, b) => a.order - b.order);
+			modules = modules.toSorted((a, b) => a.order - b.order);
 		} catch (error) {
 			console.error('Error moving module down:', error);
 		}
 	}
+
+	$inspect(modules);
 </script>
 
 <Back href="/admin/courses" />
@@ -95,7 +93,7 @@
 	</div>
 
 	<div class="grid grid-cols-1 gap-4">
-		{#each modules as modulo, index}
+		{#each modules as modulo, index (modulo.id)}
 			<ModuleCard
 				module={modulo}
 				actDate={modulo.updated_at}
