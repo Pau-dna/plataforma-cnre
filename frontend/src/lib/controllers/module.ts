@@ -63,7 +63,7 @@ export class ModuleController extends BaseController {
 	 */
 	async reorderModules(courseId: number, moduleOrders: ReorderItemDTO[]): Promise<void> {
 		for (const modulo of moduleOrders) {
-			await this.updateModulePatch(modulo.id, {
+			this.updateModulePatch(modulo.id, {
 				order: modulo.order
 			});
 		}

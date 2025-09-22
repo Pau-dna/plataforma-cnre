@@ -29,7 +29,7 @@
 		canMoveUp = true,
 		canMoveDown = true
 	}: Props = $props();
-	
+
 	let openEdit = $state(false);
 	let openDelete = $state(false);
 	const moduleController = new ModuleController();
@@ -105,6 +105,7 @@
 	<Card.Content class="flex w-full justify-between">
 		<div class="flex items-center gap-4">
 			<Button
+				href="/admin/courses/{module.course_id}/{module.id}"
 				href="/admin/courses/{modulo.course_id}/{modulo.id}"
 				variant="ghost"
 				size="sm"

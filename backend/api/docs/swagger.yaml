@@ -179,7 +179,7 @@ definitions:
         type: string
       id:
         type: integer
-      isCorrect:
+      is_correct:
         type: boolean
       order:
         type: integer
