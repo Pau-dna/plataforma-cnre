@@ -81,13 +81,13 @@
 		}
 
 		// Validate answers
-		const validAnswers = answers.filter(a => a.text.trim());
+		const validAnswers = answers.filter((a) => a.text.trim());
 		if (validAnswers.length < 2) {
 			toast.error('Debe tener al menos 2 respuestas válidas');
 			return;
 		}
 
-		const correctAnswers = validAnswers.filter(a => a.is_correct);
+		const correctAnswers = validAnswers.filter((a) => a.is_correct);
 		if (correctAnswers.length === 0) {
 			toast.error('Debe marcar al menos una respuesta como correcta');
 			return;
@@ -169,7 +169,7 @@
 					/>
 				</div>
 
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 					<div class="space-y-2">
 						<Label for="type">Tipo de Pregunta *</Label>
 						<select
@@ -177,12 +177,12 @@
 							bind:value={formData.type}
 							required
 							disabled={isSubmitting}
-							class="w-full px-3 py-2 text-sm rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+							class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							<option value={QuestionType.SINGLE}>Opción única</option>
 							<option value={QuestionType.MULTIPLE}>Opción múltiple</option>
 						</select>
-						<p class="text-xs text-muted-foreground">
+						<p class="text-muted-foreground text-xs">
 							{#if formData.type === QuestionType.SINGLE}
 								Solo una respuesta puede ser correcta
 							{:else}
@@ -222,21 +222,27 @@
 		<Card>
 			<CardHeader class="flex flex-row items-center justify-between space-y-0">
 				<CardTitle>Respuestas</CardTitle>
-				<Button type="button" variant="outline" size="sm" onclick={addAnswer} disabled={isSubmitting}>
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					onclick={addAnswer}
+					disabled={isSubmitting}
+				>
 					<Plus class="h-4 w-4" />
 					<span>Agregar Respuesta</span>
 				</Button>
 			</CardHeader>
 			<CardContent class="space-y-4">
 				{#each answers as answer, index (index)}
-					<div class="flex items-start gap-3 p-4 border border-gray-200 rounded-lg">
+					<div class="flex items-start gap-3 rounded-lg border border-gray-200 p-4">
 						<div class="flex items-center gap-2 pt-2">
 							<input
 								type="checkbox"
 								checked={answer.is_correct}
 								onchange={() => toggleCorrectAnswer(index)}
 								disabled={isSubmitting}
-								class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+								class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 							/>
 							{#if answer.is_correct}
 								<Check class="h-4 w-4 text-green-600" />
@@ -259,7 +265,7 @@
 								size="sm"
 								onclick={() => removeAnswer(index)}
 								disabled={isSubmitting}
-								class="mt-6 text-red-600 hover:text-red-800 hover:bg-red-50"
+								class="mt-6 text-red-600 hover:bg-red-50 hover:text-red-800"
 							>
 								<Trash2 class="h-4 w-4" />
 							</Button>
@@ -267,15 +273,17 @@
 					</div>
 				{/each}
 
-				<div class="text-sm text-muted-foreground p-3 bg-blue-50 border border-blue-200 rounded-lg">
-					<p class="font-medium mb-1">Instrucciones:</p>
-					<ul class="list-disc list-inside space-y-1">
+				<div class="text-muted-foreground rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm">
+					<p class="mb-1 font-medium">Instrucciones:</p>
+					<ul class="list-inside list-disc space-y-1">
 						<li>Marca las respuestas correctas con el checkbox</li>
 						<li>Puedes agregar tantas respuestas como necesites (mínimo 2)</li>
 						{#if formData.type === QuestionType.SINGLE}
 							<li class="text-orange-700">Solo una respuesta puede ser correcta para este tipo</li>
 						{:else}
-							<li class="text-green-700">Múltiples respuestas pueden ser correctas para este tipo</li>
+							<li class="text-green-700">
+								Múltiples respuestas pueden ser correctas para este tipo
+							</li>
 						{/if}
 					</ul>
 				</div>
@@ -287,11 +295,7 @@
 			<Button variant="outline" type="button" onclick={handleCancel} disabled={isSubmitting}>
 				Cancelar
 			</Button>
-			<Button
-				type="submit"
-				disabled={isSubmitting}
-				class="bg-green-500 hover:bg-green-600"
-			>
+			<Button type="submit" disabled={isSubmitting} class="bg-green-500 hover:bg-green-600">
 				{#if isSubmitting}
 					Creando...
 				{:else}

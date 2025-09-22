@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		const answerController = new AnswerController();
 
 		const question = await questionController.getQuestionWithAnswers(questionId);
-		
+
 		return {
 			question,
 			courseId,
