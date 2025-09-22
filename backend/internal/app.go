@@ -111,6 +111,7 @@ func (app *Application) Mount() {
 	app.Router.POST("/auth/login", authHandler.Login)
 	app.Router.POST("/auth/register", authHandler.Register)
 	app.Router.GET("/auth/me", authMiddleware, authHandler.GetUserInfo)
+	app.Router.POST("/auth/google", authHandler.GoogleLogin)
 
 	app.Router.GET("/api/v1/notifications/subscribe", notificationHandler.SubscribeSSE)
 
