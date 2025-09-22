@@ -198,7 +198,6 @@ func (h *ModuleHandler) GetModuleWithContent(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param courseId path int true "Course ID"
-// @Param moduleOrders body []struct{ID uint; Order int} true "Module orders"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}

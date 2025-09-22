@@ -26,7 +26,6 @@ func NewEvaluationAttemptHandler(handler *Handler, evaluationAttemptService serv
 // @Tags evaluation-attempts
 // @Accept json
 // @Produce json
-// @Param attempt body struct{UserID uint; EvaluationID uint} true "Attempt data"
 // @Success 201 {object} models.EvaluationAttempt
 // @Failure 400 {object} map[string]interface{}
 // @Failure 409 {object} map[string]interface{}
@@ -64,7 +63,6 @@ func (h *EvaluationAttemptHandler) StartAttempt(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Attempt ID"
-// @Param answers body struct{Answers []models.AttemptAnswer} true "Answers data"
 // @Success 200 {object} models.EvaluationAttempt
 // @Failure 400 {object} map[string]interface{}
 // @Failure 409 {object} map[string]interface{}
@@ -169,7 +167,6 @@ func (h *EvaluationAttemptHandler) GetUserAttempts(c *gin.Context) {
 // @Produce json
 // @Param userId path int true "User ID"
 // @Param evaluationId path int true "Evaluation ID"
-// @Success 200 {object} struct{CanAttempt bool; Reason string}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/users/{userId}/evaluations/{evaluationId}/can-attempt [get]

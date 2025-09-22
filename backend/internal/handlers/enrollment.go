@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/imlargo/go-api-template/internal/models"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -25,7 +26,6 @@ func NewEnrollmentHandler(handler *Handler, enrollmentService services.Enrollmen
 // @Tags enrollments
 // @Accept json
 // @Produce json
-// @Param enrollment body struct{UserID uint; CourseID uint} true "Enrollment data"
 // @Success 201 {object} models.Enrollment
 // @Failure 400 {object} map[string]interface{}
 // @Failure 409 {object} map[string]interface{}
@@ -209,7 +209,6 @@ func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 // @Accept json
 // @Param userId path int true "User ID"
 // @Param id path int true "Course ID"
-// @Param progress body struct{Progress float64} true "Progress data"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
