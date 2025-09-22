@@ -6,23 +6,23 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import type { Course, Module } from '$lib/types';
+	import type { Module } from '$lib/types';
 	import { toast } from 'svelte-sonner';
-	import { CourseController, ModuleController } from '$lib/controllers';
+	import { ModuleController } from '$lib/controllers';
 
 	type Props = {
-		course: Course;
+		module: Module;
 		openEdit?: boolean;
 		children?: Snippet;
-		onupdate?: (course: Module) => void;
+		onupdate?: (module: Module) => void;
 	};
 
-	let { course, children, onupdate, openEdit = $bindable() }: Props = $props();
+	let { module, children, onupdate, openEdit = $bindable() }: Props = $props();
 
 	let submitting = $state(false);
 	const formData = $state<Partial<Module>>({
-		title: course.title,
-		description: course.description
+		title: module.title,
+		description: module.description
 	});
 
 	const moduleController = new ModuleController();
@@ -35,12 +35,12 @@
 
 		try {
 			submitting = true;
-			const updated = await moduleController.updateModulePatch(course.id, formData as Module);
-			toast.success('Curso actualizado con éxito.');
+			const updated = await moduleController.updateModulePatch(module.id, formData);
+			toast.success('Módulo actualizado con éxito.');
 			openEdit = false;
 			onupdate?.(updated);
 		} catch (error) {
-			toast.error('Error al actualizar el curso.', {
+			toast.error('Error al actualizar el módulo.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
 		} finally {
@@ -50,8 +50,8 @@
 
 	$effect(() => {
 		if (!openEdit) {
-			formData.title = course.title;
-			formData.description = course.description;
+			formData.title = module.title;
+			formData.description = module.description;
 		}
 	});
 </script>
@@ -59,20 +59,20 @@
 <Dialog.Root bind:open={openEdit}>
 	<Dialog.Content class="form-card flex flex-col gap-6">
 		<Dialog.Header class="flex flex-col gap-3">
-			<Dialog.Title class="text-h2">Edita el curso</Dialog.Title>
-			<Dialog.Description>Complete los detalles para editar el curso.</Dialog.Description>
+			<Dialog.Title class="text-h2">Editar módulo</Dialog.Title>
+			<Dialog.Description>Complete los detalles para editar el módulo.</Dialog.Description>
 		</Dialog.Header>
 		<div class="flex flex-col gap-6">
 			<div class="flex flex-col gap-2">
-				<Label for="name">Nombre del curso</Label>
-				<Input bind:value={formData.title} id="name" placeholder="Ingrese el nombre del curso" />
+				<Label for="name">Nombre del módulo</Label>
+				<Input bind:value={formData.title} id="name" placeholder="Ingrese el nombre del módulo" />
 			</div>
 			<div class="flex flex-col gap-2">
 				<Label for="description">Descripción</Label>
 				<Textarea
 					bind:value={formData.description}
 					id="description"
-					placeholder="Ingrese la descripción del curso"
+					placeholder="Ingrese la descripción del módulo"
 				/>
 			</div>
 		</div>
@@ -80,7 +80,7 @@
 			<Button
 				onclick={handleUpdate}
 				disabled={submitting}
-				class="w-full bg-pink-500 hover:bg-pink-900">Editar curso</Button
+				class="w-full bg-pink-500 hover:bg-pink-900">Editar módulo</Button
 			>
 		</Dialog.Footer>
 	</Dialog.Content>
