@@ -1,8 +1,9 @@
 <script lang="ts">
 	import ModuleCard from '$lib/components/module/ModuleCard.svelte';
+	import EmptyState from '$lib/components/ui/empty-state';
 	import type { PageProps } from './$types';
 	import type { Module, ReorderItemDTO } from '$lib/types';
-	import { Plus } from '@lucide/svelte';
+	import { Plus, Layers } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Back from '$lib/components/kit/Back.svelte';
 	import { ModuleController } from '$lib/controllers/module';
@@ -92,17 +93,25 @@
 		<p class="text-subtitle">Inducción al CNRE</p>
 	</div>
 
-	<div class="grid grid-cols-1 gap-4">
-		{#each modules as modulo, index (modulo.id)}
-			<ModuleCard
-				module={modulo}
-				actDate={modulo.updated_at}
-				onupdate={handleModuleUpdate}
-				onmoveup={handleMoveUp}
-				onmovedown={handleMoveDown}
-				canMoveUp={index > 0}
-				canMoveDown={index < modules.length - 1}
-			/>
-		{/each}
-	</div>
+	{#if modules && modules.length > 0}
+		<div class="grid grid-cols-1 gap-4">
+			{#each modules as modulo, index (modulo.id)}
+				<ModuleCard
+					module={modulo}
+					actDate={modulo.updated_at}
+					onupdate={handleModuleUpdate}
+					onmoveup={handleMoveUp}
+					onmovedown={handleMoveDown}
+					canMoveUp={index > 0}
+					canMoveDown={index < modules.length - 1}
+				/>
+			{/each}
+		</div>
+	{:else}
+		<EmptyState
+			icon={Layers}
+			title="No hay módulos creados"
+			description="Este curso aún no tiene módulos. Crea el primer módulo para comenzar a organizar el contenido del curso."
+		/>
+	{/if}
 </div>

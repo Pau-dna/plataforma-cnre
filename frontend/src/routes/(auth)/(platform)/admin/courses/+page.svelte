@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Plus } from '@lucide/svelte';
+	import EmptyState from '$lib/components/ui/empty-state';
+	import { Plus, GraduationCap } from '@lucide/svelte';
 	import type { Course } from '$lib/types/models/course';
 	import CourseCard from '$lib/components/course/CourseCard.svelte';
 
@@ -26,7 +27,11 @@
 		-->
 	</div>
 	{#if courses.length === 0}
-		<p>No hay cursos disponibles para administrar.</p>
+		<EmptyState
+			icon={GraduationCap}
+			title="No hay cursos disponibles"
+			description="Aún no se han creado cursos para administrar. Los cursos aparecerán aquí una vez que sean creados."
+		/>
 	{:else}
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each courses as course}
