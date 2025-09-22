@@ -63,6 +63,7 @@ export const load = (async ({ url, cookies }) => {
 	if (destination !== "/logout" && authData) {
 		// Try to enroll
 		try {
+			console.log(authData.tokens.access_token);
 			const enrollmentController = new EnrollmentController(authData.tokens.access_token)
 			await enrollmentController.enrollInCourse(1, authData.user.id);
 		} catch (error) {
