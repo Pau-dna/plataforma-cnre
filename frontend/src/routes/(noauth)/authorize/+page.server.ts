@@ -1,3 +1,4 @@
+import { AuthController } from '$lib/controllers/auth';
 import { authCookiesManager } from '$lib/server/cookies/manager';
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
@@ -18,8 +19,12 @@ export const load = (async ({ url, cookies }) => {
 	const authController = new AuthController();
 
 	try {
-		const response = await authController.login(credentials.code);
-		authCookiesManager.setAuthTokens(cookies, response.access_token, response.refresh_token);
+		const response = await authController.loginWithGoogle(credentials.code);
+		authCookiesManager.login(
+			cookies, 
+			response.accessToken,
+			response.refreshToken,
+		);
 	} catch (error) {
 		redirect(303, '/logout');
 	}
