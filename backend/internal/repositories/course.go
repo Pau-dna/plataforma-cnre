@@ -52,7 +52,7 @@ func (r *courseRepository) Delete(id uint) error {
 
 func (r *courseRepository) GetAll() ([]*models.Course, error) {
 	var courses []*models.Course
-	if err := r.db.Find(&courses).Error; err != nil {
+	if err := r.db.Order("`order` ASC, id ASC").Find(&courses).Error; err != nil {
 		return nil, err
 	}
 	return courses, nil

@@ -35,6 +35,14 @@ func NewCourseService(service *Service) CourseService {
 }
 
 func (s *courseService) CreateCourse(course *models.Course) (*models.Course, error) {
+	// Set order to the next available position if not specified
+	if course.Order == 0 {
+		courses, err := s.store.Courses.GetAll()
+		if err == nil {
+			course.Order = len(courses)
+		}
+	}
+	
 	if err := s.store.Courses.Create(course); err != nil {
 		return nil, fmt.Errorf("failed to create course: %w", err)
 	}
