@@ -10,6 +10,7 @@
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import Back from '$lib/components/kit/Back.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -45,6 +46,8 @@
 		}
 	}
 </script>
+
+<Back href="/admin/courses/{page.params.course}" />
 
 <div class="flex items-center justify-center">
 	<Card.Root class="form-card">
