@@ -7,38 +7,7 @@
 
 	let { data }: PageProps = $props();
 
-	let courses: Course[] = [
-		{
-			id: 1,
-			title: 'Curso de Ejemplo',
-			description: 'Descripción del curso de ejemplo.',
-			created_at: '2023-10-01T12:00:00Z',
-			updated_at: '2023-10-01T12:00:00Z',
-			modules: [],
-			student_count: 25,
-			module_count: 5
-		},
-		{
-			id: 2,
-			title: 'Otro Curso',
-			description: 'Descripción de otro curso.',
-			created_at: '2023-10-02T12:00:00Z',
-			updated_at: '2023-10-02T12:00:00Z',
-			modules: [],
-			student_count: 10,
-			module_count: 3
-		},
-		{
-			id: 3,
-			title: 'Tercer Curso',
-			description: 'Descripción del tercer curso.',
-			created_at: '2023-10-03T12:00:00Z',
-			updated_at: '2023-10-03T12:00:00Z',
-			modules: [],
-			student_count: 5,
-			module_count: 1
-		}
-	];
+	let courses = $state(data.courses)
 </script>
 
 <div class="flex flex-col gap-6">
