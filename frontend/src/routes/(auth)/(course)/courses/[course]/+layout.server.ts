@@ -10,8 +10,8 @@ export const load = (async ({ params, locals }) => {
 
 	const [course, modules, enrollment] = await Promise.all([
 		courseController.getCourse(parseInt(params.course)),
-		moduleController.getModulesByCourse(course.id),
-		enrollmentController.getEnrollment(locals.user.id)
+		moduleController.getModulesByCourse(parseInt(params.course)),
+		enrollmentController.getUserCourseEnrollment(locals.user.id, parseInt(params.course))
 	])
 	
 	return {
