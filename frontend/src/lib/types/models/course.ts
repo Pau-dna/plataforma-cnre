@@ -84,6 +84,7 @@ export interface Evaluation extends BaseEntity {
 	description?: string;
 	type: ContentType.EVALUATION;
 	question_count: number;
+	answer_options_count: number;
 	passing_score: number;
 	max_attempts?: number;
 	time_limit?: number;
@@ -125,13 +126,32 @@ export interface Enrollment extends BaseEntity {
 	course?: Course;
 }
 
+// AttemptAnswerOption interface - matches backend AttemptAnswerOption model
+export interface AttemptAnswerOption {
+	id: number;
+	text: string;
+	is_correct: boolean;
+}
+
+// AttemptQuestion interface - matches backend AttemptQuestion model
+export interface AttemptQuestion {
+	id: number;
+	text: string;
+	type: QuestionType;
+	explanation?: string;
+	points: number;
+	original_id: number;
+	answer_options: AttemptAnswerOption[];
+}
+
 // EvaluationAttempt interface - matches backend EvaluationAttempt model
 export interface EvaluationAttempt extends BaseEntity {
 	user_id: number;
 	evaluation_id: number;
+	questions: AttemptQuestion[];
 	answers: {
-		question_id: number;
-		selected_answer_ids: number[];
+		attempt_question_id: number;
+		selected_option_ids: number[];
 		is_correct: boolean;
 		points: number;
 	}[];

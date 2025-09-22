@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/imlargo/go-api-template/internal/dto"
@@ -39,8 +40,8 @@ func (s *evaluationAttemptService) StartAttempt(userID, evaluationID uint) (*mod
 		return nil, fmt.Errorf("user not found: %w", err)
 	}
 
-	// Verify evaluation exists
-	_, err = s.store.Evaluations.Get(evaluationID)
+	// Verify evaluation exists and get configuration
+	evaluation, err := s.store.Evaluations.Get(evaluationID)
 	if err != nil {
 		return nil, fmt.Errorf("evaluation not found: %w", err)
 	}
@@ -54,13 +55,20 @@ func (s *evaluationAttemptService) StartAttempt(userID, evaluationID uint) (*mod
 		return nil, fmt.Errorf("cannot start attempt: %s", reason)
 	}
 
-	// Create new attempt
+	// Generate dynamic questions and answers for this attempt
+	attemptQuestions, totalPoints, err := s.generateAttemptQuestions(evaluation)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate attempt questions: %w", err)
+	}
+
+	// Create new attempt with generated questions
 	attempt := &models.EvaluationAttempt{
 		UserID:       userID,
 		EvaluationID: evaluationID,
+		Questions:    attemptQuestions,
 		StartedAt:    time.Now(),
 		Score:        0,
-		TotalPoints:  0,
+		TotalPoints:  totalPoints,
 		Passed:       false,
 		Answers:      models.AttemptAnswers{},
 	}
@@ -70,6 +78,191 @@ func (s *evaluationAttemptService) StartAttempt(userID, evaluationID uint) (*mod
 	}
 
 	return attempt, nil
+}
+
+// generateAttemptQuestions generates random questions and answer options for an attempt
+func (s *evaluationAttemptService) generateAttemptQuestions(evaluation *models.Evaluation) (models.AttemptQuestions, int, error) {
+	// Get all questions for this evaluation
+	allQuestions, err := s.store.Questions.GetByEvaluationID(evaluation.ID)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to get questions: %w", err)
+	}
+
+	if len(allQuestions) < evaluation.QuestionCount {
+		return nil, 0, fmt.Errorf("insufficient questions available: need %d, have %d", 
+			evaluation.QuestionCount, len(allQuestions))
+	}
+
+	// Randomly select questions
+	selectedQuestions := s.selectRandomQuestions(allQuestions, evaluation.QuestionCount)
+	
+	var attemptQuestions models.AttemptQuestions
+	totalPoints := 0
+
+	for i, question := range selectedQuestions {
+		// Get all answers for this question
+		allAnswers, err := s.store.Answers.GetByQuestionID(question.ID)
+		if err != nil {
+			s.logger.Warnf("Failed to get answers for question %d: %v", question.ID, err)
+			continue
+		}
+
+		// Generate answer options for this question
+		answerOptions, err := s.generateAnswerOptions(allAnswers, evaluation.AnswerOptionsCount)
+		if err != nil {
+			s.logger.Warnf("Failed to generate answer options for question %d: %v", question.ID, err)
+			continue
+		}
+
+		attemptQuestion := models.AttemptQuestion{
+			ID:            uint(i + 1), // Sequential ID for this attempt
+			Text:          question.Text,
+			Type:          question.Type,
+			Explanation:   question.Explanation,
+			Points:        question.Points,
+			OriginalID:    question.ID,
+			AnswerOptions: answerOptions,
+		}
+
+		attemptQuestions = append(attemptQuestions, attemptQuestion)
+		totalPoints += question.Points
+	}
+
+	if len(attemptQuestions) == 0 {
+		return nil, 0, fmt.Errorf("failed to generate any valid questions")
+	}
+
+	return attemptQuestions, totalPoints, nil
+}
+
+// selectRandomQuestions randomly selects the specified number of questions
+func (s *evaluationAttemptService) selectRandomQuestions(questions []*models.Question, count int) []*models.Question {
+	if len(questions) <= count {
+		return questions
+	}
+
+	// Create a copy of the slice to avoid modifying the original
+	selected := make([]*models.Question, len(questions))
+	copy(selected, questions)
+
+	// Shuffle using Fisher-Yates algorithm
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := len(selected) - 1; i > 0; i-- {
+		j := r.Intn(i + 1)
+		selected[i], selected[j] = selected[j], selected[i]
+	}
+
+	return selected[:count]
+}
+
+// generateAnswerOptions generates random answer options ensuring proper distribution
+func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.Answer, optionsCount int) ([]models.AttemptAnswerOption, error) {
+	if len(allAnswers) < 2 {
+		return nil, fmt.Errorf("insufficient answers available: need at least 2, have %d", len(allAnswers))
+	}
+
+	// Separate correct and incorrect answers
+	var correctAnswers []*models.Answer
+	var incorrectAnswers []*models.Answer
+
+	for _, answer := range allAnswers {
+		if answer.IsCorrect {
+			correctAnswers = append(correctAnswers, answer)
+		} else {
+			incorrectAnswers = append(incorrectAnswers, answer)
+		}
+	}
+
+	if len(correctAnswers) == 0 {
+		return nil, fmt.Errorf("no correct answers available")
+	}
+
+	// Calculate how many correct and incorrect answers to include
+	maxCorrect := optionsCount / 2
+	if maxCorrect == 0 {
+		maxCorrect = 1 // Always at least 1 correct answer
+	}
+
+	// Ensure we have at least 1 correct answer
+	correctToInclude := 1
+	if len(correctAnswers) > 1 && maxCorrect > 1 {
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		correctToInclude = r.Intn(maxCorrect) + 1
+	}
+
+	// Don't exceed available correct answers
+	if correctToInclude > len(correctAnswers) {
+		correctToInclude = len(correctAnswers)
+	}
+
+	incorrectToInclude := optionsCount - correctToInclude
+	if incorrectToInclude > len(incorrectAnswers) {
+		incorrectToInclude = len(incorrectAnswers)
+	}
+
+	// If we don't have enough incorrect answers, adjust
+	if incorrectToInclude < 0 {
+		incorrectToInclude = 0
+	}
+
+	// Select random correct and incorrect answers
+	selectedCorrect := s.selectRandomAnswers(correctAnswers, correctToInclude)
+	selectedIncorrect := s.selectRandomAnswers(incorrectAnswers, incorrectToInclude)
+
+	// Combine and shuffle the options
+	var options []models.AttemptAnswerOption
+	
+	// Add correct options
+	for i, answer := range selectedCorrect {
+		options = append(options, models.AttemptAnswerOption{
+			ID:        uint(i + 1),
+			Text:      answer.Text,
+			IsCorrect: true,
+		})
+	}
+
+	// Add incorrect options  
+	for i, answer := range selectedIncorrect {
+		options = append(options, models.AttemptAnswerOption{
+			ID:        uint(len(selectedCorrect) + i + 1),
+			Text:      answer.Text,
+			IsCorrect: false,
+		})
+	}
+
+	// Shuffle the options so correct answers aren't always first
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := len(options) - 1; i > 0; i-- {
+		j := r.Intn(i + 1)
+		options[i], options[j] = options[j], options[i]
+	}
+
+	// Reassign sequential IDs after shuffling
+	for i := range options {
+		options[i].ID = uint(i + 1)
+	}
+
+	return options, nil
+}
+
+// selectRandomAnswers randomly selects the specified number of answers
+func (s *evaluationAttemptService) selectRandomAnswers(answers []*models.Answer, count int) []*models.Answer {
+	if len(answers) <= count {
+		return answers
+	}
+
+	// Create a copy to avoid modifying the original
+	selected := make([]*models.Answer, len(answers))
+	copy(selected, answers)
+
+	// Shuffle
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := len(selected) - 1; i > 0; i-- {
+		j := r.Intn(i + 1)
+		selected[i], selected[j] = selected[j], selected[i]
+	}
+
+	return selected[:count]
 }
 
 func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []models.AttemptAnswer) (*models.EvaluationAttempt, error) {
@@ -223,35 +416,36 @@ func (s *evaluationAttemptService) ScoreAttempt(attemptID uint) (*models.Evaluat
 	}
 
 	totalScore := 0
-	totalPoints := 0
+	totalPoints := attempt.TotalPoints // Already calculated during attempt creation
 
-	// Score each answer
+	// Score each answer based on attempt questions
 	for i, answer := range attempt.Answers {
-		isCorrect, points, err := s.answerService.ValidateAnswers(
-			answer.QuestionID,
-			answer.SelectedAnswerIDs,
-		)
-		if err != nil {
-			s.logger.Warnf("Failed to validate answer for question %d: %v", answer.QuestionID, err)
+		// Find the corresponding attempt question
+		var attemptQuestion *models.AttemptQuestion
+		for _, q := range attempt.Questions {
+			if q.ID == answer.AttemptQuestionID {
+				attemptQuestion = &q
+				break
+			}
+		}
+
+		if attemptQuestion == nil {
+			s.logger.Warnf("Attempt question %d not found for answer", answer.AttemptQuestionID)
 			continue
 		}
+
+		// Validate the selected options
+		isCorrect, points := s.validateAttemptAnswer(attemptQuestion, answer.SelectedOptionIDs)
 
 		// Update the answer in the attempt
 		attempt.Answers[i].IsCorrect = isCorrect
 		attempt.Answers[i].Points = points
 
 		totalScore += points
-
-		// Get question to add to total points
-		question, err := s.store.Questions.Get(answer.QuestionID)
-		if err == nil {
-			totalPoints += question.Points
-		}
 	}
 
 	// Update attempt with scores
 	attempt.Score = totalScore
-	attempt.TotalPoints = totalPoints
 
 	// Check if passed based on passing score
 	if totalPoints > 0 {
@@ -265,4 +459,62 @@ func (s *evaluationAttemptService) ScoreAttempt(attemptID uint) (*models.Evaluat
 	}
 
 	return attempt, nil
+}
+
+// validateAttemptAnswer validates user's selected options against the attempt question
+func (s *evaluationAttemptService) validateAttemptAnswer(question *models.AttemptQuestion, selectedOptionIDs []uint) (bool, int) {
+	if len(selectedOptionIDs) == 0 {
+		return false, 0
+	}
+
+	// Get correct option IDs
+	var correctOptionIDs []uint
+	for _, option := range question.AnswerOptions {
+		if option.IsCorrect {
+			correctOptionIDs = append(correctOptionIDs, option.ID)
+		}
+	}
+
+	// Check if all selected options are correct and all correct options are selected
+	selectedMap := make(map[uint]bool)
+	for _, id := range selectedOptionIDs {
+		selectedMap[id] = true
+	}
+
+	correctMap := make(map[uint]bool)
+	for _, id := range correctOptionIDs {
+		correctMap[id] = true
+	}
+
+	// For single choice: only one option should be selected and it should be correct
+	if question.Type == "single_choice" {
+		if len(selectedOptionIDs) != 1 {
+			return false, 0
+		}
+		if correctMap[selectedOptionIDs[0]] {
+			return true, question.Points
+		}
+		return false, 0
+	}
+
+	// For multiple choice: all selected must be correct, and all correct must be selected
+	if question.Type == "multiple_choice" {
+		// Check if all selected are correct
+		for _, id := range selectedOptionIDs {
+			if !correctMap[id] {
+				return false, 0 // Selected an incorrect option
+			}
+		}
+
+		// Check if all correct options are selected
+		for _, id := range correctOptionIDs {
+			if !selectedMap[id] {
+				return false, 0 // Missed a correct option
+			}
+		}
+
+		return true, question.Points
+	}
+
+	return false, 0
 }

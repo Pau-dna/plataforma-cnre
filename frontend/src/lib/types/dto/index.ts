@@ -50,6 +50,7 @@ export interface CreateEvaluationDTO {
 	description?: string;
 	type: ContentType.EVALUATION;
 	question_count: number;
+	answer_options_count: number;
 	passing_score: number;
 	max_attempts?: number;
 	time_limit?: number;
@@ -61,6 +62,7 @@ export interface UpdateEvaluationDTO {
 	title?: string;
 	description?: string;
 	question_count?: number;
+	answer_options_count?: number;
 	passing_score?: number;
 	max_attempts?: number;
 	time_limit?: number;
@@ -110,8 +112,8 @@ export interface StartEvaluationAttemptDTO {
 
 export interface SubmitEvaluationAttemptDTO {
 	answers: {
-		question_id: number;
-		selected_answer_ids: number[];
+		attempt_question_id: number;
+		selected_option_ids: number[];
 		is_correct: boolean;
 		points: number;
 	}[];
