@@ -59,7 +59,7 @@
 <Dialog.Root bind:open={openEdit}>
 	<Dialog.Content class="form-card flex flex-col gap-6">
 		<Dialog.Header class="flex flex-col gap-3">
-			<Dialog.Title class="text-h2">Edita el curso</Dialog.Title>
+			<Dialog.Title class="text-h2">Editar curso</Dialog.Title>
 			<Dialog.Description>Complete los detalles para editar el curso.</Dialog.Description>
 		</Dialog.Header>
 		<div class="flex flex-col gap-6">

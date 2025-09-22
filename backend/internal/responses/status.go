@@ -5,6 +5,6 @@ const (
 	errNotFound       = "NOT_FOUND"
 	errInternalServer = "INTERNAL_SERVER_ERROR"
 	errBadRequest     = "BAD_REQUEST"
-	errToManyRequests = "TOO_MANY_REQUESTS"
+	errTooManyRequests = "TOO_MANY_REQUESTS"
 	errUnauthorized   = "UNAUTHORIZED"
 )

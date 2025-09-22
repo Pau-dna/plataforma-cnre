@@ -12,7 +12,7 @@
 <div class="flex items-center justify-center">
 	<Card.Root class="form-card">
 		<Card.Header class="flex flex-col gap-3">
-			<Card.Title class="text-h2">Crea un curso</Card.Title>
+			<Card.Title class="text-h2">Crear curso</Card.Title>
 			<Card.Description>Complete los detalles para crear un nuevo curso.</Card.Description>
 		</Card.Header>
 		<Card.Content class="flex flex-col gap-6">

@@ -26,7 +26,7 @@
 		-->
 	</div>
 	{#if courses.length === 0}
-		<p>No estás inscrito en ningún curso.</p>
+		<p>No hay cursos disponibles para administrar.</p>
 	{:else}
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each courses as course}
