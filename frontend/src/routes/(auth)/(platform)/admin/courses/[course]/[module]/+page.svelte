@@ -22,6 +22,11 @@
 		}
 	}
 
+	function handleContentDelete(deleted: Content) {
+		// Remove the content from the array
+		contents = contents.filter((c) => c.id !== deleted.id);
+	}
+
 	async function handleMoveUp(content: Content) {
 		const currentIndex = contents.findIndex((c) => c.id === content.id);
 		if (currentIndex <= 0) return; // Can't move up if it's the first content
@@ -101,6 +106,7 @@
 				{content}
 				actDate={content.updated_at}
 				onupdate={handleContentUpdate}
+				ondelete={handleContentDelete}
 				onmoveup={handleMoveUp}
 				onmovedown={handleMoveDown}
 				canMoveUp={index > 0}

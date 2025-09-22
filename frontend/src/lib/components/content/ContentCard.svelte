@@ -4,12 +4,15 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import DeleteConfirmDialog from '$lib/components/ui/DeleteConfirmDialog.svelte';
 	import type { Content } from '$lib/types';
+	import { ContentController } from '$lib/controllers/content';
 
 	type Props = {
 		content: Content;
 		actDate?: string;
 		onupdate?: (content: Content) => void;
+		ondelete?: (content: Content) => void;
 		onmoveup?: (content: Content) => void;
 		onmovedown?: (content: Content) => void;
 		canMoveUp?: boolean;
@@ -20,11 +23,15 @@
 		content,
 		actDate,
 		onupdate,
+		ondelete,
 		onmoveup,
 		onmovedown,
 		canMoveUp = true,
 		canMoveDown = true
 	}: Props = $props();
+
+	let openDelete = $state(false);
+	const contentController = new ContentController();
 
 	function handleMoveUp() {
 		onmoveup?.(content);
@@ -32,6 +39,16 @@
 
 	function handleMoveDown() {
 		onmovedown?.(content);
+	}
+
+	async function handleDelete() {
+		try {
+			await contentController.deleteContent(content.id);
+			ondelete?.(content);
+		} catch (error) {
+			console.error('Error deleting content:', error);
+			// TODO: Show error toast
+		}
 	}
 
 	// Format the date for display
@@ -58,7 +75,9 @@
 						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
 						<DropdownMenu.Item>Editar</DropdownMenu.Item>
 						<DropdownMenu.Separator />
-						<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
+						<DropdownMenu.Item class="text-destructive" onclick={() => (openDelete = true)}>
+							Eliminar
+						</DropdownMenu.Item>
 					</DropdownMenu.Group>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
@@ -104,3 +123,10 @@
 		<span class="text-muted-foreground text-sm leading-none">Actualizado el {formattedDate}</span>
 	</Card.Content>
 </Card.Root>
+
+<DeleteConfirmDialog
+	bind:open={openDelete}
+	title="¿Eliminar contenido?"
+	description="Esta acción eliminará permanentemente el contenido '{content.title}'. No se puede deshacer."
+	onConfirm={handleDelete}
+/>

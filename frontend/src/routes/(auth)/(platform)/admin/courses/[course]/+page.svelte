@@ -21,6 +21,11 @@
 		}
 	}
 
+	function handleModuleDelete(deleted: Module) {
+		// Remove the module from the array
+		modules = modules.filter((m) => m.id !== deleted.id);
+	}
+
 	async function handleMoveUp(modulo: Module) {
 		const currentIndex = modules.findIndex((m) => m.id === modulo.id);
 		if (currentIndex <= 0) return; // Can't move up if it's the first module
@@ -98,6 +103,7 @@
 				module={modulo}
 				actDate={modulo.updated_at}
 				onupdate={handleModuleUpdate}
+				ondelete={handleModuleDelete}
 				onmoveup={handleMoveUp}
 				onmovedown={handleMoveDown}
 				canMoveUp={index > 0}
