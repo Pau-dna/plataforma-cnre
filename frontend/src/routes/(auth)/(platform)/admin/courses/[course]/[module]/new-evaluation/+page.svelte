@@ -106,7 +106,7 @@
 			<CardTitle>Información de la Evaluación</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<form onsubmit|preventDefault={handleSubmit} class="space-y-6">
+			<div class="space-y-6">
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<div class="space-y-2 md:col-span-2">
 						<Label for="title">Título *</Label>
@@ -210,6 +210,7 @@
 					<Button
 						type="submit"
 						disabled={isSubmitting}
+						onclick={handleSubmit}
 						class="bg-purple-500 hover:bg-purple-600"
 					>
 						{#if isSubmitting}
@@ -219,7 +220,7 @@
 						{/if}
 					</Button>
 				</div>
-			</form>
+			</div>
 		</CardContent>
 	</Card>
 </div>

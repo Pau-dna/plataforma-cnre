@@ -174,7 +174,6 @@ func (app *Application) Mount() {
 	v1.PATCH("/questions/:id", questionHandler.UpdateQuestionPatch)
 	v1.DELETE("/questions/:id", questionHandler.DeleteQuestion)
 	v1.GET("/evaluations/:id/questions", questionHandler.GetQuestionsByEvaluation)
-	v1.GET("/questions/:id/answers", questionHandler.GetQuestionWithAnswers)
 
 	// Answers
 	v1.POST("/answers", answerHandler.CreateAnswer)

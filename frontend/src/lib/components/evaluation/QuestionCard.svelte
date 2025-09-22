@@ -2,7 +2,7 @@
 	import type { Question } from '$lib/types';
 	import { QuestionController } from '$lib/controllers';
 	import { toast } from 'svelte-sonner';
-	import { Edit, Trash, MessageSquare } from 'lucide/svelte';
+	import { Edit, Trash, MessageSquare } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Card from '$lib/components/ui/card/card.svelte';
 	import CardHeader from '$lib/components/ui/card/card-header.svelte';

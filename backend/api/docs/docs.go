@@ -3643,6 +3643,9 @@ const docTemplate = `{
         "github_com_imlargo_go-api-template_internal_dto.UpdateEvaluationRequest": {
             "type": "object",
             "properties": {
+                "answer_options_count": {
+                    "type": "integer"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -3792,20 +3795,67 @@ const docTemplate = `{
         "github_com_imlargo_go-api-template_internal_models.AttemptAnswer": {
             "type": "object",
             "properties": {
+                "attempt_question_id": {
+                    "description": "ID de la pregunta generada del intento",
+                    "type": "integer"
+                },
                 "is_correct": {
                     "type": "boolean"
                 },
                 "points": {
                     "type": "integer"
                 },
-                "question_id": {
-                    "type": "integer"
-                },
-                "selected_answer_ids": {
+                "selected_option_ids": {
+                    "description": "IDs de las opciones seleccionadas",
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_models.AttemptAnswerOption": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "is_correct": {
+                    "type": "boolean"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_models.AttemptQuestion": {
+            "type": "object",
+            "properties": {
+                "answer_options": {
+                    "description": "Opciones de respuesta generadas",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.AttemptAnswerOption"
+                    }
+                },
+                "explanation": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "original_id": {
+                    "description": "ID de la pregunta original",
+                    "type": "integer"
+                },
+                "points": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_enums.QuestionType"
                 }
             }
         },
@@ -3947,6 +3997,9 @@ const docTemplate = `{
         "github_com_imlargo_go-api-template_internal_models.Evaluation": {
             "type": "object",
             "properties": {
+                "answer_options_count": {
+                    "type": "integer"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -4016,6 +4069,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "answers": {
+                    "description": "Respuestas del usuario",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.AttemptAnswer"
@@ -4035,6 +4089,13 @@ const docTemplate = `{
                 },
                 "passed": {
                     "type": "boolean"
+                },
+                "questions": {
+                    "description": "Preguntas generadas para este intento",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.AttemptQuestion"
+                    }
                 },
                 "score": {
                     "type": "integer"

@@ -150,7 +150,7 @@
 		<p class="text-subtitle">Evaluación: {evaluation.title}</p>
 	</div>
 
-	<form onsubmit|preventDefault={handleSubmit} class="space-y-6">
+	<div class="space-y-6">
 		<!-- Question Details -->
 		<Card>
 			<CardHeader>
@@ -290,6 +290,7 @@
 			<Button
 				type="submit"
 				disabled={isSubmitting}
+				onclick={handleSubmit}
 				class="bg-green-500 hover:bg-green-600"
 			>
 				{#if isSubmitting}
