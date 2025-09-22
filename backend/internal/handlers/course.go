@@ -178,7 +178,7 @@ func (h *CourseHandler) DeleteCourse(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	responses.Ok(c, "ok")
 }
 
 // @Summary Get all courses

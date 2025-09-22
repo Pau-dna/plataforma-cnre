@@ -178,7 +178,7 @@ func (h *ModuleHandler) DeleteModule(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	responses.Ok(c, "ok")
 }
 
 // @Summary Get modules by course

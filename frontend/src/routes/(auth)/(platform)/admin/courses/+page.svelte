@@ -26,7 +26,9 @@
 		-->
 	</div>
 	{#if courses.length === 0}
-		<p>No hay cursos disponibles para administrar.</p>
+		<div class="flex flex-col items-center justify-center py-12 text-center">
+			<p class="text-muted-foreground text-lg">No hay cursos disponibles para administrar</p>
+		</div>
 	{:else}
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each courses as course}

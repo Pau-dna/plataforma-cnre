@@ -3068,7 +3068,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "isCorrect": {
+                "is_correct": {
                     "type": "boolean"
                 },
                 "order": {

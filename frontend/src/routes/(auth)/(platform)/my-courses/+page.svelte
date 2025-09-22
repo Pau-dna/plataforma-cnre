@@ -11,7 +11,9 @@
 	<h1 class="text-h1">Mis Cursos</h1>
 
 	{#if courses.length === 0}
-		<p>No estás inscrito en ningún curso.</p>
+		<div class="flex flex-col items-center justify-center py-12 text-center">
+			<p class="text-muted-foreground text-lg">No estás inscrito en ningún curso</p>
+		</div>
 	{:else}
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each courses as course}

@@ -54,7 +54,11 @@ export class ContentController extends BaseController {
 	 * Reorder content within a module
 	 */
 	async reorderContent(moduleId: number, contentOrders: ReorderItemDTO[]): Promise<void> {
-		return this.post(`/api/v1/modules/${moduleId}/content/reorder`, contentOrders);
+		for (const content of contentOrders) {
+			this.updateContentPatch(content.id, {
+				order: content.order
+			});
+		}
 	}
 
 	/**
