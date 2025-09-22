@@ -29,7 +29,7 @@
 		canMoveUp = true,
 		canMoveDown = true
 	}: Props = $props();
-	
+
 	let openEdit = $state(false);
 	let openDelete = $state(false);
 	const moduleController = new ModuleController();
