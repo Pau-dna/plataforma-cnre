@@ -96,6 +96,8 @@
 		<div class="flex flex-wrap gap-2 text-sm text-muted-foreground">
 			<span>Preguntas: {evaluation.question_count}</span>
 			<span>•</span>
+			<span>Opciones: {evaluation.answer_options_count}</span>
+			<span>•</span>
 			<span>Puntaje mínimo: {evaluation.passing_score}%</span>
 			{#if evaluation.time_limit}
 				<span>•</span>

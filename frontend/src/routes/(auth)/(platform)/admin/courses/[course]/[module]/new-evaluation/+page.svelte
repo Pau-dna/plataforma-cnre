@@ -26,6 +26,7 @@
 		title: '',
 		description: '',
 		question_count: 1,
+		answer_options_count: 4,
 		passing_score: 60,
 		max_attempts: undefined as number | undefined,
 		time_limit: undefined as number | undefined
@@ -45,6 +46,11 @@
 			return;
 		}
 
+		if (formData.answer_options_count < 2) {
+			toast.error('Debe tener al menos 2 opciones de respuesta');
+			return;
+		}
+
 		if (formData.passing_score < 0 || formData.passing_score > 100) {
 			toast.error('El puntaje mínimo debe estar entre 0 y 100');
 			return;
@@ -61,6 +67,7 @@
 				description: formData.description.trim() || undefined,
 				type: ContentType.EVALUATION,
 				question_count: formData.question_count,
+				answer_options_count: formData.answer_options_count,
 				passing_score: formData.passing_score,
 				max_attempts: formData.max_attempts || undefined,
 				time_limit: formData.time_limit || undefined,
@@ -134,6 +141,22 @@
 							required
 							disabled={isSubmitting}
 						/>
+					</div>
+
+					<div class="space-y-2">
+						<Label for="answer_options_count">Opciones por Pregunta *</Label>
+						<Input
+							id="answer_options_count"
+							type="number"
+							bind:value={formData.answer_options_count}
+							min="2"
+							max="10"
+							required
+							disabled={isSubmitting}
+						/>
+						<p class="text-xs text-muted-foreground">
+							Número de opciones de respuesta mostradas por pregunta
+						</p>
 					</div>
 
 					<div class="space-y-2">
