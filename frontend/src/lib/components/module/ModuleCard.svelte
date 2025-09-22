@@ -17,7 +17,7 @@
 	};
 
 	const {
-		module,
+		module: modulo,
 		actDate,
 		onupdate,
 		onmoveup,
@@ -32,11 +32,11 @@
 	}
 
 	function handleMoveUp() {
-		onmoveup?.(module);
+		onmoveup?.(modulo);
 	}
 
 	function handleMoveDown() {
-		onmovedown?.(module);
+		onmovedown?.(modulo);
 	}
 </script>
 
@@ -48,7 +48,7 @@
 					<GripVertical class="text-muted-foreground h-4 w-4" />
 				</Button>
 
-				<span class="text-muted-foreground font-semibold">Módulo {module.id}</span>
+				<span class="text-muted-foreground font-semibold">Módulo {modulo.id}</span>
 			</div>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
@@ -58,7 +58,9 @@
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content>
 					<DropdownMenu.Group>
-						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
+						<DropdownMenu.Item>
+							<a href={`/admin/courses/${modulo.course_id}/${modulo.id}`}> Ver Detalles </a>
+						</DropdownMenu.Item>
 						<DropdownMenu.Item onclick={() => (openEdit = true)}>Editar</DropdownMenu.Item>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
@@ -76,15 +78,15 @@
 				</Button>
 			</div>
 			<div class="flex flex-col gap-1">
-				<Card.Title class="text-lg">{module.title}</Card.Title>
-				<Card.Description>{module.description}</Card.Description>
+				<Card.Title class="text-lg">{modulo.title}</Card.Title>
+				<Card.Description>{modulo.description}</Card.Description>
 			</div>
 		</div>
 	</Card.Header>
 	<Card.Content class="flex w-full justify-between">
 		<div class="flex items-center gap-4">
 			<Button
-				href="/admin/courses/{module.course_id}/{module.id}"
+				href="/admin/courses/{modulo.course_id}/{modulo.id}"
 				variant="ghost"
 				size="sm"
 				class="flex items-center gap-2 text-blue-800 hover:bg-blue-50 hover:text-blue-900"
@@ -97,4 +99,4 @@
 	</Card.Content>
 </Card.Root>
 
-<EditModule {module} bind:openEdit onupdate={handleModuleUpdate} />
+<EditModule module={modulo} bind:openEdit onupdate={handleModuleUpdate} />
