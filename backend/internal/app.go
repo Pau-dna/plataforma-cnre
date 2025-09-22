@@ -139,6 +139,7 @@ func (app *Application) Mount() {
 	v1.PUT("/courses/:id", courseHandler.UpdateCourse)
 	v1.PATCH("/courses/:id", courseHandler.UpdateCoursePatch)
 	v1.DELETE("/courses/:id", courseHandler.DeleteCourse)
+	v1.POST("/courses/reorder", courseHandler.ReorderCourses)
 
 	// Modules
 	v1.POST("/modules", moduleHandler.CreateModule)

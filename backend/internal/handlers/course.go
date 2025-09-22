@@ -225,3 +225,48 @@ func (h *CourseHandler) GetCourseWithModules(c *gin.Context) {
 
 	c.JSON(http.StatusOK, course)
 }
+
+// @Summary Reorder courses
+// @Description Reorder courses
+// @Tags courses
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/courses/reorder [post]
+func (h *CourseHandler) ReorderCourses(c *gin.Context) {
+	var courseOrders []struct {
+		ID    uint `json:"id" binding:"required"`
+		Order int  `json:"order" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&courseOrders); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Convert to the expected type
+	var convertedOrders []struct {
+		ID    uint
+		Order int
+	}
+	for _, order := range courseOrders {
+		convertedOrders = append(convertedOrders, struct {
+			ID    uint
+			Order int
+		}{
+			ID:    order.ID,
+			Order: order.Order,
+		})
+	}
+
+	err := h.courseService.ReorderCourses(convertedOrders)
+	if err != nil {
+		h.logger.Errorf("Failed to reorder courses: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to reorder courses"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Courses reordered successfully"})
+}

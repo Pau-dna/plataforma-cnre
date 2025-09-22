@@ -34,6 +34,7 @@ export interface Course extends BaseEntity {
 	description: string;
 	short_description?: string;
 	image_url?: string;
+	order?: number;
 	student_count?: number;
 	module_count?: number;
 	modules?: Module[];

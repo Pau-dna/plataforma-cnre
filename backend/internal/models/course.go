@@ -7,6 +7,7 @@ type Course struct {
 	Description      string `json:"description"`
 	ShortDescription string `json:"short_description"`
 	ImageURL         string `json:"image_url"`
+	Order            int    `json:"order" gorm:"default:0"`
 	StudentCount     int    `json:"student_count"`
 	ModuleCount      int    `json:"module_count"`
 

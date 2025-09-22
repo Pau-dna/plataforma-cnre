@@ -1,5 +1,5 @@
 import { BaseController } from './base';
-import type { Course, CreateCourseDTO, UpdateCourseDTO, Module, Enrollment } from '$lib/types';
+import type { Course, CreateCourseDTO, UpdateCourseDTO, Module, Enrollment, ReorderItemDTO } from '$lib/types';
 
 export class CourseController extends BaseController {
 	/**
@@ -49,6 +49,13 @@ export class CourseController extends BaseController {
 	 */
 	async deleteCourse(id: number): Promise<void> {
 		return this.delete(`/api/v1/courses/${id}`);
+	}
+
+	/**
+	 * Reorder courses
+	 */
+	async reorderCourses(courseOrders: ReorderItemDTO[]): Promise<void> {
+		return this.post(`/api/v1/courses/reorder`, courseOrders);
 	}
 
 	/**

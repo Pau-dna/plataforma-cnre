@@ -18,6 +18,10 @@ type CourseService interface {
 	GetAllCourses() ([]*models.Course, error)
 	GetCourseWithModules(id uint) (*models.Course, error)
 	GetCoursesWithEnrollmentCount() ([]*models.Course, error)
+	ReorderCourses(courseOrders []struct {
+		ID    uint
+		Order int
+	}) error
 }
 
 type courseService struct {
@@ -119,4 +123,24 @@ func (s *courseService) GetCoursesWithEnrollmentCount() ([]*models.Course, error
 		return nil, fmt.Errorf("failed to get courses: %w", err)
 	}
 	return courses, nil
+}
+
+func (s *courseService) ReorderCourses(courseOrders []struct {
+	ID    uint
+	Order int
+}) error {
+	// Update each course's order
+	for _, order := range courseOrders {
+		course, err := s.store.Courses.Get(order.ID)
+		if err != nil {
+			continue // Skip invalid courses
+		}
+
+		course.Order = order.Order
+		if err := s.store.Courses.Update(course); err != nil {
+			return fmt.Errorf("failed to update course order: %w", err)
+		}
+	}
+
+	return nil
 }

@@ -60,6 +60,7 @@
 		]
 	},
 	"dependencies": {
-		"svelte-auth-tools": "^0.1.0"
+		"svelte-auth-tools": "^0.1.0",
+		"svelte-dnd-action": "^0.9.65"
 	}
 }
