@@ -12,6 +12,25 @@ type GoogleOAuthResponse = {
 };
 
 export const load = (async ({ url, cookies }) => {
+
+	const isAuthenticated = authCookiesManager.isAuthenticated(cookies);
+	const redirectParam = url.searchParams.get('redirect');
+	let redirectTo: null | string = null;
+
+	if (redirectParam) {
+		try {
+			redirectTo = atob(redirectParam);
+		} catch (error) {
+			// If base64 decoding fails, ignore the redirect parameter
+			console.warn('Failed to decode redirect parameter.');
+			redirectTo = null;
+		}
+	}
+
+	if (isAuthenticated) {
+		redirect(303, redirectTo || '/my-courses');
+	}
+
 	const credentialsText = url.searchParams.toString();
 	const decoded = new URLSearchParams(credentialsText);
 	const credentials = Object.fromEntries(decoded) as GoogleOAuthResponse;
@@ -21,13 +40,15 @@ export const load = (async ({ url, cookies }) => {
 	try {
 		const response = await authController.loginWithGoogle(credentials.code);
 		authCookiesManager.login(
-			cookies, 
+			cookies,
 			response.accessToken,
 			response.refreshToken,
 		);
+
+		// Redirect to the original destination or default to home
+		const destination = redirectTo && redirectTo !== '' ? redirectTo : '/home';
+		redirect(303, destination);
 	} catch (error) {
 		redirect(303, '/logout');
 	}
-
-	redirect(303, '/');
 }) satisfies PageServerLoad;
