@@ -50,7 +50,7 @@
 		>
 	</Card.Content>
 	<Card.Footer>
-		<Button class="w-full bg-pink-500 hover:bg-pink-900">
+		<Button class="w-full bg-pink-500 hover:bg-pink-900" onclick={handleLogin}>
 			<span>Continuar con Google</span>
 			<ArrowRight />
 		</Button>
