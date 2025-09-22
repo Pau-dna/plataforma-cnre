@@ -12,6 +12,8 @@ type EvaluationRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Evaluation, error)
+	GetByModuleID(moduleID uint) ([]*models.Evaluation, error)
+	GetWithQuestions(id uint) (*models.Evaluation, error)
 }
 
 type evaluationRepository struct {
@@ -56,4 +58,20 @@ func (r *evaluationRepository) GetAll() ([]*models.Evaluation, error) {
 		return nil, err
 	}
 	return evaluations, nil
+}
+
+func (r *evaluationRepository) GetByModuleID(moduleID uint) ([]*models.Evaluation, error) {
+	var evaluations []*models.Evaluation
+	if err := r.db.Where("module_id = ?", moduleID).Order("\"order\" ASC").Find(&evaluations).Error; err != nil {
+		return nil, err
+	}
+	return evaluations, nil
+}
+
+func (r *evaluationRepository) GetWithQuestions(id uint) (*models.Evaluation, error) {
+	var evaluation models.Evaluation
+	if err := r.db.Preload("Questions").First(&evaluation, id).Error; err != nil {
+		return nil, err
+	}
+	return &evaluation, nil
 }

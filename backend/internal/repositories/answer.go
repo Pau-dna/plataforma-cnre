@@ -12,6 +12,7 @@ type AnswerRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Answer, error)
+	GetByQuestionID(questionID uint) ([]*models.Answer, error)
 }
 
 type answerRepository struct {
@@ -53,6 +54,14 @@ func (r *answerRepository) Delete(id uint) error {
 func (r *answerRepository) GetAll() ([]*models.Answer, error) {
 	var answers []*models.Answer
 	if err := r.db.Find(&answers).Error; err != nil {
+		return nil, err
+	}
+	return answers, nil
+}
+
+func (r *answerRepository) GetByQuestionID(questionID uint) ([]*models.Answer, error) {
+	var answers []*models.Answer
+	if err := r.db.Where("question_id = ?", questionID).Order("\"order\" ASC").Find(&answers).Error; err != nil {
 		return nil, err
 	}
 	return answers, nil

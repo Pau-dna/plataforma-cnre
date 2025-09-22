@@ -102,32 +102,22 @@ func (s *moduleService) DeleteModule(id uint) error {
 }
 
 func (s *moduleService) GetModulesByCourse(courseID uint) ([]*models.Module, error) {
-	// This would require a repository method to filter by course ID
-	// For now, we'll implement a basic version
-	modules, err := s.store.Modules.GetAll()
+	// Use the new repository method to filter by course ID at database level
+	modules, err := s.store.Modules.GetByCourseID(courseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get modules: %w", err)
 	}
 
-	// Filter by course ID
-	var courseModules []*models.Module
-	for _, module := range modules {
-		if module.CourseID == courseID {
-			courseModules = append(courseModules, module)
-		}
-	}
-
-	return courseModules, nil
+	return modules, nil
 }
 
 func (s *moduleService) GetModuleWithContent(id uint) (*models.Module, error) {
-	// This would require a repository method to preload content
-	module, err := s.store.Modules.Get(id)
+	// Use the new repository method to preload content
+	module, err := s.store.Modules.GetWithContent(id)
 	if err != nil {
 		return nil, fmt.Errorf("module not found: %w", err)
 	}
 
-	// For now, return the module - would need to implement preloading in repository
 	return module, nil
 }
 

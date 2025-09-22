@@ -12,6 +12,7 @@ type ContentRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Content, error)
+	GetByModuleID(moduleID uint) ([]*models.Content, error)
 }
 
 type contentRepository struct {
@@ -53,6 +54,14 @@ func (r *contentRepository) Delete(id uint) error {
 func (r *contentRepository) GetAll() ([]*models.Content, error) {
 	var contents []*models.Content
 	if err := r.db.Find(&contents).Error; err != nil {
+		return nil, err
+	}
+	return contents, nil
+}
+
+func (r *contentRepository) GetByModuleID(moduleID uint) ([]*models.Content, error) {
+	var contents []*models.Content
+	if err := r.db.Where("module_id = ?", moduleID).Order("\"order\" ASC").Find(&contents).Error; err != nil {
 		return nil, err
 	}
 	return contents, nil

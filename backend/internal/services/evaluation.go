@@ -103,31 +103,21 @@ func (s *evaluationService) DeleteEvaluation(id uint) error {
 }
 
 func (s *evaluationService) GetEvaluationsByModule(moduleID uint) ([]*models.Evaluation, error) {
-	// This would require a repository method to filter by module ID
-	// For now, we'll implement a basic version
-	evaluations, err := s.store.Evaluations.GetAll()
+	// Use the new repository method to filter by module ID at database level
+	evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get evaluations: %w", err)
 	}
 
-	// Filter by module ID
-	var moduleEvaluations []*models.Evaluation
-	for _, evaluation := range evaluations {
-		if evaluation.ModuleID == moduleID {
-			moduleEvaluations = append(moduleEvaluations, evaluation)
-		}
-	}
-
-	return moduleEvaluations, nil
+	return evaluations, nil
 }
 
 func (s *evaluationService) GetEvaluationWithQuestions(id uint) (*models.Evaluation, error) {
-	// This would require a repository method to preload questions
-	evaluation, err := s.store.Evaluations.Get(id)
+	// Use the new repository method to preload questions
+	evaluation, err := s.store.Evaluations.GetWithQuestions(id)
 	if err != nil {
 		return nil, fmt.Errorf("evaluation not found: %w", err)
 	}
 
-	// For now, return the evaluation - would need to implement preloading in repository
 	return evaluation, nil
 }

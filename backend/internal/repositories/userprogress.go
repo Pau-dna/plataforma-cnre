@@ -12,6 +12,9 @@ type UserProgressRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.UserProgress, error)
+	GetByUserAndCourse(userID, courseID uint) ([]*models.UserProgress, error)
+	GetByUserAndModule(userID, moduleID uint) ([]*models.UserProgress, error)
+	GetByUserAndContent(userID, contentID uint) (*models.UserProgress, error)
 }
 
 type userprogressRepository struct {
@@ -56,4 +59,28 @@ func (r *userprogressRepository) GetAll() ([]*models.UserProgress, error) {
 		return nil, err
 	}
 	return userprogresss, nil
+}
+
+func (r *userprogressRepository) GetByUserAndCourse(userID, courseID uint) ([]*models.UserProgress, error) {
+	var userProgress []*models.UserProgress
+	if err := r.db.Where("user_id = ? AND course_id = ?", userID, courseID).Find(&userProgress).Error; err != nil {
+		return nil, err
+	}
+	return userProgress, nil
+}
+
+func (r *userprogressRepository) GetByUserAndModule(userID, moduleID uint) ([]*models.UserProgress, error) {
+	var userProgress []*models.UserProgress
+	if err := r.db.Where("user_id = ? AND module_id = ?", userID, moduleID).Find(&userProgress).Error; err != nil {
+		return nil, err
+	}
+	return userProgress, nil
+}
+
+func (r *userprogressRepository) GetByUserAndContent(userID, contentID uint) (*models.UserProgress, error) {
+	var userProgress models.UserProgress
+	if err := r.db.Where("user_id = ? AND content_id = ?", userID, contentID).First(&userProgress).Error; err != nil {
+		return nil, err
+	}
+	return &userProgress, nil
 }

@@ -99,31 +99,21 @@ func (s *questionService) DeleteQuestion(id uint) error {
 }
 
 func (s *questionService) GetQuestionsByEvaluation(evaluationID uint) ([]*models.Question, error) {
-	// This would require a repository method to filter by evaluation ID
-	// For now, we'll implement a basic version
-	questions, err := s.store.Questions.GetAll()
+	// Use the new repository method to filter by evaluation ID at database level
+	questions, err := s.store.Questions.GetByEvaluationID(evaluationID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get questions: %w", err)
 	}
 
-	// Filter by evaluation ID
-	var evaluationQuestions []*models.Question
-	for _, question := range questions {
-		if question.EvaluationID == evaluationID {
-			evaluationQuestions = append(evaluationQuestions, question)
-		}
-	}
-
-	return evaluationQuestions, nil
+	return questions, nil
 }
 
 func (s *questionService) GetQuestionWithAnswers(id uint) (*models.Question, error) {
-	// This would require a repository method to preload answers
-	question, err := s.store.Questions.Get(id)
+	// Use the new repository method to preload answers
+	question, err := s.store.Questions.GetWithAnswers(id)
 	if err != nil {
 		return nil, fmt.Errorf("question not found: %w", err)
 	}
 
-	// For now, return the question - would need to implement preloading in repository
 	return question, nil
 }

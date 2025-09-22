@@ -98,22 +98,13 @@ func (s *answerService) DeleteAnswer(id uint) error {
 }
 
 func (s *answerService) GetAnswersByQuestion(questionID uint) ([]*models.Answer, error) {
-	// This would require a repository method to filter by question ID
-	// For now, we'll implement a basic version
-	answers, err := s.store.Answers.GetAll()
+	// Use the new repository method to filter by question ID at database level
+	answers, err := s.store.Answers.GetByQuestionID(questionID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get answers: %w", err)
 	}
 
-	// Filter by question ID
-	var questionAnswers []*models.Answer
-	for _, answer := range answers {
-		if answer.QuestionID == questionID {
-			questionAnswers = append(questionAnswers, answer)
-		}
-	}
-
-	return questionAnswers, nil
+	return answers, nil
 }
 
 func (s *answerService) ValidateAnswers(questionID uint, selectedAnswerIDs []uint) (bool, int, error) {
