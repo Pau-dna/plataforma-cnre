@@ -53,6 +53,13 @@ export class QuestionController extends BaseController {
 	async getQuestionsByEvaluation(evaluationId: number): Promise<Question[]> {
 		return this.get<Question[]>(`/api/v1/evaluations/${evaluationId}/questions`);
 	}
+
+	/**
+	 * Get question with answers
+	 */
+	async getQuestionWithAnswers(questionId: number): Promise<Question> {
+		return this.get<Question>(`/api/v1/questions/${questionId}/answers`);
+	}
 }
 
 export class AnswerController extends BaseController {
