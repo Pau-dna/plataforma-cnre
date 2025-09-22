@@ -11,7 +11,7 @@
 
 	const hasBack = $derived(browser && window?.history && window.history.length > 2);
 	const backJavascript = 'javascript:history.back()';
-	const backLink = $derived(hasBack ? backJavascript : href || backJavascript);
+	const backLink = $derived(href || (hasBack ? backJavascript : backJavascript));
 </script>
 
 <div class="block h-14 md:hidden">
