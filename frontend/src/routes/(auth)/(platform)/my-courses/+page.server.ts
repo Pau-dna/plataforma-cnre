@@ -1,9 +1,10 @@
+import { EnrollmentController } from '$lib';
 import { CourseController } from '$lib/controllers/course';
 import type { PageServerLoad } from './$types';
 
-export const load = (async () => {
-	const courseController = new CourseController();
-	const courses = await courseController.getCourses();
+export const load = (async ({ locals }) => {
+	const enrollmentController = new EnrollmentController(locals?.accessToken || "");
+	const enrollments = await enrollmentController.getUserEnrollments(locals.user.id);
 
-	return { courses };
+	return { enrollments };
 }) satisfies PageServerLoad;
