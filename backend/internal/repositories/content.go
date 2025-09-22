@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/imlargo/go-api-template/internal/models"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -26,7 +27,23 @@ func NewContentRepository(r *Repository) ContentRepository {
 }
 
 func (r *contentRepository) Create(content *models.Content) error {
-	return r.db.Create(content).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Get the maximum order for this module
+		var maxOrder int
+		err := tx.Model(&models.Content{}).
+			Where("module_id = ?", content.ModuleID).
+			Select("COALESCE(MAX(\"order\"), 0)").
+			Scan(&maxOrder).Error
+		if err != nil {
+			return err
+		}
+
+		// Set the next order
+		content.Order = maxOrder + 1
+
+		// Create the content
+		return tx.Create(content).Error
+	})
 }
 
 func (r *contentRepository) Get(id uint) (*models.Content, error) {
