@@ -60,6 +60,80 @@ definitions:
     - notification
     - user_id
     type: object
+  github_com_imlargo_go-api-template_internal_dto.UpdateContentRequest:
+    properties:
+      body:
+        type: string
+      description:
+        type: string
+      media_url:
+        type: string
+      order:
+        type: integer
+      title:
+        type: string
+      type:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_enums.ContentType'
+    type: object
+  github_com_imlargo_go-api-template_internal_dto.UpdateCourseRequest:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      module_count:
+        type: integer
+      short_description:
+        type: string
+      student_count:
+        type: integer
+      title:
+        type: string
+    type: object
+  github_com_imlargo_go-api-template_internal_dto.UpdateEnrollmentRequest:
+    properties:
+      is_complete:
+        type: boolean
+      progress:
+        type: number
+    type: object
+  github_com_imlargo_go-api-template_internal_dto.UpdateEvaluationAttemptRequest:
+    properties:
+      completed_at:
+        type: string
+      is_completed:
+        type: boolean
+      score:
+        type: number
+    type: object
+  github_com_imlargo_go-api-template_internal_dto.UpdateEvaluationRequest:
+    properties:
+      description:
+        type: string
+      max_attempts:
+        type: integer
+      order:
+        type: integer
+      passing_score:
+        type: number
+      question_count:
+        type: integer
+      time_limit:
+        type: integer
+      title:
+        type: string
+      type:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_enums.ContentType'
+    type: object
+  github_com_imlargo_go-api-template_internal_dto.UpdateModuleRequest:
+    properties:
+      description:
+        type: string
+      order:
+        type: integer
+      title:
+        type: string
+    type: object
   github_com_imlargo_go-api-template_internal_dto.UserAuthResponse:
     properties:
       tokens:
@@ -790,6 +864,46 @@ paths:
       summary: Get course by ID
       tags:
       - courses
+    patch:
+      consumes:
+      - application/json
+      description: Update a course by ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Course data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_dto.UpdateCourseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Course updated successfully
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+        "404":
+          description: Course not found
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update course
+      tags:
+      - courses
     put:
       consumes:
       - application/json
@@ -979,6 +1093,46 @@ paths:
       summary: Get enrollment by ID
       tags:
       - enrollments
+    patch:
+      consumes:
+      - application/json
+      description: Update an enrollment by ID
+      parameters:
+      - description: Enrollment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Enrollment data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_dto.UpdateEnrollmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Enrollment updated successfully
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+        "404":
+          description: Enrollment not found
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update enrollment
+      tags:
+      - enrollments
   /api/v1/evaluation-attempts/{id}:
     get:
       description: Get an evaluation attempt by its ID
@@ -1006,6 +1160,46 @@ paths:
             additionalProperties: true
             type: object
       summary: Get evaluation attempt
+      tags:
+      - evaluation-attempts
+    patch:
+      consumes:
+      - application/json
+      description: Update an evaluation attempt by ID
+      parameters:
+      - description: Attempt ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Attempt data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_dto.UpdateEvaluationAttemptRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Attempt updated successfully
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+        "404":
+          description: Attempt not found
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update evaluation attempt
       tags:
       - evaluation-attempts
   /api/v1/evaluation-attempts/{id}/score:
@@ -1885,6 +2079,45 @@ paths:
       summary: Unsuscribe SSE
       tags:
       - notifications
+  /api/v1/users/{userId}/courses/{courseId}/enrollment:
+    get:
+      description: Get enrollment for a specific user and course
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user course enrollment
+      tags:
+      - enrollments
   /api/v1/users/{userId}/courses/{id}/complete:
     post:
       description: Mark an enrollment as completed

@@ -5,8 +5,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
-"github.com/imlargo/go-api-template/internal/responses"
+	"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -126,31 +127,31 @@ func (h *ModuleHandler) UpdateModule(c *gin.Context) {
 // @Failure500{object}responses.ErrorResponse"Internal Server Error"
 // @Security     BearerAuth
 func (h *ModuleHandler) UpdateModulePatch(c *gin.Context) {
-moduleID := c.Param("id")
-if moduleID == "" {
-responses.ErrorBadRequest(c, "Module ID is required")
-return
-}
+	moduleID := c.Param("id")
+	if moduleID == "" {
+		responses.ErrorBadRequest(c, "Module ID is required")
+		return
+	}
 
-moduleIDInt, err := strconv.Atoi(moduleID)
-if err != nil {
-responses.ErrorBadRequest(c, "Invalid Module ID: "+err.Error())
-return
-}
+	moduleIDInt, err := strconv.Atoi(moduleID)
+	if err != nil {
+		responses.ErrorBadRequest(c, "Invalid Module ID: "+err.Error())
+		return
+	}
 
-var payload map[string]interface{}
-if err := c.BindJSON(&payload); err != nil {
-responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
-return
-}
+	var payload map[string]interface{}
+	if err := c.BindJSON(&payload); err != nil {
+		responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+		return
+	}
 
-module, err := h.moduleService.UpdateModulePatch(uint(moduleIDInt), payload)
-if err != nil {
-responses.ErrorInternalServerWithMessage(c, err.Error())
-return
-}
+	module, err := h.moduleService.UpdateModulePatch(uint(moduleIDInt), payload)
+	if err != nil {
+		responses.ErrorInternalServerWithMessage(c, err.Error())
+		return
+	}
 
-responses.Ok(c, module)
+	responses.Ok(c, module)
 }
 
 // @Summary Delete module

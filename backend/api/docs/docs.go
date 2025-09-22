@@ -513,6 +513,68 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a course by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "courses"
+                ],
+                "summary": "Update course",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Course ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Course data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_dto.UpdateCourseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Course updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Course"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Course not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/courses/{id}/enrollments": {
@@ -731,6 +793,68 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an enrollment by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enrollments"
+                ],
+                "summary": "Update enrollment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Enrollment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Enrollment data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_dto.UpdateEnrollmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Enrollment updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Enrollment not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/evaluation-attempts/start": {
@@ -815,6 +939,68 @@ const docTemplate = `{
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an evaluation attempt by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "evaluation-attempts"
+                ],
+                "summary": "Update evaluation attempt",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Attempt ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Attempt data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_dto.UpdateEvaluationAttemptRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Attempt updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Attempt not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
                         }
                     }
                 }
@@ -2119,6 +2305,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/users/{userId}/courses/{courseId}/enrollment": {
+            "get": {
+                "description": "Get enrollment for a specific user and course",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enrollments"
+                ],
+                "summary": "Get user course enrollment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/users/{userId}/courses/{id}/complete": {
             "post": {
                 "description": "Mark an enrollment as completed",
@@ -2644,6 +2887,120 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.UpdateContentRequest": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "media_url": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_enums.ContentType"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.UpdateCourseRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "module_count": {
+                    "type": "integer"
+                },
+                "short_description": {
+                    "type": "string"
+                },
+                "student_count": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.UpdateEnrollmentRequest": {
+            "type": "object",
+            "properties": {
+                "is_complete": {
+                    "type": "boolean"
+                },
+                "progress": {
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.UpdateEvaluationAttemptRequest": {
+            "type": "object",
+            "properties": {
+                "completed_at": {
+                    "type": "string"
+                },
+                "is_completed": {
+                    "type": "boolean"
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.UpdateEvaluationRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "max_attempts": {
+                    "type": "integer"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "passing_score": {
+                    "type": "number"
+                },
+                "question_count": {
+                    "type": "integer"
+                },
+                "time_limit": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_enums.ContentType"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.UpdateModuleRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
