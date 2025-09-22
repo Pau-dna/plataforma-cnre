@@ -62,7 +62,11 @@ export class ModuleController extends BaseController {
 	 * Reorder modules within a course
 	 */
 	async reorderModules(courseId: number, moduleOrders: ReorderItemDTO[]): Promise<void> {
-		return this.post(`/api/v1/courses/${courseId}/modules/reorder`, moduleOrders);
+		for (const modulo of moduleOrders) {
+			await this.updateModulePatch(modulo.id, {
+				order: modulo.order
+			});
+		}
 	}
 
 	/**
