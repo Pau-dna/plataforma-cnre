@@ -67,12 +67,239 @@ definitions:
       user:
         $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.User'
     type: object
+  github_com_imlargo_go-api-template_internal_enums.ContentType:
+    enum:
+    - content
+    - evaluation
+    type: string
+    x-enum-varnames:
+    - ContentTypeContent
+    - ContentTypeEvaluation
   github_com_imlargo_go-api-template_internal_enums.NotificationType:
     enum:
     - base
     type: string
     x-enum-varnames:
     - NotificationTypeBase
+  github_com_imlargo_go-api-template_internal_enums.QuestionType:
+    enum:
+    - single_choice
+    - multiple_choice
+    type: string
+    x-enum-varnames:
+    - QuestionTypeSingle
+    - QuestionTypeMultiple
+  github_com_imlargo_go-api-template_internal_enums.UserRole:
+    enum:
+    - student
+    - instructor
+    - admin
+    type: string
+    x-enum-varnames:
+    - UserRoleStudent
+    - UserRoleInstructor
+    - UserRoleAdmin
+  github_com_imlargo_go-api-template_internal_models.Answer:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      isCorrect:
+        type: boolean
+      order:
+        type: integer
+      question:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Question'
+        description: Relaciones
+      question_id:
+        type: integer
+      text:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_imlargo_go-api-template_internal_models.AttemptAnswer:
+    properties:
+      is_correct:
+        type: boolean
+      points:
+        type: integer
+      question_id:
+        type: integer
+      selected_answer_ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  github_com_imlargo_go-api-template_internal_models.Content:
+    properties:
+      body:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      mediaUrl:
+        type: string
+      module:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+        description: Relaciones
+      module_id:
+        type: integer
+      order:
+        type: integer
+      title:
+        type: string
+      type:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_enums.ContentType'
+      updated_at:
+        type: string
+      user_progress:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.UserProgress'
+        type: array
+    type: object
+  github_com_imlargo_go-api-template_internal_models.Course:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      enrollments:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+        type: array
+      id:
+        type: integer
+      image_url:
+        type: string
+      module_count:
+        type: integer
+      modules:
+        description: Relaciones
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+        type: array
+      short_description:
+        type: string
+      student_count:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_imlargo_go-api-template_internal_models.Enrollment:
+    properties:
+      completed_at:
+        type: string
+      course:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+      course_id:
+        type: integer
+      created_at:
+        type: string
+      enrolled_at:
+        type: string
+      id:
+        type: integer
+      progress:
+        description: porcentaje 0-100
+        type: number
+      updated_at:
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.User'
+        description: Relaciones
+      user_id:
+        type: integer
+    type: object
+  github_com_imlargo_go-api-template_internal_models.Evaluation:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      evaluation_attempts:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt'
+        type: array
+      id:
+        type: integer
+      max_attempts:
+        type: integer
+      module:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+        description: Relaciones
+      module_id:
+        type: integer
+      order:
+        type: integer
+      passing_score:
+        type: integer
+      question_count:
+        type: integer
+      questions:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Question'
+        type: array
+      time_limit:
+        description: en minutos
+        type: integer
+      title:
+        type: string
+      type:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_enums.ContentType'
+      updated_at:
+        type: string
+      user_progress:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.UserProgress'
+        type: array
+    type: object
+  github_com_imlargo_go-api-template_internal_models.EvaluationAttempt:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.AttemptAnswer'
+        type: array
+      created_at:
+        type: string
+      evaluation:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+      evaluation_id:
+        type: integer
+      id:
+        type: integer
+      passed:
+        type: boolean
+      score:
+        type: integer
+      started_at:
+        type: string
+      submitted_at:
+        type: string
+      time_spent:
+        description: en minutos
+        type: integer
+      total_points:
+        type: integer
+      updated_at:
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.User'
+        description: Relaciones
+      user_id:
+        type: integer
+    type: object
   github_com_imlargo_go-api-template_internal_models.File:
     properties:
       content_type:
@@ -90,6 +317,35 @@ definitions:
       updated_at:
         type: string
       url:
+        type: string
+    type: object
+  github_com_imlargo_go-api-template_internal_models.Module:
+    properties:
+      contents:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+        type: array
+      course:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+        description: Relaciones
+      course_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      evaluations:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+        type: array
+      id:
+        type: integer
+      order:
+        type: integer
+      title:
+        type: string
+      updated_at:
         type: string
     type: object
   github_com_imlargo_go-api-template_internal_models.Notification:
@@ -124,18 +380,92 @@ definitions:
       user_id:
         type: integer
     type: object
+  github_com_imlargo_go-api-template_internal_models.Question:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Answer'
+        type: array
+      created_at:
+        type: string
+      evaluation:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+        description: Relaciones
+      evaluation_id:
+        type: integer
+      explanation:
+        type: string
+      id:
+        type: integer
+      points:
+        type: integer
+      text:
+        type: string
+      type:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_enums.QuestionType'
+      updated_at:
+        type: string
+    type: object
   github_com_imlargo_go-api-template_internal_models.User:
     properties:
+      avatarUrl:
+        type: string
       created_at:
         type: string
       email:
         type: string
+      enrollments:
+        description: Relaciones
+        items:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+        type: array
+      firstName:
+        type: string
       id:
         type: integer
-      name:
+      lastName:
         type: string
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_enums.UserRole'
       updated_at:
         type: string
+    type: object
+  github_com_imlargo_go-api-template_internal_models.UserProgress:
+    properties:
+      attempts:
+        type: integer
+      completed_at:
+        type: string
+      content:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+      content_id:
+        description: puede ser Content o Evaluation
+        type: integer
+      course:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+      course_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      module:
+        $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+      module_id:
+        type: integer
+      score:
+        type: integer
+      updated_at:
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.User'
+        description: Relaciones
+      user_id:
+        type: integer
     type: object
   github_com_imlargo_go-api-template_internal_responses.ErrorResponse:
     properties:
@@ -171,6 +501,736 @@ info:
   title: Go api
   version: "1.0"
 paths:
+  /api/v1/content:
+    post:
+      consumes:
+      - application/json
+      description: Create new content for a module
+      parameters:
+      - description: Content data
+        in: body
+        name: content
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create content
+      tags:
+      - content
+  /api/v1/content/{id}:
+    delete:
+      description: Delete content by ID
+      parameters:
+      - description: Content ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete content
+      tags:
+      - content
+    get:
+      description: Get content by ID
+      parameters:
+      - description: Content ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get content
+      tags:
+      - content
+    put:
+      consumes:
+      - application/json
+      description: Update content by ID
+      parameters:
+      - description: Content ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Content data
+        in: body
+        name: content
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update content
+      tags:
+      - content
+  /api/v1/courses:
+    get:
+      description: Get all courses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all courses
+      tags:
+      - courses
+    post:
+      consumes:
+      - application/json
+      description: Create a new course
+      parameters:
+      - description: Course data
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new course
+      tags:
+      - courses
+  /api/v1/courses/{courseId}/modules:
+    get:
+      description: Get all modules for a specific course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get modules by course
+      tags:
+      - modules
+  /api/v1/courses/{courseId}/modules/reorder:
+    post:
+      consumes:
+      - application/json
+      description: Reorder modules for a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Reorder modules
+      tags:
+      - modules
+  /api/v1/courses/{id}:
+    delete:
+      description: Delete a course by its ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete course
+      tags:
+      - courses
+    get:
+      description: Get a course by its ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get course by ID
+      tags:
+      - courses
+    put:
+      consumes:
+      - application/json
+      description: Update a course by its ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Course data
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update course
+      tags:
+      - courses
+  /api/v1/courses/{id}/enrollments:
+    get:
+      description: Get all enrollments for a specific course
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get course enrollments
+      tags:
+      - enrollments
+  /api/v1/courses/{id}/modules:
+    get:
+      description: Get a course by its ID with all modules
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Course'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get course with modules
+      tags:
+      - courses
+  /api/v1/enrollments:
+    post:
+      consumes:
+      - application/json
+      description: Enroll a user in a specific course
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Enroll user in course
+      tags:
+      - enrollments
+  /api/v1/enrollments/{id}:
+    delete:
+      description: Delete an enrollment by its ID
+      parameters:
+      - description: Enrollment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete enrollment
+      tags:
+      - enrollments
+    get:
+      description: Get an enrollment by its ID
+      parameters:
+      - description: Enrollment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get enrollment by ID
+      tags:
+      - enrollments
+  /api/v1/evaluation-attempts/{id}:
+    get:
+      description: Get an evaluation attempt by its ID
+      parameters:
+      - description: Attempt ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get evaluation attempt
+      tags:
+      - evaluation-attempts
+  /api/v1/evaluation-attempts/{id}/score:
+    post:
+      description: Score an evaluation attempt (admin only)
+      parameters:
+      - description: Attempt ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Score evaluation attempt
+      tags:
+      - evaluation-attempts
+  /api/v1/evaluation-attempts/{id}/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submit answers for an evaluation attempt
+      parameters:
+      - description: Attempt ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Submit evaluation attempt
+      tags:
+      - evaluation-attempts
+  /api/v1/evaluation-attempts/start:
+    post:
+      consumes:
+      - application/json
+      description: Start a new evaluation attempt for a user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Start evaluation attempt
+      tags:
+      - evaluation-attempts
+  /api/v1/evaluations:
+    post:
+      consumes:
+      - application/json
+      description: Create new evaluation for a module
+      parameters:
+      - description: Evaluation data
+        in: body
+        name: evaluation
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create evaluation
+      tags:
+      - evaluations
+  /api/v1/evaluations/{id}:
+    delete:
+      description: Delete evaluation by ID
+      parameters:
+      - description: Evaluation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete evaluation
+      tags:
+      - evaluations
+    get:
+      description: Get evaluation by ID
+      parameters:
+      - description: Evaluation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get evaluation
+      tags:
+      - evaluations
+    put:
+      consumes:
+      - application/json
+      description: Update evaluation by ID
+      parameters:
+      - description: Evaluation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Evaluation data
+        in: body
+        name: evaluation
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update evaluation
+      tags:
+      - evaluations
   /api/v1/files:
     post:
       consumes:
@@ -331,6 +1391,228 @@ paths:
       summary: Get presigned URL for file upload
       tags:
       - files
+  /api/v1/modules:
+    post:
+      consumes:
+      - application/json
+      description: Create a new module
+      parameters:
+      - description: Module data
+        in: body
+        name: module
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new module
+      tags:
+      - modules
+  /api/v1/modules/{id}:
+    delete:
+      description: Delete a module by its ID
+      parameters:
+      - description: Module ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete module
+      tags:
+      - modules
+    get:
+      description: Get a module by its ID
+      parameters:
+      - description: Module ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get module by ID
+      tags:
+      - modules
+    put:
+      consumes:
+      - application/json
+      description: Update a module by its ID
+      parameters:
+      - description: Module ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module data
+        in: body
+        name: module
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update module
+      tags:
+      - modules
+  /api/v1/modules/{id}/content:
+    get:
+      description: Get a module by its ID with all content
+      parameters:
+      - description: Module ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Module'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get module with content
+      tags:
+      - modules
+  /api/v1/modules/{moduleId}/content:
+    get:
+      description: Get all content for a specific module
+      parameters:
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Content'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get module contents
+      tags:
+      - content
+  /api/v1/modules/{moduleId}/evaluations:
+    get:
+      description: Get all evaluations for a specific module
+      parameters:
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Evaluation'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get module evaluations
+      tags:
+      - evaluations
   /api/v1/notifications:
     get:
       consumes:
@@ -607,6 +1889,181 @@ paths:
       summary: Unsuscribe SSE
       tags:
       - notifications
+  /api/v1/users/{userId}/courses/{id}/complete:
+    post:
+      description: Mark an enrollment as completed
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Complete enrollment
+      tags:
+      - enrollments
+  /api/v1/users/{userId}/courses/{id}/progress:
+    put:
+      consumes:
+      - application/json
+      description: Update the progress of an enrollment
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update enrollment progress
+      tags:
+      - enrollments
+  /api/v1/users/{userId}/enrollments:
+    get:
+      description: Get all enrollments for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user enrollments
+      tags:
+      - enrollments
+  /api/v1/users/{userId}/evaluations/{evaluationId}/attempts:
+    get:
+      description: Get all attempts for a user and evaluation
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Evaluation ID
+        in: path
+        name: evaluationId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.EvaluationAttempt'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user evaluation attempts
+      tags:
+      - evaluation-attempts
+  /api/v1/users/{userId}/evaluations/{evaluationId}/can-attempt:
+    get:
+      description: Check if a user can attempt an evaluation
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Evaluation ID
+        in: path
+        name: evaluationId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Check if user can attempt evaluation
+      tags:
+      - evaluation-attempts
   /auth/login:
     post:
       consumes:

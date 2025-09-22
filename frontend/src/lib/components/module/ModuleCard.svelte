@@ -55,7 +55,7 @@
 			</div>
 		</div>
 	</Card.Header>
-	<Card.Content class="flex justify-between w-full">
+	<Card.Content class="flex w-full justify-between">
 		<div class="flex items-center gap-4">
 			<div class="flex items-center gap-2">
 				<CirclePlay class="text-muted-foreground h-4 w-4 leading-none" />
@@ -66,6 +66,6 @@
 				<span class="text-sm leading-none">Ver Contenido</span>
 			</div>
 		</div>
-        <span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
+		<span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
 	</Card.Content>
 </Card.Root>

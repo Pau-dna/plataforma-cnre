@@ -1,4 +1,3 @@
-
 package repositories
 
 import (
@@ -11,6 +10,7 @@ type AnswerRepository interface {
 	Create(answer *models.Answer) error
 	Update(answer *models.Answer) error
 	Delete(id uint) error
+	GetAll() ([]*models.Answer, error)
 }
 
 type answerRepository struct {

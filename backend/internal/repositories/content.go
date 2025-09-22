@@ -1,4 +1,3 @@
-
 package repositories
 
 import (
@@ -11,6 +10,7 @@ type ContentRepository interface {
 	Create(content *models.Content) error
 	Update(content *models.Content) error
 	Delete(id uint) error
+	GetAll() ([]*models.Content, error)
 }
 
 type contentRepository struct {

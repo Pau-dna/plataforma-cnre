@@ -1,40 +1,82 @@
-import type { Module } from '$lib/types/models/course';
+import { BaseController } from './base';
+import type {
+	Module,
+	CreateModuleDTO,
+	UpdateModuleDTO,
+	Content,
+	Evaluation,
+	ReorderItemDTO
+} from '$lib/types';
 
-export class ModuleController {
+export class ModuleController extends BaseController {
+	/**
+	 * Get a specific module by ID
+	 */
+	async getModule(id: number): Promise<Module> {
+		return this.get<Module>(`/api/v1/modules/${id}`);
+	}
+
+	/**
+	 * Get module with all content loaded
+	 */
+	async getModuleWithContent(id: number): Promise<Module> {
+		return this.get<Module>(`/api/v1/modules/${id}/content`);
+	}
+
+	/**
+	 * Get all modules for a specific course
+	 */
+	async getModulesByCourse(courseId: number): Promise<Module[]> {
+		return this.get<Module[]>(`/api/v1/courses/${courseId}/modules`);
+	}
+
+	/**
+	 * Create a new module
+	 */
+	async createModule(moduleData: CreateModuleDTO): Promise<Module> {
+		return this.post<Module>('/api/v1/modules', moduleData);
+	}
+
+	/**
+	 * Update an existing module
+	 */
+	async updateModule(id: number, moduleData: UpdateModuleDTO): Promise<Module> {
+		return this.put<Module>(`/api/v1/modules/${id}`, moduleData);
+	}
+
+	/**
+	 * Delete a module
+	 */
+	async deleteModule(id: number): Promise<void> {
+		return this.delete(`/api/v1/modules/${id}`);
+	}
+
+	/**
+	 * Reorder modules within a course
+	 */
+	async reorderModules(courseId: number, moduleOrders: ReorderItemDTO[]): Promise<void> {
+		return this.post(`/api/v1/courses/${courseId}/modules/reorder`, moduleOrders);
+	}
+
+	/**
+	 * Get all content for a specific module
+	 */
+	async getModuleContents(moduleId: number): Promise<Content[]> {
+		return this.get<Content[]>(`/api/v1/modules/${moduleId}/content`);
+	}
+
+	/**
+	 * Get all evaluations for a specific module
+	 */
+	async getModuleEvaluations(moduleId: number): Promise<Evaluation[]> {
+		return this.get<Evaluation[]>(`/api/v1/modules/${moduleId}/evaluations`);
+	}
+
+	/**
+	 * Legacy method for backwards compatibility
+	 * @deprecated Use getModulesByCourse instead
+	 */
 	async getModules(courseID: number): Promise<Module[]> {
-		return [
-			{
-				id: 1,
-				order: 1,
-				course_id: courseID,
-				contents: [],
-				title: 'Introducción al CNRE',
-				description: 'Bienvenida y presentación general del CNRE Medellín 2025.'
-			},
-			{
-				id: 2,
-				order: 2,
-				course_id: courseID,
-				contents: [],
-				title: 'Competencias Técnicas',
-				description: 'Formación en habilidades técnicas requeridas para el personal del CNRE.'
-			},
-			{
-				id: 3,
-				order: 3,
-				course_id: courseID,
-				contents: [],
-				title: 'Gestión Administrativa',
-				description: 'Módulo sobre procesos administrativos y gestión interna.'
-			},
-			{
-				id: 4,
-				order: 4,
-				course_id: courseID,
-				contents: [],
-				title: 'Evaluación y Seguimiento',
-				description: 'Herramientas y metodologías para la evaluación y seguimiento del desempeño.'
-			}
-		];
+		return this.getModulesByCourse(courseID);
 	}
 }
