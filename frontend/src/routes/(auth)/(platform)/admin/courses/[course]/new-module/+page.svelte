@@ -18,7 +18,6 @@
 	const formdata = $state<CreateModuleDTO>({
 		title: '',
 		description: '',
-		order: 0,
 		course_id: parseInt(page.params.course as string)
 	});
 
