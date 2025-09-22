@@ -4,12 +4,15 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import EditModule from './EditModule.svelte';
+	import DeleteConfirmDialog from '$lib/components/ui/DeleteConfirmDialog.svelte';
 	import type { Module } from '$lib/types';
+	import { ModuleController } from '$lib/controllers/module';
 
 	type Props = {
 		module: Module;
 		actDate?: string;
 		onupdate?: (module: Module) => void;
+		ondelete?: (module: Module) => void;
 		onmoveup?: (module: Module) => void;
 		onmovedown?: (module: Module) => void;
 		canMoveUp?: boolean;
@@ -17,26 +20,40 @@
 	};
 
 	const {
-		module,
+		module: modulo,
 		actDate,
 		onupdate,
+		ondelete,
 		onmoveup,
 		onmovedown,
 		canMoveUp = true,
 		canMoveDown = true
 	}: Props = $props();
+
 	let openEdit = $state(false);
+	let openDelete = $state(false);
+	const moduleController = new ModuleController();
 
 	function handleModuleUpdate(updated: Module) {
 		onupdate?.(updated);
 	}
 
 	function handleMoveUp() {
-		onmoveup?.(module);
+		onmoveup?.(modulo);
 	}
 
 	function handleMoveDown() {
-		onmovedown?.(module);
+		onmovedown?.(modulo);
+	}
+
+	async function handleDelete() {
+		try {
+			await moduleController.deleteModule(modulo.id);
+			ondelete?.(modulo);
+		} catch (error) {
+			console.error('Error deleting module:', error);
+			// TODO: Show error toast
+		}
 	}
 </script>
 
@@ -48,7 +65,7 @@
 					<GripVertical class="text-muted-foreground h-4 w-4" />
 				</Button>
 
-				<span class="text-muted-foreground font-semibold">Módulo {module.id}</span>
+				<span class="text-muted-foreground font-semibold">Módulo {modulo.id}</span>
 			</div>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
@@ -58,10 +75,14 @@
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content>
 					<DropdownMenu.Group>
-						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
+						<DropdownMenu.Item>
+							<a href={`/admin/courses/${modulo.course_id}/${modulo.id}`}> Ver Detalles </a>
+						</DropdownMenu.Item>
 						<DropdownMenu.Item onclick={() => (openEdit = true)}>Editar</DropdownMenu.Item>
 						<DropdownMenu.Separator />
-						<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
+						<DropdownMenu.Item class="text-destructive" onclick={() => (openDelete = true)}>
+							Eliminar
+						</DropdownMenu.Item>
 					</DropdownMenu.Group>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
@@ -76,8 +97,8 @@
 				</Button>
 			</div>
 			<div class="flex flex-col gap-1">
-				<Card.Title class="text-lg">{module.title}</Card.Title>
-				<Card.Description>{module.description}</Card.Description>
+				<Card.Title class="text-lg">{modulo.title}</Card.Title>
+				<Card.Description>{modulo.description}</Card.Description>
 			</div>
 		</div>
 	</Card.Header>
@@ -85,6 +106,7 @@
 		<div class="flex items-center gap-4">
 			<Button
 				href="/admin/courses/{module.course_id}/{module.id}"
+				href="/admin/courses/{modulo.course_id}/{modulo.id}"
 				variant="ghost"
 				size="sm"
 				class="flex items-center gap-2 text-blue-800 hover:bg-blue-50 hover:text-blue-900"
@@ -97,4 +119,10 @@
 	</Card.Content>
 </Card.Root>
 
-<EditModule {module} bind:openEdit onupdate={handleModuleUpdate} />
+<EditModule module={modulo} bind:openEdit onupdate={handleModuleUpdate} />
+<DeleteConfirmDialog
+	bind:open={openDelete}
+	title="¿Eliminar módulo?"
+	description="Esta acción eliminará permanentemente el módulo '{modulo.title}' y todo su contenido asociado. No se puede deshacer."
+	onConfirm={handleDelete}
+/>

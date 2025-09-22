@@ -151,7 +151,7 @@ func (h *EnrollmentHandler) DeleteEnrollment(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	responses.Ok(c, "ok")
 }
 
 // @Summary Get user enrollments

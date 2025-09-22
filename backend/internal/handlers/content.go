@@ -177,7 +177,7 @@ func (h *ContentHandler) DeleteContent(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	responses.Ok(c, "ok")
 }
 
 // @Summary Get module contents

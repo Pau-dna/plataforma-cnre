@@ -176,7 +176,7 @@ func (h *EvaluationHandler) DeleteEvaluation(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	responses.Ok(c, "ok")
 }
 
 // @Summary Get module evaluations

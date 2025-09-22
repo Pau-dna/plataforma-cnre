@@ -5,9 +5,12 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import Back from '$lib/components/kit/Back.svelte';
 
 	let { data }: PageProps = $props();
 </script>
+
+<Back href="/admin/courses" />
 
 <div class="flex items-center justify-center">
 	<Card.Root class="form-card">

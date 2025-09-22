@@ -3068,7 +3068,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "isCorrect": {
+                "is_correct": {
                     "type": "boolean"
                 },
                 "order": {
@@ -3128,7 +3128,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "mediaUrl": {
+                "media_url": {
                     "type": "string"
                 },
                 "module": {

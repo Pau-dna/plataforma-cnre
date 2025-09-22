@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { UserIcon, MailIcon, LogOutIcon } from '@lucide/svelte';
+	import { getUserRoleLabel } from '$lib/types/models/course';
 
 	function getInitials(fullname: string) {
 		const names = fullname.split(' ');
@@ -57,7 +58,7 @@
 						<div class="mt-1 flex items-center gap-1">
 							<UserIcon class="text-muted-foreground size-3" />
 							<Badge variant="secondary" class="h-4 px-1 text-xs">
-								{authStore.user.role}
+								{getUserRoleLabel(authStore.user.role)}
 							</Badge>
 						</div>
 					{/if}

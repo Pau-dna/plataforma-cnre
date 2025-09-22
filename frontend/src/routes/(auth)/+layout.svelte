@@ -4,6 +4,8 @@
 	import { CirclePlay, House } from '@lucide/svelte';
 	import NavigationBar from '$lib/components/layout/NavigationBar.svelte';
 	import type { Icon as IconType } from '@lucide/svelte';
+	import { authStore } from '$lib/stores/auth.svelte';
+	import { UserRole } from '$lib/types/models/course';
 
 	let { children }: { data: LayoutData; children: Snippet } = $props();
 
@@ -12,20 +14,27 @@
 		name: string;
 	};
 
-	const links: NavLink[] = [
-		{
-			name: 'Inicio',
-			href: '/home'
-		},
-		{
-			href: '/my-courses',
-			name: 'Mis Cursos'
-		},
-		{
-			href: '/admin/courses',
-			name: 'Admin'
+	const links: NavLink[] = $derived.by(() => {
+		const internalLinks = [
+			{
+				name: 'Inicio',
+				href: '/home'
+			},
+			{
+				href: '/my-courses',
+				name: 'Mis Cursos'
+			}
+		];
+
+		if (authStore.user?.role === UserRole.ADMIN || authStore.user?.role === UserRole.INSTRUCTOR) {
+			internalLinks.push({
+				href: '/admin/courses',
+				name: 'Admin'
+			});
 		}
-	];
+
+		return internalLinks;
+	});
 </script>
 
 <div class="hidden md:block">

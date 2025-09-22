@@ -10,7 +10,7 @@ type Content struct {
 	Description string            `json:"description" gorm:"type:text"`
 	Type        enums.ContentType `json:"type" gorm:"not null;default:'content'"`
 	Body        string            `json:"body" gorm:"type:text;not null"`
-	MediaURL    string            `json:"mediaUrl" gorm:"column:media_url"`
+	MediaURL    string            `json:"media_url" gorm:"column:media_url"`
 	ModuleID    uint              `json:"module_id" gorm:"not null"`
 
 	// Relaciones

@@ -21,7 +21,6 @@
 		description: '',
 		body: '',
 		media_url: '',
-		order: 1,
 		type: ContentType.CONTENT,
 		module_id: data.moduleId
 	});
