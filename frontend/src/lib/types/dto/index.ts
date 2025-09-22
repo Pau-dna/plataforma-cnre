@@ -114,8 +114,6 @@ export interface SubmitEvaluationAttemptDTO {
 	answers: {
 		attempt_question_id: number;
 		selected_option_ids: number[];
-		is_correct: boolean;
-		points: number;
 	}[];
 }
 
