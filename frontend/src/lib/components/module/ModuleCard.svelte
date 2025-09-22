@@ -83,13 +83,9 @@
 	</Card.Header>
 	<Card.Content class="flex w-full justify-between">
 		<div class="flex items-center gap-4">
-			<div class="flex items-center gap-2">
-				<CirclePlay class="text-muted-foreground h-4 w-4 leading-none" />
-				<span class="text-muted-foreground text-sm leading-none">Video Incluido</span>
-			</div>
-			<div class="flex items-center gap-2 text-cyan-900">
+			<div class="flex items-center gap-2 text-blue-800">
 				<BookOpen class="h-4 w-4 leading-none" />
-				<span class="text-sm leading-none">Ver Contenido</span>
+				<span class="text-sm leading-none">Ver Contenidos</span>
 			</div>
 		</div>
 		<span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
