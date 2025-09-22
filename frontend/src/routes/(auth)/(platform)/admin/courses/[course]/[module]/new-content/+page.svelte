@@ -21,7 +21,6 @@
 		description: '',
 		body: '',
 		media_url: '',
-		order: 1,
 		type: ContentType.CONTENT,
 		module_id: data.moduleId
 	});
@@ -96,17 +95,6 @@
 					id="media_url"
 					placeholder="https://ejemplo.com/video.mp4 o https://ejemplo.com/imagen.jpg"
 					bind:value={formdata.media_url}
-				/>
-			</div>
-
-			<div class="flex flex-col gap-2">
-				<Label for="order">Orden</Label>
-				<Input
-					id="order"
-					type="number"
-					min="1"
-					placeholder="Orden de aparición del contenido"
-					bind:value={formdata.order}
 				/>
 			</div>
 		</Card.Content>

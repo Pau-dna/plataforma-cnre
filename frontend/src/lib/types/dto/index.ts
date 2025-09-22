@@ -28,7 +28,6 @@ export interface UpdateModuleDTO {
 }
 
 export interface CreateContentDTO {
-	order: number;
 	title: string;
 	description?: string;
 	type: ContentType.CONTENT;
