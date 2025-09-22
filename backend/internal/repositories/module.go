@@ -12,6 +12,8 @@ type ModuleRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Module, error)
+	GetByCourseID(courseID uint) ([]*models.Module, error)
+	GetWithContent(id uint) (*models.Module, error)
 }
 
 type moduleRepository struct {
@@ -56,4 +58,20 @@ func (r *moduleRepository) GetAll() ([]*models.Module, error) {
 		return nil, err
 	}
 	return modules, nil
+}
+
+func (r *moduleRepository) GetByCourseID(courseID uint) ([]*models.Module, error) {
+	var modules []*models.Module
+	if err := r.db.Where("course_id = ?", courseID).Order("\"order\" ASC").Find(&modules).Error; err != nil {
+		return nil, err
+	}
+	return modules, nil
+}
+
+func (r *moduleRepository) GetWithContent(id uint) (*models.Module, error) {
+	var module models.Module
+	if err := r.db.Preload("Contents").First(&module, id).Error; err != nil {
+		return nil, err
+	}
+	return &module, nil
 }

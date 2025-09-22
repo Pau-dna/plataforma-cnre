@@ -12,6 +12,8 @@ type QuestionRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Question, error)
+	GetByEvaluationID(evaluationID uint) ([]*models.Question, error)
+	GetWithAnswers(id uint) (*models.Question, error)
 }
 
 type questionRepository struct {
@@ -56,4 +58,20 @@ func (r *questionRepository) GetAll() ([]*models.Question, error) {
 		return nil, err
 	}
 	return questions, nil
+}
+
+func (r *questionRepository) GetByEvaluationID(evaluationID uint) ([]*models.Question, error) {
+	var questions []*models.Question
+	if err := r.db.Where("evaluation_id = ?", evaluationID).Find(&questions).Error; err != nil {
+		return nil, err
+	}
+	return questions, nil
+}
+
+func (r *questionRepository) GetWithAnswers(id uint) (*models.Question, error) {
+	var question models.Question
+	if err := r.db.Preload("Answers").First(&question, id).Error; err != nil {
+		return nil, err
+	}
+	return &question, nil
 }

@@ -120,38 +120,20 @@ func (s *userProgressService) UpdateUserProgressPatch(progressID uint, data map[
 }
 
 func (s *userProgressService) GetUserProgress(userID, courseID uint) ([]*models.UserProgress, error) {
-	// This would require a repository method to filter by user ID and course ID
-	// For now, we'll implement a basic version
-	allProgress, err := s.store.UserProgresss.GetAll()
+	// Use the new repository method to filter by user ID and course ID at database level
+	userProgress, err := s.store.UserProgresss.GetByUserAndCourse(userID, courseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get progress: %w", err)
-	}
-
-	// Filter by user ID and course ID
-	var userProgress []*models.UserProgress
-	for _, progress := range allProgress {
-		if progress.UserID == userID && progress.CourseID == courseID {
-			userProgress = append(userProgress, progress)
-		}
 	}
 
 	return userProgress, nil
 }
 
 func (s *userProgressService) GetUserModuleProgress(userID, moduleID uint) ([]*models.UserProgress, error) {
-	// This would require a repository method to filter by user ID and module ID
-	// For now, we'll implement a basic version
-	allProgress, err := s.store.UserProgresss.GetAll()
+	// Use the new repository method to filter by user ID and module ID at database level
+	moduleProgress, err := s.store.UserProgresss.GetByUserAndModule(userID, moduleID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get progress: %w", err)
-	}
-
-	// Filter by user ID and module ID
-	var moduleProgress []*models.UserProgress
-	for _, progress := range allProgress {
-		if progress.UserID == userID && progress.ModuleID == moduleID {
-			moduleProgress = append(moduleProgress, progress)
-		}
 	}
 
 	return moduleProgress, nil
@@ -242,20 +224,13 @@ func (s *userProgressService) CalculateModuleProgress(userID, moduleID uint) (fl
 }
 
 func (s *userProgressService) GetUserProgressForContent(userID, contentID uint) (*models.UserProgress, error) {
-	// This would require a repository method to filter by user ID and content ID
-	allProgress, err := s.store.UserProgresss.GetAll()
+	// Use the new repository method to filter by user ID and content ID at database level
+	progress, err := s.store.UserProgresss.GetByUserAndContent(userID, contentID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get progress: %w", err)
+		return nil, fmt.Errorf("progress not found: %w", err)
 	}
 
-	// Find progress for specific content
-	for _, progress := range allProgress {
-		if progress.UserID == userID && progress.ContentID == contentID {
-			return progress, nil
-		}
-	}
-
-	return nil, fmt.Errorf("progress not found")
+	return progress, nil
 }
 
 func (s *userProgressService) updateCourseProgress(userID, courseID uint) error {

@@ -104,22 +104,13 @@ func (s *contentService) DeleteContent(id uint) error {
 }
 
 func (s *contentService) GetContentsByModule(moduleID uint) ([]*models.Content, error) {
-	// This would require a repository method to filter by module ID
-	// For now, we'll implement a basic version
-	contents, err := s.store.Contents.GetAll()
+	// Use the new repository method to filter by module ID at database level
+	contents, err := s.store.Contents.GetByModuleID(moduleID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get contents: %w", err)
 	}
 
-	// Filter by module ID
-	var moduleContents []*models.Content
-	for _, content := range contents {
-		if content.ModuleID == moduleID {
-			moduleContents = append(moduleContents, content)
-		}
-	}
-
-	return moduleContents, nil
+	return contents, nil
 }
 
 func (s *contentService) ReorderContent(moduleID uint, contentOrders []struct {

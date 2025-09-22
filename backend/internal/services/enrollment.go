@@ -121,41 +121,23 @@ func (s *enrollmentService) DeleteEnrollment(id uint) error {
 }
 
 func (s *enrollmentService) GetUserEnrollments(userID uint) ([]*models.Enrollment, error) {
-	// This would require a repository method to filter by user ID
-	// For now, we'll implement a basic version
-	enrollments, err := s.store.Enrollments.GetAll()
+	// Use the new repository method to filter by user ID at database level
+	enrollments, err := s.store.Enrollments.GetByUserID(userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get enrollments: %w", err)
 	}
 
-	// Filter by user ID
-	var userEnrollments []*models.Enrollment
-	for _, enrollment := range enrollments {
-		if enrollment.UserID == userID {
-			userEnrollments = append(userEnrollments, enrollment)
-		}
-	}
-
-	return userEnrollments, nil
+	return enrollments, nil
 }
 
 func (s *enrollmentService) GetCourseEnrollments(courseID uint) ([]*models.Enrollment, error) {
-	// This would require a repository method to filter by course ID
-	// For now, we'll implement a basic version
-	enrollments, err := s.store.Enrollments.GetAll()
+	// Use the new repository method to filter by course ID at database level
+	enrollments, err := s.store.Enrollments.GetByCourseID(courseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get enrollments: %w", err)
 	}
 
-	// Filter by course ID
-	var courseEnrollments []*models.Enrollment
-	for _, enrollment := range enrollments {
-		if enrollment.CourseID == courseID {
-			courseEnrollments = append(courseEnrollments, enrollment)
-		}
-	}
-
-	return courseEnrollments, nil
+	return enrollments, nil
 }
 
 func (s *enrollmentService) GetUserCourseEnrollment(userID, courseID uint) (*models.Enrollment, error) {
