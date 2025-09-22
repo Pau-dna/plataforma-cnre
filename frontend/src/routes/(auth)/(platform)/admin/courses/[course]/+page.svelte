@@ -6,26 +6,8 @@
 
 	let { data }: PageProps = $props();
 
-	const modules = [
-		{
-			id: 1,
-			title: 'Introducción al CNRE',
-			description: 'Descripción del módulo 1',
-			actDate: '07/09/2025'
-		},
-		{
-			id: 2,
-			title: 'Estructura del CNRE',
-			description: 'Descripción del módulo 2',
-			actDate: '07/09/2025'
-		},
-		{
-			id: 3,
-			title: 'Funciones y Responsabilidades',
-			description: 'Descripción del módulo 3',
-			actDate: '08/09/2025'
-		}
-	];
+	const course = $state(data.course);
+	const modules = $state(data.modules);
 </script>
 
 <div class="flex flex-col gap-4">
