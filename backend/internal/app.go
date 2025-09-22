@@ -136,9 +136,9 @@ func (app *Application) Mount() {
 	v1.GET("/modules/:id", moduleHandler.GetModule)
 	v1.PUT("/modules/:id", moduleHandler.UpdateModule)
 	v1.DELETE("/modules/:id", moduleHandler.DeleteModule)
-	v1.GET("/courses/:courseId/modules", moduleHandler.GetModulesByCourse)
+	v1.GET("/courses/:id/modules", moduleHandler.GetModulesByCourse)
 	v1.GET("/modules/:id/content", moduleHandler.GetModuleWithContent)
-	v1.POST("/courses/:courseId/modules/reorder", moduleHandler.ReorderModules)
+	v1.POST("/courses/:id/modules/reorder", moduleHandler.ReorderModules)
 
 	// Content
 	v1.POST("/content", contentHandler.CreateContent)
@@ -159,9 +159,9 @@ func (app *Application) Mount() {
 	v1.GET("/enrollments/:id", enrollmentHandler.GetEnrollment)
 	v1.DELETE("/enrollments/:id", enrollmentHandler.DeleteEnrollment)
 	v1.GET("/users/:userId/enrollments", enrollmentHandler.GetUserEnrollments)
-	v1.GET("/courses/:courseId/enrollments", enrollmentHandler.GetCourseEnrollments)
-	v1.POST("/users/:userId/courses/:courseId/complete", enrollmentHandler.CompleteEnrollment)
-	v1.PUT("/users/:userId/courses/:courseId/progress", enrollmentHandler.UpdateProgress)
+	v1.GET("/courses/:id/enrollments", enrollmentHandler.GetCourseEnrollments)
+	v1.POST("/users/:userId/courses/:id/complete", enrollmentHandler.CompleteEnrollment)
+	v1.PUT("/users/:userId/courses/:id/progress", enrollmentHandler.UpdateProgress)
 
 	// Evaluation Attempts
 	v1.POST("/evaluation-attempts/start", evaluationAttemptHandler.StartAttempt)

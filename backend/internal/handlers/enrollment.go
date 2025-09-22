@@ -141,13 +141,13 @@ func (h *EnrollmentHandler) GetUserEnrollments(c *gin.Context) {
 // @Description Get all enrollments for a specific course
 // @Tags enrollments
 // @Produce json
-// @Param courseId path int true "Course ID"
+// @Param id path int true "Course ID"
 // @Success 200 {array} models.Enrollment
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /api/v1/courses/{courseId}/enrollments [get]
+// @Router /api/v1/courses/{id}/enrollments [get]
 func (h *EnrollmentHandler) GetCourseEnrollments(c *gin.Context) {
-	courseIDStr := c.Param("courseId")
+	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
@@ -168,12 +168,12 @@ func (h *EnrollmentHandler) GetCourseEnrollments(c *gin.Context) {
 // @Description Mark an enrollment as completed
 // @Tags enrollments
 // @Param userId path int true "User ID"
-// @Param courseId path int true "Course ID"
+// @Param id path int true "Course ID"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /api/v1/users/{userId}/courses/{courseId}/complete [post]
+// @Router /api/v1/users/{userId}/courses/{id}/complete [post]
 func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
@@ -182,7 +182,7 @@ func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 		return
 	}
 
-	courseIDStr := c.Param("courseId")
+	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
@@ -208,13 +208,13 @@ func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 // @Tags enrollments
 // @Accept json
 // @Param userId path int true "User ID"
-// @Param courseId path int true "Course ID"
+// @Param id path int true "Course ID"
 // @Param progress body struct{Progress float64} true "Progress data"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /api/v1/users/{userId}/courses/{courseId}/progress [put]
+// @Router /api/v1/users/{userId}/courses/{id}/progress [put]
 func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
@@ -223,7 +223,7 @@ func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 		return
 	}
 
-	courseIDStr := c.Param("courseId")
+	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})

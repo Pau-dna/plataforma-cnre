@@ -148,7 +148,7 @@ func (h *ModuleHandler) DeleteModule(c *gin.Context) {
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/courses/{courseId}/modules [get]
 func (h *ModuleHandler) GetModulesByCourse(c *gin.Context) {
-	courseIDStr := c.Param("courseId")
+	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
@@ -204,7 +204,7 @@ func (h *ModuleHandler) GetModuleWithContent(c *gin.Context) {
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/courses/{courseId}/modules/reorder [post]
 func (h *ModuleHandler) ReorderModules(c *gin.Context) {
-	courseIDStr := c.Param("courseId")
+	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
