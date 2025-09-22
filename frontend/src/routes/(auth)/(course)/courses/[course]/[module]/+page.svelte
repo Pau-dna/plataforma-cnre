@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { Module } from '$lib';
 	import Content from '$lib/components/course/Content.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
-	const modulo = $derived(data.modules.find((m) => m.id === data.moduleID));
+	const modulo = $derived(data.modules.find((m) => m.id === data.moduleID) as Module);
 </script>
 
 <div class="flex flex-col gap-y-8">
