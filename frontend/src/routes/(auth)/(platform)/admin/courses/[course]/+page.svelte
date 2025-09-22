@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ModuleCard from '$lib/components/module/ModuleCard.svelte';
 	import type { PageProps } from './$types';
+	import type { Module } from '$lib/types';
 	import { Plus } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Back from '$lib/components/kit/Back.svelte';
@@ -9,6 +10,14 @@
 
 	const course = $state(data.course);
 	const modules = $state(data.modules);
+
+	function handleModuleUpdate(updated: Module) {
+		// Find and update the module in the array
+		const index = modules.findIndex(m => m.id === updated.id);
+		if (index !== -1) {
+			modules[index] = updated;
+		}
+	}
 </script>
 
 <Back href="/admin/courses" />
@@ -28,10 +37,9 @@
 	<div class="grid grid-cols-1 gap-4">
 		{#each modules as modulo}
 			<ModuleCard
-				id={modulo.id}
-				title={modulo.title}
-				description={modulo.description}
-				actDate={modulo.actDate}
+				module={modulo}
+				actDate={modulo.updated_at}
+				onupdate={handleModuleUpdate}
 			/>
 		{/each}
 	</div>

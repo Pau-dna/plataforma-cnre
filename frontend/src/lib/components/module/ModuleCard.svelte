@@ -3,15 +3,21 @@
 	import { ArrowDown, ArrowUp, BookOpen, CirclePlay, Ellipsis, GripVertical } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import EditModule from './EditModule.svelte';
+	import type { Module } from '$lib/types';
 
 	type Props = {
-		id: number;
-		title: string;
-		description: string;
+		module: Module;
 		actDate?: string;
+		onupdate?: (module: Module) => void;
 	};
 
-	const { id, title, description, actDate }: Props = $props();
+	const { module, actDate, onupdate }: Props = $props();
+	let openEdit = $state(false);
+
+	function handleModuleUpdate(updated: Module) {
+		onupdate?.(updated);
+	}
 </script>
 
 <Card.Root>
@@ -22,7 +28,7 @@
 					<GripVertical class="text-muted-foreground h-4 w-4" />
 				</Button>
 
-				<span class="text-muted-foreground font-semibold">Modulo {id}</span>
+				<span class="text-muted-foreground font-semibold">Módulo {module.id}</span>
 			</div>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
@@ -33,7 +39,7 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.Group>
 						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
-						<DropdownMenu.Item>Editar</DropdownMenu.Item>
+						<DropdownMenu.Item onclick={() => openEdit = true}>Editar</DropdownMenu.Item>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item class="text-destructive">Eliminar</DropdownMenu.Item>
 					</DropdownMenu.Group>
@@ -50,8 +56,8 @@
 				</Button>
 			</div>
 			<div class="flex flex-col gap-1">
-				<Card.Title class="text-lg">{title}</Card.Title>
-				<Card.Description>{description}</Card.Description>
+				<Card.Title class="text-lg">{module.title}</Card.Title>
+				<Card.Description>{module.description}</Card.Description>
 			</div>
 		</div>
 	</Card.Header>
@@ -69,3 +75,5 @@
 		<span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
 	</Card.Content>
 </Card.Root>
+
+<EditModule {module} bind:openEdit onupdate={handleModuleUpdate} />
