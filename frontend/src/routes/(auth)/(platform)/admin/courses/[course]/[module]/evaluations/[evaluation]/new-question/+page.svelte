@@ -68,7 +68,9 @@
 		}
 	}
 
-	async function handleSubmit() {
+	async function handleSubmit(event: Event) {
+		event.preventDefault();
+
 		// Basic validation
 		if (!formData.text.trim()) {
 			toast.error('El texto de la pregunta es requerido');
@@ -150,7 +152,7 @@
 		<p class="text-subtitle">Evaluación: {evaluation.title}</p>
 	</div>
 
-	<form onsubmit|preventDefault={handleSubmit} class="space-y-6">
+	<form onsubmit={handleSubmit} class="space-y-6">
 		<!-- Question Details -->
 		<Card>
 			<CardHeader>

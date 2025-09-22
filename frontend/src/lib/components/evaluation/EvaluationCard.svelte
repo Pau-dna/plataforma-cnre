@@ -2,7 +2,7 @@
 	import type { Evaluation } from '$lib/types';
 	import { EvaluationController } from '$lib/controllers';
 	import { toast } from 'svelte-sonner';
-	import { Edit, Trash, ChevronUp, ChevronDown, FileQuestion } from 'lucide/svelte';
+	import { Edit, Trash, ChevronUp, ChevronDown, FileQuestion } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Card from '$lib/components/ui/card/card.svelte';
 	import CardHeader from '$lib/components/ui/card/card-header.svelte';
@@ -34,7 +34,9 @@
 	const evaluationController = new EvaluationController();
 
 	async function handleDeleteEvaluation() {
-		if (!confirm('¿Estás seguro de que quieres eliminar esta evaluación?')) {
+		const confirmMessage = `¿Estás seguro de que quieres eliminar la evaluación "${evaluation.title}"?\n\nEsta acción no se puede deshacer y eliminará todas las preguntas y respuestas asociadas.`;
+
+		if (!confirm(confirmMessage)) {
 			return;
 		}
 

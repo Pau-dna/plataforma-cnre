@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import type { CreateEvaluationDTO } from '$lib/types';
-	import { ContentType } from '$lib/types';
+	import type { UpdateEvaluationDTO } from '$lib/types';
 	import { EvaluationController } from '$lib/controllers';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
@@ -17,19 +16,19 @@
 
 	let { data }: PageProps = $props();
 
-	const module = data.module;
+	const evaluation = data.evaluation;
 	const courseId = data.courseId;
 	const moduleId = data.moduleId;
 	const evaluationController = new EvaluationController();
 
 	let formData = $state({
-		title: '',
-		description: '',
-		question_count: 1,
-		answer_options_count: 4,
-		passing_score: 60,
-		max_attempts: undefined as number | undefined,
-		time_limit: undefined as number | undefined
+		title: evaluation.title,
+		description: evaluation.description || '',
+		question_count: evaluation.question_count,
+		answer_options_count: evaluation.answer_options_count,
+		passing_score: evaluation.passing_score,
+		max_attempts: evaluation.max_attempts,
+		time_limit: evaluation.time_limit
 	});
 
 	let isSubmitting = $state(false);
@@ -61,32 +60,22 @@
 		isSubmitting = true;
 
 		try {
-			// Get current evaluations to determine next order
-			const existingEvaluations = await evaluationController.getEvaluationsByModule(moduleId);
-			const nextOrder =
-				existingEvaluations.length > 0
-					? Math.max(...existingEvaluations.map((e) => e.order)) + 1
-					: 1;
-
-			const evaluationData: CreateEvaluationDTO = {
+			const evaluationData: UpdateEvaluationDTO = {
 				title: formData.title.trim(),
 				description: formData.description.trim() || undefined,
-				type: ContentType.EVALUATION,
 				question_count: formData.question_count,
 				answer_options_count: formData.answer_options_count,
 				passing_score: formData.passing_score,
 				max_attempts: formData.max_attempts || undefined,
-				time_limit: formData.time_limit || undefined,
-				module_id: moduleId,
-				order: nextOrder
+				time_limit: formData.time_limit || undefined
 			};
 
-			const newEvaluation = await evaluationController.createEvaluation(evaluationData);
-			toast.success('Evaluación creada exitosamente');
-			goto(`/admin/courses/${courseId}/${moduleId}`);
+			await evaluationController.updateEvaluation(evaluation.id, evaluationData);
+			toast.success('Evaluación actualizada exitosamente');
+			goto(`/admin/courses/${courseId}/${moduleId}/evaluations/${evaluation.id}`);
 		} catch (error) {
-			console.error('Error creating evaluation:', error);
-			toast.error('Error al crear la evaluación', {
+			console.error('Error updating evaluation:', error);
+			toast.error('Error al actualizar la evaluación', {
 				description: error instanceof Error ? error.message : String(error)
 			});
 		} finally {
@@ -95,16 +84,16 @@
 	}
 
 	function handleCancel() {
-		goto(`/admin/courses/${courseId}/${moduleId}`);
+		goto(`/admin/courses/${courseId}/${moduleId}/evaluations/${evaluation.id}`);
 	}
 </script>
 
-<Back href="/admin/courses/{courseId}/{moduleId}" />
+<Back href="/admin/courses/{courseId}/{moduleId}/evaluations/{evaluation.id}" />
 
 <div class="flex flex-col gap-6">
 	<div>
-		<h1 class="text-h1">Crear Nueva Evaluación</h1>
-		<p class="text-subtitle">Módulo: {module.title}</p>
+		<h1 class="text-h1">Configuración de Evaluación</h1>
+		<p class="text-subtitle">Evaluación: {evaluation.title}</p>
 	</div>
 
 	<Card class="w-full max-w-4xl">
@@ -213,9 +202,9 @@
 					</Button>
 					<Button type="submit" disabled={isSubmitting} class="bg-purple-500 hover:bg-purple-600">
 						{#if isSubmitting}
-							Creando...
+							Guardando...
 						{:else}
-							Crear Evaluación
+							Guardar Cambios
 						{/if}
 					</Button>
 				</div>
