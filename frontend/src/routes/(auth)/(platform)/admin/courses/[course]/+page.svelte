@@ -25,10 +25,7 @@
 	<div class="grid grid-cols-1 gap-4">
 		{#each modules as modulo}
 			<ModuleCard
-				id={modulo.id}
-				title={modulo.title}
-				description={modulo.description}
-				actDate={modulo.actDate}
+				module={modulo}
 			/>
 		{/each}
 	</div>

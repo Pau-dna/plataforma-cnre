@@ -9,12 +9,19 @@
 
 	type Props = {
 		course: Course;
+		onUpdated?: (updatedCourse: Course) => void;
 	};
 
-	const { course }: Props = $props();
+	let { course, onUpdated }: Props = $props();
 
 	let openEdit = $state(false);
 	let openDelete = $state(false);
+
+	function handleCourseUpdated(updatedCourse: Course) {
+		// Update local course data
+		Object.assign(course, updatedCourse);
+		onUpdated?.(updatedCourse);
+	}
 </script>
 
 <a href="/courses/{course.id}">
@@ -72,5 +79,5 @@
 	</Card.Root>
 </a>
 
-<EditCourse course={course} bind:openEdit></EditCourse>
+<EditCourse course={course} bind:openEdit onUpdated={handleCourseUpdated}></EditCourse>
 <DeleteCourse bind:openDelete></DeleteCourse>
