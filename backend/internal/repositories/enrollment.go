@@ -11,6 +11,7 @@ type EnrollmentRepository interface {
 	Update(enrollment *models.Enrollment) error
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
+	GetUserEnrollment(userID uint, courseID uint) (*models.Enrollment, error)
 	GetAll() ([]*models.Enrollment, error)
 }
 
@@ -31,6 +32,14 @@ func (r *enrollmentRepository) Create(enrollment *models.Enrollment) error {
 func (r *enrollmentRepository) Get(id uint) (*models.Enrollment, error) {
 	var enrollment models.Enrollment
 	if err := r.db.First(&enrollment, id).Error; err != nil {
+		return nil, err
+	}
+	return &enrollment, nil
+}
+
+func (r *enrollmentRepository) GetUserEnrollment(userID uint, courseID uint) (*models.Enrollment, error) {
+	var enrollment models.Enrollment
+	if err := r.db.Where(&models.Enrollment{UserID: userID, CourseID: courseID}).First(&enrollment).Error; err != nil {
 		return nil, err
 	}
 	return &enrollment, nil

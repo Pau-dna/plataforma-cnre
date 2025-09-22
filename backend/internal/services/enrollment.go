@@ -160,19 +160,12 @@ func (s *enrollmentService) GetCourseEnrollments(courseID uint) ([]*models.Enrol
 
 func (s *enrollmentService) GetUserCourseEnrollment(userID, courseID uint) (*models.Enrollment, error) {
 	// This would require a repository method to filter by both user ID and course ID
-	enrollments, err := s.store.Enrollments.GetAll()
+	enrollment, err := s.store.Enrollments.GetUserEnrollment(userID, courseID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get enrollments: %w", err)
+		return nil, err
 	}
 
-	// Find enrollment for specific user and course
-	for _, enrollment := range enrollments {
-		if enrollment.UserID == userID && enrollment.CourseID == courseID {
-			return enrollment, nil
-		}
-	}
-
-	return nil, fmt.Errorf("enrollment not found")
+	return enrollment, nil
 }
 
 func (s *enrollmentService) CompleteEnrollment(userID, courseID uint) error {
