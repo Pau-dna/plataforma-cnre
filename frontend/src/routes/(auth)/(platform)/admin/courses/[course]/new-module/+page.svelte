@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageProps } from './$types';
+	import type { PageProps } from '../../../../../admin/courses/[course]/new-module/$types';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
