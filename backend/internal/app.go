@@ -129,7 +129,6 @@ func (app *Application) Mount() {
 	v1.GET("/courses/:id", courseHandler.GetCourse)
 	v1.PUT("/courses/:id", courseHandler.UpdateCourse)
 	v1.DELETE("/courses/:id", courseHandler.DeleteCourse)
-	v1.GET("/courses/:id/modules", courseHandler.GetCourseWithModules)
 
 	// Modules
 	v1.POST("/modules", moduleHandler.CreateModule)
@@ -137,7 +136,6 @@ func (app *Application) Mount() {
 	v1.PUT("/modules/:id", moduleHandler.UpdateModule)
 	v1.DELETE("/modules/:id", moduleHandler.DeleteModule)
 	v1.GET("/courses/:id/modules", moduleHandler.GetModulesByCourse)
-	v1.GET("/modules/:id/content", moduleHandler.GetModuleWithContent)
 	v1.POST("/courses/:id/modules/reorder", moduleHandler.ReorderModules)
 
 	// Content
@@ -145,14 +143,14 @@ func (app *Application) Mount() {
 	v1.GET("/content/:id", contentHandler.GetContent)
 	v1.PUT("/content/:id", contentHandler.UpdateContent)
 	v1.DELETE("/content/:id", contentHandler.DeleteContent)
-	v1.GET("/modules/:moduleId/content", contentHandler.GetContentsByModule)
+	v1.GET("/modules/:id/content", contentHandler.GetContentsByModule)
 
 	// Evaluations
 	v1.POST("/evaluations", evaluationHandler.CreateEvaluation)
 	v1.GET("/evaluations/:id", evaluationHandler.GetEvaluation)
 	v1.PUT("/evaluations/:id", evaluationHandler.UpdateEvaluation)
 	v1.DELETE("/evaluations/:id", evaluationHandler.DeleteEvaluation)
-	v1.GET("/modules/:moduleId/evaluations", evaluationHandler.GetEvaluationsByModule)
+	v1.GET("/modules/:id/evaluations", evaluationHandler.GetEvaluationsByModule)
 
 	// Enrollments
 	v1.POST("/enrollments", enrollmentHandler.CreateEnrollment)
