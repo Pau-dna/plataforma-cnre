@@ -9,6 +9,7 @@ type CourseRepository interface {
 	Get(id uint) (*models.Course, error)
 	Create(course *models.Course) error
 	Update(course *models.Course) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Course, error)
 }

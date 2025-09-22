@@ -1,15 +1,19 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type AnswerService interface {
 	CreateAnswer(answer *models.Answer) (*models.Answer, error)
 	GetAnswer(id uint) (*models.Answer, error)
 	UpdateAnswer(id uint, answer *models.Answer) (*models.Answer, error)
+	UpdateAnswerPatch(id uint, data map[string]interface{}) (*models.Answer, error)
 	DeleteAnswer(id uint) error
 	GetAnswersByQuestion(questionID uint) ([]*models.Answer, error)
 	ValidateAnswers(questionID uint, selectedAnswerIDs []uint) (bool, int, error)
@@ -62,6 +66,28 @@ func (s *answerService) UpdateAnswer(id uint, answerData *models.Answer) (*model
 	}
 
 	return existingAnswer, nil
+}
+
+func (s *answerService) UpdateAnswerPatch(answerID uint, data map[string]interface{}) (*models.Answer, error) {
+	if answerID == 0 {
+		return nil, errors.New("answer ID cannot be zero")
+	}
+
+	var answer dto.UpdateAnswerRequest
+	if err := utils.MapToStructStrict(data, &answer); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.Answers.Patch(answerID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.Answers.Get(answerID)
+	if err != nil {
+		return nil, errors.New("answer not found")
+	}
+
+	return updated, nil
 }
 
 func (s *answerService) DeleteAnswer(id uint) error {

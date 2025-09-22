@@ -9,6 +9,7 @@ type ContentRepository interface {
 	Get(id uint) (*models.Content, error)
 	Create(content *models.Content) error
 	Update(content *models.Content) error
+	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Content, error)
 }

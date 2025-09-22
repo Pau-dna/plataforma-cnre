@@ -1,15 +1,19 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type UserProgressService interface {
 	MarkContentComplete(userID, courseID, moduleID, contentID uint) (*models.UserProgress, error)
 	MarkContentIncomplete(userID, courseID, moduleID, contentID uint) error
+	UpdateUserProgressPatch(id uint, data map[string]interface{}) (*models.UserProgress, error)
 	GetUserProgress(userID, courseID uint) ([]*models.UserProgress, error)
 	GetUserModuleProgress(userID, moduleID uint) ([]*models.UserProgress, error)
 	CalculateCourseProgress(userID, courseID uint) (float64, error)
@@ -91,6 +95,28 @@ func (s *userProgressService) MarkContentIncomplete(userID, courseID, moduleID, 
 	s.updateCourseProgress(userID, courseID)
 
 	return nil
+}
+
+func (s *userProgressService) UpdateUserProgressPatch(progressID uint, data map[string]interface{}) (*models.UserProgress, error) {
+	if progressID == 0 {
+		return nil, errors.New("progress ID cannot be zero")
+	}
+
+	var progress dto.UpdateUserProgressRequest
+	if err := utils.MapToStructStrict(data, &progress); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.UserProgresss.Patch(progressID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.UserProgresss.Get(progressID)
+	if err != nil {
+		return nil, errors.New("progress not found")
+	}
+
+	return updated, nil
 }
 
 func (s *userProgressService) GetUserProgress(userID, courseID uint) ([]*models.UserProgress, error) {

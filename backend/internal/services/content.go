@@ -1,15 +1,19 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
+	"github.com/imlargo/go-api-template/pkg/utils"
 )
 
 type ContentService interface {
 	CreateContent(content *models.Content) (*models.Content, error)
 	GetContent(id uint) (*models.Content, error)
 	UpdateContent(id uint, content *models.Content) (*models.Content, error)
+	UpdateContentPatch(id uint, data map[string]interface{}) (*models.Content, error)
 	DeleteContent(id uint) error
 	GetContentsByModule(moduleID uint) ([]*models.Content, error)
 	ReorderContent(moduleID uint, contentOrders []struct {
@@ -68,6 +72,28 @@ func (s *contentService) UpdateContent(id uint, contentData *models.Content) (*m
 	}
 
 	return existingContent, nil
+}
+
+func (s *contentService) UpdateContentPatch(contentID uint, data map[string]interface{}) (*models.Content, error) {
+	if contentID == 0 {
+		return nil, errors.New("content ID cannot be zero")
+	}
+
+	var content dto.UpdateContentRequest
+	if err := utils.MapToStructStrict(data, &content); err != nil {
+		return nil, errors.New("invalid data: " + err.Error())
+	}
+
+	if err := s.store.Contents.Patch(contentID, data); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.store.Contents.Get(contentID)
+	if err != nil {
+		return nil, errors.New("content not found")
+	}
+
+	return updated, nil
 }
 
 func (s *contentService) DeleteContent(id uint) error {
