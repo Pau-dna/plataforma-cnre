@@ -10,13 +10,25 @@
 		module: Module;
 		actDate?: string;
 		onupdate?: (module: Module) => void;
+		onmoveup?: (module: Module) => void;
+		onmovedown?: (module: Module) => void;
+		canMoveUp?: boolean;
+		canMoveDown?: boolean;
 	};
 
-	const { module, actDate, onupdate }: Props = $props();
+	const { module, actDate, onupdate, onmoveup, onmovedown, canMoveUp = true, canMoveDown = true }: Props = $props();
 	let openEdit = $state(false);
 
 	function handleModuleUpdate(updated: Module) {
 		onupdate?.(updated);
+	}
+
+	function handleMoveUp() {
+		onmoveup?.(module);
+	}
+
+	function handleMoveDown() {
+		onmovedown?.(module);
 	}
 </script>
 
@@ -48,10 +60,10 @@
 		</div>
 		<div class="flex items-center gap-4">
 			<div class="flex flex-col gap-0">
-				<Button size="sm" variant="ghost">
+				<Button size="sm" variant="ghost" disabled={!canMoveUp} onclick={handleMoveUp}>
 					<ArrowUp class="h-4 w-4" />
 				</Button>
-				<Button size="sm" variant="ghost">
+				<Button size="sm" variant="ghost" disabled={!canMoveDown} onclick={handleMoveDown}>
 					<ArrowDown class="h-4 w-4" />
 				</Button>
 			</div>
