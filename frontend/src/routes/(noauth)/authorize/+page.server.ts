@@ -41,14 +41,17 @@ export const load = (async ({ url, cookies }) => {
 		const response = await authController.loginWithGoogle(credentials.code);
 		authCookiesManager.login(
 			cookies,
-			response.accessToken,
-			response.refreshToken,
+			response.tokens.access_token,
+			response.tokens.refresh_token,
 		);
 
+		console.log(response);
+
 		// Redirect to the original destination or default to home
-		const destination = redirectTo && redirectTo !== '' ? redirectTo : '/home';
+		const destination = redirectTo && redirectTo !== '' ? redirectTo : '/my-courses';
 		redirect(303, destination);
 	} catch (error) {
+		console.log(error);
 		redirect(303, '/logout');
 	}
 }) satisfies PageServerLoad;
