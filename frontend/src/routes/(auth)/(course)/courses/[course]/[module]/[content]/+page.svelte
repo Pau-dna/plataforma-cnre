@@ -14,6 +14,9 @@
 
 	// Navigation logic to find next content
 	function getNextContent(): { url: string; label: string } | null {
+		// Validate that we have all necessary data
+		if (!modules || !Array.isArray(modules) || modules.length === 0) return null;
+		
 		// Find current module
 		const currentModule = modules.find((m: Module) => m.id === moduleId);
 		if (!currentModule?.contents) return null;
@@ -46,6 +49,7 @@
 					label: `Siguiente módulo: ${nextModule.title}`
 				};
 			} else {
+				// If next module has no content, go to module page
 				return {
 					url: `/courses/${courseId}/${nextModule.id}`,
 					label: `Siguiente módulo: ${nextModule.title}`
@@ -65,9 +69,11 @@
 		<p class="text-muted-foreground">{content.description}</p>
 	</div>
 
-	<div class="aspect-video w-full">
-		<VideoPlayer url={content?.media_url || ""} />
-	</div>
+	{#if content?.media_url}
+		<div class="aspect-video w-full">
+			<VideoPlayer url={content.media_url} />
+		</div>
+	{/if}
 
 	{#if content.body}
 		<div class="prose prose-sm max-w-none">
