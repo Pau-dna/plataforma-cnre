@@ -9,9 +9,10 @@
 
 	type Props = {
 		course: Course;
+		onupdate?: (course: Course) => void;
 	};
 
-	const { course }: Props = $props();
+	const { course, onupdate }: Props = $props();
 
 	let openEdit = $state(false);
 	let openDelete = $state(false);
@@ -72,5 +73,5 @@
 	</Card.Root>
 </a>
 
-<EditCourse course={course} bind:openEdit></EditCourse>
+<EditCourse {onupdate} course={course} bind:openEdit></EditCourse>
 <DeleteCourse bind:openDelete></DeleteCourse>
