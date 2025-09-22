@@ -1,5 +1,7 @@
+import { EnrollmentController } from '$lib';
 import { AuthController } from '$lib/controllers/auth';
 import { authCookiesManager } from '$lib/server/cookies/manager';
+import type { SignInResponse } from '$lib/types/dto/auth';
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
@@ -38,6 +40,7 @@ export const load = (async ({ url, cookies }) => {
 	const authController = new AuthController();
 
 
+	let authData: null | SignInResponse = null;
 	let destination = "/logout";
 	try {
 		const response = await authController.loginWithGoogle(credentials.code);
@@ -47,6 +50,7 @@ export const load = (async ({ url, cookies }) => {
 			response.tokens.refresh_token,
 		);
 
+		authData = response;
 		console.log(response);
 
 		// Redirect to the original destination or default to home
@@ -54,6 +58,16 @@ export const load = (async ({ url, cookies }) => {
 	} catch (error) {
 		authCookiesManager.logout(cookies);
 		console.log(error);
+	}
+
+	if (destination !== "/logout" && authData) {
+		// Try to enroll
+		try {
+			const enrollmentController = new EnrollmentController(authData.tokens.access_token)
+			await enrollmentController.enrollInCourse(1, authData.user.id);
+		} catch (error) {
+			console.log('Auto-enrollment failed:', error);
+		}
 	}
 
 	redirect(303, destination);
