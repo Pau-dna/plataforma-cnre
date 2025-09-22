@@ -16,6 +16,6 @@
 	</div>
 
 	<div class="aspect-video w-full">
-		<VideoPlayer url={content?.media_url || ""} />
+		<VideoPlayer url={content?.media_url || ''} />
 	</div>
 </div>

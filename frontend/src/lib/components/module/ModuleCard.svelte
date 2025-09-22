@@ -7,6 +7,7 @@
 	import DeleteConfirmDialog from '$lib/components/ui/DeleteConfirmDialog.svelte';
 	import type { Module } from '$lib/types';
 	import { ModuleController } from '$lib/controllers/module';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		module: Module;
@@ -29,7 +30,7 @@
 		canMoveUp = true,
 		canMoveDown = true
 	}: Props = $props();
-	
+
 	let openEdit = $state(false);
 	let openDelete = $state(false);
 	const moduleController = new ModuleController();
@@ -49,10 +50,13 @@
 	async function handleDelete() {
 		try {
 			await moduleController.deleteModule(modulo.id);
+			toast.success('Módulo eliminado con éxito.');
 			ondelete?.(modulo);
 		} catch (error) {
 			console.error('Error deleting module:', error);
-			// TODO: Show error toast
+			toast.error('Error al eliminar el módulo.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
 		}
 	}
 </script>
