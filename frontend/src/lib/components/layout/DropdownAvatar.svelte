@@ -12,7 +12,6 @@
 
 </script>
 
-{JSON.stringify(authStore.user)}
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root class="size-10">
