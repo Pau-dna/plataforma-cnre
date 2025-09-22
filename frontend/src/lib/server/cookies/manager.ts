@@ -1,4 +1,4 @@
-import { AuthCookiesManager } from 'svelte-auth-tools/dist/server/cookies/cookies.js';
+import { AuthCookiesManager } from "./cookies";
 
 export const authCookiesManager = new AuthCookiesManager({
 	cookies: {

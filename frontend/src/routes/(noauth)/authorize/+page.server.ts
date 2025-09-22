@@ -1,4 +1,4 @@
-import { authCookiesManager } from '$lib/server/cookies';
+import { authCookiesManager } from '$lib/server/cookies/manager';
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
