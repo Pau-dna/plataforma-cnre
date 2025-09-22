@@ -68,7 +68,7 @@ func (app *Application) Mount() {
 	moduleService := services.NewModuleService(serviceContainer)
 	contentService := services.NewContentService(serviceContainer)
 	evaluationService := services.NewEvaluationService(serviceContainer)
-	// questionService := services.NewQuestionService(serviceContainer)
+	questionService := services.NewQuestionService(serviceContainer)
 	answerService := services.NewAnswerService(serviceContainer)
 	enrollmentService := services.NewEnrollmentService(serviceContainer)
 	evaluationAttemptService := services.NewEvaluationAttemptService(serviceContainer, answerService)
@@ -85,6 +85,8 @@ func (app *Application) Mount() {
 	moduleHandler := handlers.NewModuleHandler(handlerContainer, moduleService)
 	contentHandler := handlers.NewContentHandler(handlerContainer, contentService)
 	evaluationHandler := handlers.NewEvaluationHandler(handlerContainer, evaluationService)
+	questionHandler := handlers.NewQuestionHandler(handlerContainer, questionService)
+	answerHandler := handlers.NewAnswerHandler(handlerContainer, answerService)
 	enrollmentHandler := handlers.NewEnrollmentHandler(handlerContainer, enrollmentService)
 	evaluationAttemptHandler := handlers.NewEvaluationAttemptHandler(handlerContainer, evaluationAttemptService)
 
@@ -164,6 +166,23 @@ func (app *Application) Mount() {
 	v1.PATCH("/evaluations/:id", evaluationHandler.UpdateEvaluationPatch)
 	v1.DELETE("/evaluations/:id", evaluationHandler.DeleteEvaluation)
 	v1.GET("/modules/:id/evaluations", evaluationHandler.GetEvaluationsByModule)
+
+	// Questions
+	v1.POST("/questions", questionHandler.CreateQuestion)
+	v1.GET("/questions/:id", questionHandler.GetQuestion)
+	v1.PUT("/questions/:id", questionHandler.UpdateQuestion)
+	v1.PATCH("/questions/:id", questionHandler.UpdateQuestionPatch)
+	v1.DELETE("/questions/:id", questionHandler.DeleteQuestion)
+	v1.GET("/evaluations/:id/questions", questionHandler.GetQuestionsByEvaluation)
+	v1.GET("/questions/:id/answers", questionHandler.GetQuestionWithAnswers)
+
+	// Answers
+	v1.POST("/answers", answerHandler.CreateAnswer)
+	v1.GET("/answers/:id", answerHandler.GetAnswer)
+	v1.PUT("/answers/:id", answerHandler.UpdateAnswer)
+	v1.PATCH("/answers/:id", answerHandler.UpdateAnswerPatch)
+	v1.DELETE("/answers/:id", answerHandler.DeleteAnswer)
+	v1.GET("/questions/:id/answers", answerHandler.GetAnswersByQuestion)
 
 	// Enrollments
 	v1.POST("/enrollments", enrollmentHandler.CreateEnrollment)
