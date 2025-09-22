@@ -54,7 +54,7 @@ func (r *moduleRepository) Delete(id uint) error {
 
 func (r *moduleRepository) GetAll() ([]*models.Module, error) {
 	var modules []*models.Module
-	if err := r.db.Find(&modules).Error; err != nil {
+	if err := r.db.Preload("Contents").Find(&modules).Error; err != nil {
 		return nil, err
 	}
 	return modules, nil
@@ -62,7 +62,7 @@ func (r *moduleRepository) GetAll() ([]*models.Module, error) {
 
 func (r *moduleRepository) GetByCourseID(courseID uint) ([]*models.Module, error) {
 	var modules []*models.Module
-	if err := r.db.Where("course_id = ?", courseID).Order("\"order\" ASC").Find(&modules).Error; err != nil {
+	if err := r.db.Preload("Contents").Where("course_id = ?", courseID).Order("\"order\" ASC").Find(&modules).Error; err != nil {
 		return nil, err
 	}
 	return modules, nil

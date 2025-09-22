@@ -26,10 +26,23 @@
 						{#if page.params.module}
 							<Breadcrumb.Separator />
 							<Breadcrumb.Item>
-								<Breadcrumb.Link href="/docs/components"
+								<Breadcrumb.Link href="/courses/{data.course.id}/{page.params.module}"
 									>{data.modules.find((m) => m.id === parseInt(page.params.module || '-1'))
 										?.title}</Breadcrumb.Link
 								>
+							</Breadcrumb.Item>
+						{/if}
+						{#if page.params.content}
+							<Breadcrumb.Separator />
+							<Breadcrumb.Item>
+								<Breadcrumb.Link
+									href="/courses/{data.course.id}/{page.params.module}/{page.params.content}"
+								>
+									{data.modules
+										.find((m) => m.id === parseInt(page.params.module || '-1'))
+										?.contents.find((c) => c.id === parseInt(page.params.content || '-1'))?.title ||
+										'Content'}
+								</Breadcrumb.Link>
 							</Breadcrumb.Item>
 						{/if}
 					</Breadcrumb.List>

@@ -6,4 +6,4 @@
     let content = $state(data.content);
 </script>
 
-{content}
+{JSON.stringify(content)}
