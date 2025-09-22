@@ -3128,7 +3128,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "mediaUrl": {
+                "media_url": {
                     "type": "string"
                 },
                 "module": {

@@ -7,6 +7,8 @@
 	let content = $state(data.content);
 </script>
 
+{JSON.stringify(content)}
+
 <div class="flex flex-col gap-y-8">
 	<div class="flex flex-col gap-y-2">
 		<h1 class="text-3xl font-bold">{content.title}</h1>
