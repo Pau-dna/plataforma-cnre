@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"log"
-	"time"
 
 	"github.com/imlargo/go-api-template/internal/models"
 	"gorm.io/gorm/clause"
@@ -37,18 +36,18 @@ func (r *userRepository) GetByID(id uint) (*models.User, error) {
 
 	var user models.User
 
-	cacheKey := r.cacheKeys.UserByID(id)
-	if err := r.cache.GetJSON(cacheKey, &user); err == nil {
-		return &user, nil
-	}
+	//cacheKey := r.cacheKeys.UserByID(id)
+	//if err := r.cache.GetJSON(cacheKey, &user); err == nil {
+	//	return &user, nil
+	//}
 
 	if err := r.db.First(&user, id).Error; err != nil {
 		return nil, err
 	}
 
-	if err := r.cache.Set(cacheKey, &user, 30*time.Minute); err != nil {
-		log.Println("Cache set failed:", err.Error())
-	}
+	// if err := r.cache.Set(cacheKey, &user, 30*time.Minute); err != nil {
+	// 	log.Println("Cache set failed:", err.Error())
+	// }
 
 	return &user, nil
 }
