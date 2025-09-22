@@ -5,21 +5,44 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import type { Module } from '$lib';
+	import type { Module, CreateModuleDTO } from '$lib';
+	import { ModuleController } from '$lib/controllers';
 	import { page } from '$app/state';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
 
 	let { data }: PageProps = $props();
 
-	const formdata = $state<Partial<Module>>({
+	let submitting = $state(false);
+	const formdata = $state<CreateModuleDTO>({
 		title: "",
 		description: "",
 		order: 0,
 		course_id: parseInt(page.params.course as string),
 	});
 
-	function handleSubmit() {
-		// Aquí iría la lógica para enviar el formulario
-		console.log("Formulario enviado:", formdata);
+	const moduleController = new ModuleController();
+
+	async function handleSubmit() {
+		// Validate data
+		if (!formdata.title || !formdata.description) {
+			toast.error('Por favor, complete todos los campos.');
+			return;
+		}
+
+		try {
+			submitting = true;
+			const newModule = await moduleController.createModule(formdata);
+			toast.success('Módulo creado con éxito.');
+			// Redirect back to the course page
+			goto(`/admin/courses/${page.params.course}`);
+		} catch (error) {
+			toast.error('Error al crear el módulo.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
+		} finally {
+			submitting = false;
+		}
 	}
 </script>
 
@@ -40,7 +63,13 @@
 			</div>
 		</Card.Content>
 		<Card.Footer>
-			<Button onclick={handleSubmit} class="w-full bg-pink-500 hover:bg-pink-900">Crear módulo</Button>
+			<Button 
+				onclick={handleSubmit} 
+				disabled={submitting}
+				class="w-full bg-pink-500 hover:bg-pink-900"
+			>
+				{submitting ? 'Creando...' : 'Crear módulo'}
+			</Button>
 		</Card.Footer>
 	</Card.Root>
 </div>
