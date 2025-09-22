@@ -7,6 +7,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import type { Course } from '$lib/types';
+	import { toast } from "svelte-sooner";
 
 	type Props = {
 		course: Course;
@@ -15,6 +16,30 @@
 	};
 
 	let { course, children, openEdit = $bindable() }: Props = $props();
+
+	let submitting = $state(false);
+	const formData= $state<Partial<Course>>({
+		title: course.title,
+		description: course.description
+	})
+
+
+	async function handleUpdate() {
+		// Validate data
+		if (!formData.title || !formData.description) {
+			toast.error('Por favor, complete todos los campos.');
+			return;
+		}
+
+	}
+
+
+	$effect(() => {
+		if (!openEdit) {
+			formData.title = course.title;
+			formData.description = course.description;
+		}
+	});
 </script>
 
 <Dialog.Root bind:open={openEdit}>
@@ -26,15 +51,15 @@
 		<div class="flex flex-col gap-6">
 			<div class="flex flex-col gap-2">
 				<Label for="name">Nombre del curso</Label>
-				<Input value={course.title} id="name" placeholder="Ingrese el nombre del curso" />
+				<Input bind:value={formData.title} id="name" placeholder="Ingrese el nombre del curso" />
 			</div>
 			<div class="flex flex-col gap-2">
 				<Label for="description">Descripción</Label>
-				<Textarea value={course.description} id="description" placeholder="Ingrese la descripción del curso" />
+				<Textarea bind:value={formData.description} id="description" placeholder="Ingrese la descripción del curso" />
 			</div>
 		</div>
 		<Dialog.Footer>
-			<Button class="w-full bg-pink-500 hover:bg-pink-900">Editar curso</Button>
+			<Button onclick={handleUpdate} disabled={submitting} class="w-full bg-pink-500 hover:bg-pink-900">Editar curso</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
