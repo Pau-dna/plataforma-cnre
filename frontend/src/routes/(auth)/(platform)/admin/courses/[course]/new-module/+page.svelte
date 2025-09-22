@@ -1,12 +1,26 @@
 <script lang="ts">
-	import type { PageProps } from '../../../../../admin/courses/[course]/new-module/$types';
+	import type { PageProps } from './$types';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import type { Module } from '$lib';
+	import { page } from '$app/state';
 
 	let { data }: PageProps = $props();
+
+	const formdata = $state<Partial<Module>>({
+		title: "",
+		description: "",
+		order: 0,
+		course_id: parseInt(page.params.course as string),
+	});
+
+	function handleSubmit() {
+		// Aquí iría la lógica para enviar el formulario
+		console.log("Formulario enviado:", formdata);
+	}
 </script>
 
 <div class="flex items-center justify-center">
@@ -18,15 +32,15 @@
 		<Card.Content class="flex flex-col gap-6">
 			<div class="flex flex-col gap-2">
 				<Label for="name">Nombre del módulo</Label>
-				<Input id="name" placeholder="Ingrese el nombre del módulo" />
+				<Input id="name" placeholder="Ingrese el nombre del módulo" bind:value={formdata.title} />
 			</div>
 			<div class="flex flex-col gap-2">
 				<Label for="description">Descripción</Label>
-				<Textarea id="description" placeholder="Ingrese la descripción del módulo" />
+				<Textarea id="description" placeholder="Ingrese la descripción del módulo" bind:value={formdata.description} />
 			</div>
 		</Card.Content>
 		<Card.Footer>
-			<Button class="w-full bg-pink-500 hover:bg-pink-900">Crear módulo</Button>
+			<Button onclick={handleSubmit} class="w-full bg-pink-500 hover:bg-pink-900">Crear módulo</Button>
 		</Card.Footer>
 	</Card.Root>
 </div>

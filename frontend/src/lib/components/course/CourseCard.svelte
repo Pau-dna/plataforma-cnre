@@ -72,5 +72,5 @@
 	</Card.Root>
 </a>
 
-<EditCourse bind:openEdit></EditCourse>
+<EditCourse course={course} bind:openEdit></EditCourse>
 <DeleteCourse bind:openDelete></DeleteCourse>

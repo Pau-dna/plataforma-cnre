@@ -6,13 +6,15 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import type { Course } from '$lib/types';
 
 	type Props = {
+		course: Course;
 		openEdit?: boolean;
 		children?: Snippet;
 	};
 
-	let { children, openEdit = $bindable() }: Props = $props();
+	let { course, children, openEdit = $bindable() }: Props = $props();
 </script>
 
 <Dialog.Root bind:open={openEdit}>
@@ -24,11 +26,11 @@
 		<div class="flex flex-col gap-6">
 			<div class="flex flex-col gap-2">
 				<Label for="name">Nombre del curso</Label>
-				<Input id="name" placeholder="Ingrese el nombre del curso" />
+				<Input value={course.title} id="name" placeholder="Ingrese el nombre del curso" />
 			</div>
 			<div class="flex flex-col gap-2">
 				<Label for="description">Descripción</Label>
-				<Textarea id="description" placeholder="Ingrese la descripción del curso" />
+				<Textarea value={course.description} id="description" placeholder="Ingrese la descripción del curso" />
 			</div>
 		</div>
 		<Dialog.Footer>

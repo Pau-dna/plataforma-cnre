@@ -14,7 +14,7 @@
 	<div class="flex flex-col gap-2">
 		<div class="flex items-center justify-between">
 			<h1 class="text-h1">Módulos del Curso</h1>
-			<Button href="/admin/courses/create" class="bg-pink-500 hover:bg-pink-900">
+			<Button href="/admin/courses/{course.id}/new-module" class="bg-pink-500 hover:bg-pink-900">
 				<Plus class="h-4 w-4 leading-none" />
 				<span class="leading-none">Crear Módulo</span>
 			</Button>
@@ -23,12 +23,12 @@
 	</div>
 
 	<div class="grid grid-cols-1 gap-4">
-		{#each modules as module}
+		{#each modules as modulo}
 			<ModuleCard
-				id={module.id}
-				title={module.title}
-				description={module.description}
-				actDate={module.actDate}
+				id={modulo.id}
+				title={modulo.title}
+				description={modulo.description}
+				actDate={modulo.actDate}
 			/>
 		{/each}
 	</div>
