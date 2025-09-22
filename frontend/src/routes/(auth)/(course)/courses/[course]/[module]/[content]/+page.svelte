@@ -16,7 +16,7 @@
 	function getNextContent(): { url: string; label: string } | null {
 		// Validate that we have all necessary data
 		if (!modules || !Array.isArray(modules) || modules.length === 0) return null;
-		
+
 		// Find current module
 		const currentModule = modules.find((m: Module) => m.id === moduleId);
 		if (!currentModule?.contents) return null;
@@ -24,7 +24,7 @@
 		// Sort contents by order
 		const sortedContents = [...currentModule.contents].sort((a, b) => a.order - b.order);
 		const currentContentIndex = sortedContents.findIndex((c) => c.id === content.id);
-		
+
 		if (currentContentIndex === -1) return null;
 
 		// Check if there's a next content in the current module
@@ -39,7 +39,7 @@
 		// If no more content in current module, find next module
 		const sortedModules = [...modules].sort((a, b) => a.order - b.order);
 		const currentModuleIndex = sortedModules.findIndex((m) => m.id === moduleId);
-		
+
 		if (currentModuleIndex < sortedModules.length - 1) {
 			const nextModule = sortedModules[currentModuleIndex + 1];
 			if (nextModule.contents && nextModule.contents.length > 0) {
@@ -69,7 +69,6 @@
 		<p class="text-muted-foreground">{content.description}</p>
 	</div>
 
-
 	{#if content?.media_url}
 		<div class="aspect-video w-full">
 			<VideoPlayer url={content.media_url} />
@@ -86,10 +85,10 @@
 
 	<!-- Next Content Button -->
 	{#if nextContentInfo}
-		<div class="flex justify-end mt-8 pt-8 border-t border-border">
+		<div class="border-border mt-8 flex justify-end border-t pt-8">
 			<Button
 				href={nextContentInfo.url}
-				class="flex items-center gap-2 bg-primary hover:bg-primary/90"
+				class="bg-primary hover:bg-primary/90 flex items-center gap-2"
 			>
 				<span>{nextContentInfo.label}</span>
 				<ChevronRight class="h-4 w-4" />
