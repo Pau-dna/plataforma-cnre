@@ -11,6 +11,13 @@
 		const initials = names.map((name) => name.charAt(0).toUpperCase());
 		return initials.slice(0, 3).join('');
 	}
+
+	function shortName(fullname: string) {
+		const names = fullname.split(' ');
+		if (names.length === 0) return '';
+		if (names.length === 1) return names[0];
+		return `${names[0]} ${names[names.length - 2]}`;
+	}
 </script>
 
 <DropdownMenu.Root>
@@ -38,7 +45,7 @@
 					/>
 				</Avatar.Root>
 				<div class="grid flex-1 text-left text-sm leading-tight">
-					<span class="truncate font-semibold">{authStore.user?.fullname || 'Usuario'}</span>
+					<span class="truncate font-semibold">{shortName(authStore.user?.fullname || 'Usuario')}</span>
 					<div class="mt-1 flex items-center gap-1">
 						<MailIcon class="text-muted-foreground size-3" />
 						<span class="text-muted-foreground truncate text-xs">{authStore.user?.email || ''}</span
