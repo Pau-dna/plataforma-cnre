@@ -6,6 +6,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Back from '$lib/components/kit/Back.svelte';
 	import { ModuleController } from '$lib/controllers/module';
+	import { toast } from 'svelte-sonner';
 
 	let { data }: PageProps = $props();
 
@@ -48,8 +49,13 @@
 
 			// Re-sort modules by order to ensure consistency
 			modules = modules.toSorted((a, b) => a.order - b.order);
+
+			toast.success('Módulo movido hacia arriba correctamente.');
 		} catch (error) {
 			console.error('Error moving module up:', error);
+			toast.error('Error al mover el módulo.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
 		}
 	}
 
@@ -75,8 +81,13 @@
 
 			// Re-sort modules by order to ensure consistency
 			modules = modules.toSorted((a, b) => a.order - b.order);
+
+			toast.success('Módulo movido hacia abajo correctamente.');
 		} catch (error) {
 			console.error('Error moving module down:', error);
+			toast.error('Error al mover el módulo.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
 		}
 	}
 

@@ -69,6 +69,7 @@
 		<p class="text-muted-foreground">{content.description}</p>
 	</div>
 
+
 	{#if content?.media_url}
 		<div class="aspect-video w-full">
 			<VideoPlayer url={content.media_url} />

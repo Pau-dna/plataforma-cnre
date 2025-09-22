@@ -7,6 +7,7 @@
 	import DeleteConfirmDialog from '$lib/components/ui/DeleteConfirmDialog.svelte';
 	import type { Content } from '$lib/types';
 	import { ContentController } from '$lib/controllers/content';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		content: Content;
@@ -44,10 +45,13 @@
 	async function handleDelete() {
 		try {
 			await contentController.deleteContent(content.id);
+			toast.success('Contenido eliminado con éxito.');
 			ondelete?.(content);
 		} catch (error) {
 			console.error('Error deleting content:', error);
-			// TODO: Show error toast
+			toast.error('Error al eliminar el contenido.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
 		}
 	}
 

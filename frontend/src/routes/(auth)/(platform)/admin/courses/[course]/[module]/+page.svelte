@@ -6,6 +6,7 @@
 	import Back from '$lib/components/kit/Back.svelte';
 	import { ContentController } from '$lib/controllers';
 	import ContentCard from '$lib/components/content/ContentCard.svelte';
+	import { toast } from 'svelte-sonner';
 
 	let { data }: PageProps = $props();
 
@@ -49,8 +50,13 @@
 
 			// Re-sort contents by order to ensure consistency
 			contents = contents.toSorted((a, b) => a.order - b.order);
+
+			toast.success('Contenido movido hacia arriba correctamente.');
 		} catch (error) {
 			console.error('Error moving content up:', error);
+			toast.error('Error al mover el contenido.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
 		}
 	}
 
@@ -76,8 +82,13 @@
 
 			// Re-sort contents by order to ensure consistency
 			contents = contents.toSorted((a, b) => a.order - b.order);
+
+			toast.success('Contenido movido hacia abajo correctamente.');
 		} catch (error) {
 			console.error('Error moving content down:', error);
+			toast.error('Error al mover el contenido.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
 		}
 	}
 </script>
