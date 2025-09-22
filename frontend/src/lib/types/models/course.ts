@@ -21,6 +21,19 @@ export enum UserRole {
 	ADMIN = 'admin'
 }
 
+export function getUserRoleLabel(role: UserRole): string {
+	switch (role) {
+		case UserRole.STUDENT:
+			return 'Estudiante';
+		case UserRole.INSTRUCTOR:
+			return 'Instructor';
+		case UserRole.ADMIN:
+			return 'Administrador';
+		default:
+			return 'Desconocido';
+	}
+}
+
 // Base interface for entities with common properties
 export interface BaseEntity {
 	id: number;
