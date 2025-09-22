@@ -1,6 +1,8 @@
 <script lang="ts">
 	import ModuleCard from '$lib/components/module/ModuleCard.svelte';
 	import type { PageProps } from './$types';
+	import { Plus } from '@lucide/svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -28,7 +30,13 @@
 
 <div class="flex flex-col gap-4">
 	<div class="flex flex-col gap-2">
-		<h1 class="text-h1">Módulos del Curso</h1>
+		<div class="flex items-center justify-between">
+			<h1 class="text-h1">Módulos del Curso</h1>
+			<Button href="/admin/courses/create" class="bg-pink-500 hover:bg-pink-900">
+				<Plus class="h-4 w-4 leading-none" />
+				<span class="leading-none">Crear Módulo</span>
+			</Button>
+		</div>
 		<p class="text-subtitle">Inducción al CNRE</p>
 	</div>
 
