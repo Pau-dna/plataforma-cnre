@@ -98,3 +98,28 @@ func (h *AuthHandler) GetUserInfo(c *gin.Context) {
 
 	responses.Ok(c, user)
 }
+
+// @Summary		Google Login
+// @Router			/auth/google [post]
+// @Description	Initiate Google OAuth2 login process
+// @Tags		auth
+// @Produce		json
+// @Success		200	{object}	dto.UserAuthResponse	"User registered successfully
+// @Failure		400	{object}	responses.ErrorResponse	"Bad Request"
+// @Failure		500	{object}	responses.ErrorResponse	"Internal Server Error
+// @Security     BearerAuth
+func (h *AuthHandler) GoogleLogin(c *gin.Context) {
+	var payload dto.GoogleLogin
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		responses.ErrorBadRequest(c, "Invalid request payload")
+		return
+	}
+
+	authData, err := h.authService.GoogleLogin(payload.Code)
+	if err != nil {
+		responses.ErrorInternalServerWithMessage(c, err.Error())
+		return
+	}
+
+	responses.Ok(c, authData)
+}

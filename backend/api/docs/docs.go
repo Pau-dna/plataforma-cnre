@@ -2375,6 +2375,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/google": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Initiate Google OAuth2 login process",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Google Login",
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_dto.UserAuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "security": [
@@ -3164,17 +3201,11 @@ const docTemplate = `{
                         "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment"
                     }
                 },
-                "firstName": {
+                "fullname": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
                 },
                 "role": {
                     "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_enums.UserRole"

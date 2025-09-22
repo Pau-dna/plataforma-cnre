@@ -7,6 +7,10 @@ type LoginUser struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type GoogleLogin struct {
+	Code string `json:"code" binding:"required"`
+}
+
 type AuthTokens struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`

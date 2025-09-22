@@ -18,6 +18,8 @@ import (
 	"github.com/imlargo/go-api-template/pkg/storage"
 	"github.com/imlargo/go-api-template/pkg/utils"
 	"go.uber.org/zap"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerFiles "github.com/swaggo/files"
@@ -51,7 +53,13 @@ func (app *Application) Mount() {
 	// Services
 	serviceContainer := services.NewService(app.Store, app.Logger, &app.Config, app.CacheKeys, app.Cache)
 	userService := services.NewUserService(serviceContainer)
-	authService := services.NewAuthService(serviceContainer, userService, jwtAuth)
+	authService := services.NewAuthService(serviceContainer, userService, jwtAuth, &oauth2.Config{
+		ClientID:     "778290220065-3qo116tisktmillm5l4v11n9a3epjbuo.apps.googleusercontent.com",
+		ClientSecret: "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",
+		RedirectURL:  "http://localhost:5173/authorize",
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+		Endpoint:     google.Endpoint,
+	})
 	fileService := services.NewFileService(serviceContainer, app.Storage)
 	notificationService := services.NewNotificationService(serviceContainer, sseManager, pushNotificationDispatcher)
 
