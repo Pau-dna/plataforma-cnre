@@ -5,8 +5,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
-"github.com/imlargo/go-api-template/internal/responses"
+	"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
 
@@ -16,6 +17,7 @@ type ContentHandler struct {
 }
 
 func NewContentHandler(handler *Handler, contentService services.ContentService) *ContentHandler {
+
 	return &ContentHandler{
 		Handler:        handler,
 		contentService: contentService,
@@ -125,31 +127,31 @@ func (h *ContentHandler) UpdateContent(c *gin.Context) {
 // @Failure500{object}responses.ErrorResponse"Internal Server Error"
 // @Security     BearerAuth
 func (h *ContentHandler) UpdateContentPatch(c *gin.Context) {
-contentID := c.Param("id")
-if contentID == "" {
-responses.ErrorBadRequest(c, "Content ID is required")
-return
-}
+	contentID := c.Param("id")
+	if contentID == "" {
+		responses.ErrorBadRequest(c, "Content ID is required")
+		return
+	}
 
-contentIDInt, err := strconv.Atoi(contentID)
-if err != nil {
-responses.ErrorBadRequest(c, "Invalid Content ID: "+err.Error())
-return
-}
+	contentIDInt, err := strconv.Atoi(contentID)
+	if err != nil {
+		responses.ErrorBadRequest(c, "Invalid Content ID: "+err.Error())
+		return
+	}
 
-var payload map[string]interface{}
-if err := c.BindJSON(&payload); err != nil {
-responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
-return
-}
+	var payload map[string]interface{}
+	if err := c.BindJSON(&payload); err != nil {
+		responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+		return
+	}
 
-content, err := h.contentService.UpdateContentPatch(uint(contentIDInt), payload)
-if err != nil {
-responses.ErrorInternalServerWithMessage(c, err.Error())
-return
-}
+	content, err := h.contentService.UpdateContentPatch(uint(contentIDInt), payload)
+	if err != nil {
+		responses.ErrorInternalServerWithMessage(c, err.Error())
+		return
+	}
 
-responses.Ok(c, content)
+	responses.Ok(c, content)
 }
 
 // @Summary Delete content
