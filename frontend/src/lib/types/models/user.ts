@@ -4,7 +4,7 @@ import type { BaseEntity, UserRole, Enrollment } from './course';
 export interface User extends BaseEntity {
 	email: string;
 	fullname: string;
-	avatarUrl: string;
+	avatar_url: string;
 	role: UserRole;
 	enrollments?: Enrollment[];
 }

@@ -1,12 +1,25 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import { authStore } from '$lib/stores/auth.svelte';
+
+
+	function getInitials(fullname: string) {
+		const names = fullname.split(' ');
+		const initials = names.map((name) => name.charAt(0).toUpperCase());
+		return initials.slice(0,3).join('');
+	}
+
 </script>
 
+{JSON.stringify(authStore.user)}
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root class="size-10">
-			<Avatar.Fallback class="bg-gradient-to-r from-sky-500 to-pink-500"></Avatar.Fallback>
+			<Avatar.Fallback>
+				{getInitials(authStore.user?.fullname || "")}
+			</Avatar.Fallback>
+			<Avatar.Image src={authStore.user?.avatar_url || '/images/default-avatar.png'} alt="User Avatar" />
 		</Avatar.Root>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>

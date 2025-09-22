@@ -151,7 +151,7 @@ export interface UserProgress extends BaseEntity {
 export interface User extends BaseEntity {
 	email: string;
 	fullname: string;
-	avatarUrl: string;
+	avatar_url: string;
 	role: UserRole;
 	enrollments?: Enrollment[];
 }

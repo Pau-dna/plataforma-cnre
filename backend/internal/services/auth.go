@@ -136,7 +136,7 @@ func (s *authService) GoogleLogin(code string) (*dto.UserAuthResponse, error) {
 		newUser := &models.User{
 			Email:     googleUser.Email,
 			Fullname:  googleUser.Name,
-			AvatarURL: googleUser.Picture,
+			AvatarUrl: googleUser.Picture,
 			Role:      enums.UserRoleStudent,
 		}
 

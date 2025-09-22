@@ -7,7 +7,7 @@ type User struct {
 
 	Email     string         `json:"email" gorm:"uniqueIndex;not null"`
 	Fullname  string         `json:"fullname" gorm:"not null"`
-	AvatarURL string         `json:"avatarUrl" gorm:"not null"`
+	AvatarUrl string         `json:"avatar_url" gorm:"not null"`
 	Role      enums.UserRole `json:"role" gorm:"not null;default:'student'"`
 
 	// Relaciones

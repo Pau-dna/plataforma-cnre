@@ -3185,7 +3185,7 @@ const docTemplate = `{
         "github_com_imlargo_go-api-template_internal_models.User": {
             "type": "object",
             "properties": {
-                "avatarUrl": {
+                "avatar_url": {
                     "type": "string"
                 },
                 "created_at": {
