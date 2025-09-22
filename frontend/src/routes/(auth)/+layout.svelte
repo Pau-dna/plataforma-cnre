@@ -32,6 +32,4 @@
 	<NavigationBar {links} />
 </div>
 
-<div class="px-4 pb-24 pt-12 md:px-12 md:pb-12 xl:px-24">
-	{@render children()}
-</div>
+{@render children()}
