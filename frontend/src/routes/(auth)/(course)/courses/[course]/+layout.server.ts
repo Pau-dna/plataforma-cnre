@@ -1,27 +1,22 @@
-import type { Course, Module } from '$lib';
+import { EnrollmentController, type Course, type Module } from '$lib';
 import { CourseController } from '$lib/controllers/course';
 import { ModuleController } from '$lib/controllers/module';
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ params }) => {
-	const courseController = new CourseController();
-	const moduleController = new ModuleController();
+export const load = (async ({ params, locals }) => {
+	const courseController = new CourseController(locals?.accessToken || "");
+	const moduleController = new ModuleController(locals?.accessToken || "");
+	const enrollmentController = new EnrollmentController(locals?.accessToken || "");
 
-	let course: Course = null as unknown as Course;
-	let modules: Module[] = [];
-
-	try {
-		course = await courseController.getCourse(params.course);
-		console.log(course);
-
-		modules = await moduleController.getModulesByCourse(course.id);
-		console.log(modules);
-	} catch (error) {
-		console.log(error);
-	}
-
+	const [course, modules, enrollment] = await Promise.all([
+		courseController.getCourse(parseInt(params.course)),
+		moduleController.getModulesByCourse(course.id),
+		enrollmentController.getEnrollment(locals.user.id)
+	])
+	
 	return {
 		course,
-		modules
+		modules,
+		enrollment
 	};
 }) satisfies LayoutServerLoad;
