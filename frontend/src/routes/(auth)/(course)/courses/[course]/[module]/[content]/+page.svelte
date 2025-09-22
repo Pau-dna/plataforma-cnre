@@ -7,7 +7,7 @@
 
 	let { data }: PageProps = $props();
 
-	let content = $state(data.content);
+	let content = $derived(data.content);
 	const modules = data.modules;
 	const courseId = data.courseId;
 	const moduleId = data.moduleId;
@@ -70,7 +70,7 @@
 	</div>
 
 	{#if content?.media_url}
-		<div class="aspect-video w-full">
+		<div class="">
 			<VideoPlayer url={content.media_url} />
 		</div>
 	{/if}

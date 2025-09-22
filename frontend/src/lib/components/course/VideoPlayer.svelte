@@ -17,9 +17,9 @@
 	const embedUrl = `https://www.youtube.com/embed/${videoID}?rel=0&modestbranding=1`;
 </script>
 
-<div class="aspect-video w-full overflow-hidden rounded-lg bg-black shadow-lg">
+<div class="aspect-video w-8/12 overflow-hidden rounded-lg bg-black shadow-lg">
 	{#if isLoading}
-		<div class="bg-muted flex h-full w-full animate-pulse items-center justify-center">
+		<div class="bg-muted flex h-full w-8/12 animate-pulse items-center justify-center">
 			<div class="text-muted-foreground">{'Cargando video...'}</div>
 		</div>
 	{/if}
@@ -27,7 +27,7 @@
 	<iframe
 		src={embedUrl}
 		title="YouTube video player"
-		class={`h-full w-full ${isLoading ? 'hidden' : 'block'}`}
+		class={`h-full w-8/12 ${isLoading ? 'hidden' : 'block'}`}
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 		allowfullscreen
 		onload={() => (isLoading = false)}

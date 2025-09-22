@@ -5,6 +5,8 @@ export const load = (async ({ locals, params, parent }) => {
 	const contentController = new ContentController(locals.accessToken || '');
 	const content = await contentController.getContent(parseInt(params.content));
 
+	console.log(content);
+	
 	// Get parent layout data to access modules and navigation info
 	const parentData = await parent();
 
