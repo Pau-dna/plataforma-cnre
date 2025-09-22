@@ -39,7 +39,7 @@ func (r *enrollmentRepository) Get(id uint) (*models.Enrollment, error) {
 
 func (r *enrollmentRepository) GetUserEnrollment(userID uint, courseID uint) (*models.Enrollment, error) {
 	var enrollment models.Enrollment
-	if err := r.db.Where(&models.Enrollment{UserID: userID, CourseID: courseID}).First(&enrollment).Error; err != nil {
+	if err := r.db.Preload("Course").Where(&models.Enrollment{UserID: userID, CourseID: courseID}).First(&enrollment).Error; err != nil {
 		return nil, err
 	}
 	return &enrollment, nil
@@ -61,7 +61,7 @@ func (r *enrollmentRepository) Delete(id uint) error {
 
 func (r *enrollmentRepository) GetAll() ([]*models.Enrollment, error) {
 	var enrollments []*models.Enrollment
-	if err := r.db.Find(&enrollments).Error; err != nil {
+	if err := r.db.Preload("Course").Find(&enrollments).Error; err != nil {
 		return nil, err
 	}
 	return enrollments, nil
