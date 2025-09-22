@@ -83,11 +83,11 @@
 	</Card.Header>
 	<Card.Content class="flex w-full justify-between">
 		<div class="flex items-center gap-4">
-			<Button 
-				href="/admin/courses/{module.course_id}/{module.id}" 
-				variant="ghost" 
+			<Button
+				href="/admin/courses/{module.course_id}/{module.id}"
+				variant="ghost"
 				size="sm"
-				class="flex items-center gap-2 text-blue-800 hover:text-blue-900 hover:bg-blue-50"
+				class="flex items-center gap-2 text-blue-800 hover:bg-blue-50 hover:text-blue-900"
 			>
 				<BookOpen class="h-4 w-4 leading-none" />
 				<span class="text-sm leading-none">Gestionar Contenidos</span>
