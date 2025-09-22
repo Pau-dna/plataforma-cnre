@@ -7,23 +7,25 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import type { Course } from '$lib/types';
-	import { toast } from "svelte-sooner";
+	import { toast } from 'svelte-sonner';
+	import { CourseController } from '$lib/controllers';
 
 	type Props = {
 		course: Course;
 		openEdit?: boolean;
 		children?: Snippet;
+		onupdate?: (course: Course) => void;
 	};
 
-	let { course, children, openEdit = $bindable() }: Props = $props();
+	let { course, children, onupdate, openEdit = $bindable() }: Props = $props();
 
 	let submitting = $state(false);
-	const formData= $state<Partial<Course>>({
+	const formData = $state<Partial<Course>>({
 		title: course.title,
 		description: course.description
-	})
+	});
 
-
+	const courseController = new CourseController();
 	async function handleUpdate() {
 		// Validate data
 		if (!formData.title || !formData.description) {
@@ -31,8 +33,20 @@
 			return;
 		}
 
+		try {
+			submitting = true;
+			const updated = await courseController.updateCoursePatch(course.id, formData as Course);
+			toast.success('Curso actualizado con éxito.');
+			openEdit = false;
+			onupdate?.(updated);
+		} catch (error) {
+			toast.error('Error al actualizar el curso.', {
+				description: error instanceof Error ? error.message : String(error)
+			});
+		} finally {
+			submitting = false;
+		}
 	}
-
 
 	$effect(() => {
 		if (!openEdit) {
@@ -55,11 +69,19 @@
 			</div>
 			<div class="flex flex-col gap-2">
 				<Label for="description">Descripción</Label>
-				<Textarea bind:value={formData.description} id="description" placeholder="Ingrese la descripción del curso" />
+				<Textarea
+					bind:value={formData.description}
+					id="description"
+					placeholder="Ingrese la descripción del curso"
+				/>
 			</div>
 		</div>
 		<Dialog.Footer>
-			<Button onclick={handleUpdate} disabled={submitting} class="w-full bg-pink-500 hover:bg-pink-900">Editar curso</Button>
+			<Button
+				onclick={handleUpdate}
+				disabled={submitting}
+				class="w-full bg-pink-500 hover:bg-pink-900">Editar curso</Button
+			>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
