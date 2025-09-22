@@ -3,12 +3,15 @@
 	import type { PageProps } from './$types';
 	import { Plus } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import Back from '$lib/components/kit/Back.svelte';
 
 	let { data }: PageProps = $props();
 
 	const course = $state(data.course);
 	const modules = $state(data.modules);
 </script>
+
+<Back href="/admin/courses" />
 
 <div class="flex flex-col gap-4">
 	<div class="flex flex-col gap-2">
