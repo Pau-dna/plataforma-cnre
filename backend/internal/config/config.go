@@ -35,11 +35,14 @@ type PushNotificationConfig struct {
 type AuthConfig struct {
 	ApiKey string
 
-	JwtSecret         string
-	JwtIssuer         string
-	JwtAudience       string
-	TokenExpiration   time.Duration
-	RefreshExpiration time.Duration
+	JwtSecret          string
+	JwtIssuer          string
+	JwtAudience        string
+	TokenExpiration    time.Duration
+	RefreshExpiration  time.Duration
+	GoogleClientID     string
+	GoogleClientSecret string
+	GoogleRedirectURL  string
 }
 
 type DbConfig struct {
@@ -83,11 +86,14 @@ func LoadConfig() AppConfig {
 			VAPIDPrivateKey: env.GetEnvString(VAPID_PRIVATE_KEY, ""),
 		},
 		Auth: AuthConfig{
-			JwtSecret:         env.GetEnvString(JWT_SECRET, "your-secret-key"),
-			JwtIssuer:         env.GetEnvString(JWT_ISSUER, "your-app"),
-			JwtAudience:       env.GetEnvString(JWT_AUDIENCE, "your-app-users"),
-			TokenExpiration:   time.Duration(env.GetEnvInt(JWT_TOKEN_EXPIRATION, 15)) * time.Minute,
-			RefreshExpiration: time.Duration(env.GetEnvInt(JWT_REFRESH_EXPIRATION, 10080)) * time.Minute,
+			JwtSecret:          env.GetEnvString(JWT_SECRET, "your-secret-key"),
+			JwtIssuer:          env.GetEnvString(JWT_ISSUER, "your-app"),
+			JwtAudience:        env.GetEnvString(JWT_AUDIENCE, "your-app-users"),
+			TokenExpiration:    time.Duration(env.GetEnvInt(JWT_TOKEN_EXPIRATION, 15)) * time.Minute,
+			RefreshExpiration:  time.Duration(env.GetEnvInt(JWT_REFRESH_EXPIRATION, 10080)) * time.Minute,
+			GoogleClientID:     env.GetEnvString(GOOGLE_CLIENT_ID, ""),
+			GoogleClientSecret: env.GetEnvString(GOOGLE_CLIENT_SECRET, ""),
+			GoogleRedirectURL:  env.GetEnvString(GOOGLE_REDIRECT_URL, ""),
 		},
 		Storage: StorageConfig{
 			BucketName:      env.GetEnvString(STORAGE_BUCKET_NAME, ""),

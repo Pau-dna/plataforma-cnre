@@ -54,9 +54,9 @@ func (app *Application) Mount() {
 	serviceContainer := services.NewService(app.Store, app.Logger, &app.Config, app.CacheKeys, app.Cache)
 	userService := services.NewUserService(serviceContainer)
 	authService := services.NewAuthService(serviceContainer, userService, jwtAuth, &oauth2.Config{
-		ClientID:     "778290220065-3qo116tisktmillm5l4v11n9a3epjbuo.apps.googleusercontent.com",
-		ClientSecret: "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",
-		RedirectURL:  "http://localhost:5173/authorize",
+		ClientID:     app.Config.Auth.GoogleClientID,
+		ClientSecret: app.Config.Auth.GoogleClientSecret,
+		RedirectURL:  app.Config.Auth.GoogleRedirectURL,
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
 		Endpoint:     google.Endpoint,
 	})

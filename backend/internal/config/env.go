@@ -67,6 +67,9 @@ func loadEnv() error {
 		STORAGE_PUBLIC_DOMAIN,
 		STORAGE_USE_PUBLIC_URL,
 		REDIS_URL,
+		GOOGLE_CLIENT_ID,
+		GOOGLE_CLIENT_SECRET,
+		GOOGLE_REDIRECT_URL,
 	}
 
 	var missingEnvVars []string
