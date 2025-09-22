@@ -8,8 +8,6 @@
 </script>
 
 
-{JSON.stringify(data.enrollments)}
-
 <div class="flex flex-col gap-6">
 	<h1 class="text-h1">Mis Cursos</h1>
 
