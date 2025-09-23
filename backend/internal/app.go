@@ -95,7 +95,7 @@ func (app *Application) Mount() {
 	authMiddleware := middleware.AuthTokenMiddleware(jwtAuth)
 	metricsMiddleware := middleware.NewMetricsMiddleware(app.Metrics)
 	rateLimiterMiddleware := middleware.NewRateLimiterMiddleware(app.RateLimiter)
-	corsMiddleware := middleware.NewCorsMiddleware(app.Config.Server.Host, []string{"http://localhost:5173"})
+	corsMiddleware := middleware.NewCorsMiddleware(app.Config.Server.Host, []string{"http://localhost:5173", "https://cnre.imlargo.dev"})
 
 	// Metrics
 	app.Router.GET("/internal/metrics", middleware.BearerApiKeyMiddleware(app.Config.Auth.ApiKey), gin.WrapH(promhttp.Handler()))
