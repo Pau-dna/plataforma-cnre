@@ -87,6 +87,7 @@
 	{#if nextContentInfo}
 		<div class="border-border mt-8 flex justify-end border-t pt-8">
 			<Button
+				data-sveltekit-reload
 				href={nextContentInfo.url}
 				class="bg-primary hover:bg-primary/90 flex items-center gap-2"
 			>
