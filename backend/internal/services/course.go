@@ -94,7 +94,7 @@ func (s *courseService) DeleteCourse(id uint) error {
 }
 
 func (s *courseService) GetAllCourses() ([]*models.Course, error) {
-	courses, err := s.store.Courses.GetAll()
+	courses, err := s.store.Courses.GetAllWithCounts()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get courses: %w", err)
 	}
@@ -102,19 +102,15 @@ func (s *courseService) GetAllCourses() ([]*models.Course, error) {
 }
 
 func (s *courseService) GetCourseWithModules(id uint) (*models.Course, error) {
-	// This would require a repository method to preload modules
-	course, err := s.store.Courses.Get(id)
+	course, err := s.store.Courses.GetWithModules(id)
 	if err != nil {
 		return nil, fmt.Errorf("course not found: %w", err)
 	}
-
-	// For now, return the course - would need to implement preloading in repository
 	return course, nil
 }
 
 func (s *courseService) GetCoursesWithEnrollmentCount() ([]*models.Course, error) {
-	// This would require a more complex repository method to calculate enrollment counts
-	courses, err := s.store.Courses.GetAll()
+	courses, err := s.store.Courses.GetAllWithCounts()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get courses: %w", err)
 	}
