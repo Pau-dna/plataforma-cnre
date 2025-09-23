@@ -1,3 +1,4 @@
+import { apiUrl } from '$lib/constants';
 import { authStore } from '$lib/stores/auth.svelte';
 
 // Type definitions for backend error format
@@ -200,7 +201,7 @@ export class ApiClient {
 }
 
 const api = new ApiClient({
-	baseUrl: 'http://localhost:8080',
+	baseUrl: apiUrl,
 	retrieveAuthToken: () => authStore.getAccessToken() || ''
 });
 
