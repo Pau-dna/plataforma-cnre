@@ -89,13 +89,13 @@ func (s *evaluationAttemptService) generateAttemptQuestions(evaluation *models.E
 	}
 
 	if len(allQuestions) < evaluation.QuestionCount {
-		return nil, 0, fmt.Errorf("insufficient questions available: need %d, have %d", 
+		return nil, 0, fmt.Errorf("insufficient questions available: need %d, have %d",
 			evaluation.QuestionCount, len(allQuestions))
 	}
 
 	// Randomly select questions
 	selectedQuestions := s.selectRandomQuestions(allQuestions, evaluation.QuestionCount)
-	
+
 	var attemptQuestions models.AttemptQuestions
 	totalPoints := 0
 
@@ -211,7 +211,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 
 	// Combine and shuffle the options
 	var options []models.AttemptAnswerOption
-	
+
 	// Add correct options
 	for i, answer := range selectedCorrect {
 		options = append(options, models.AttemptAnswerOption{
@@ -221,7 +221,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 		})
 	}
 
-	// Add incorrect options  
+	// Add incorrect options
 	for i, answer := range selectedIncorrect {
 		options = append(options, models.AttemptAnswerOption{
 			ID:        uint(len(selectedCorrect) + i + 1),

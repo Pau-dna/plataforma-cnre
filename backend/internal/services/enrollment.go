@@ -8,6 +8,7 @@ import (
 	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
 	"github.com/imlargo/go-api-template/pkg/utils"
+	"gorm.io/gorm"
 )
 
 type EnrollmentService interface {
@@ -59,11 +60,29 @@ func (s *enrollmentService) CreateEnrollment(userID, courseID uint) (*models.Enr
 		Progress:   0.0,
 	}
 
-	if err := s.store.Enrollments.Create(enrollment); err != nil {
-		return nil, fmt.Errorf("failed to create enrollment: %w", err)
+	// Use transaction to ensure consistency between enrollment creation and counter update
+	var createdEnrollment *models.Enrollment
+	err = s.store.DB().Transaction(func(tx *gorm.DB) error {
+		// Create the enrollment
+		if err := tx.Create(enrollment).Error; err != nil {
+			return fmt.Errorf("failed to create enrollment: %w", err)
+		}
+		createdEnrollment = enrollment
+
+		// Increment student count for the course
+		if err := tx.Model(&models.Course{}).Where("id = ?", courseID).
+			Update("student_count", tx.Raw("student_count + 1")).Error; err != nil {
+			return fmt.Errorf("failed to increment student count: %w", err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
-	return enrollment, nil
+	return createdEnrollment, nil
 }
 
 func (s *enrollmentService) GetEnrollment(id uint) (*models.Enrollment, error) {
@@ -114,9 +133,34 @@ func (s *enrollmentService) UpdateEnrollmentPatch(enrollmentID uint, data map[st
 }
 
 func (s *enrollmentService) DeleteEnrollment(id uint) error {
-	if err := s.store.Enrollments.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete enrollment: %w", err)
+	// Get the enrollment to get the course ID before deleting
+	enrollment, err := s.store.Enrollments.Get(id)
+	if err != nil {
+		return fmt.Errorf("failed to get enrollment: %w", err)
 	}
+
+	courseID := enrollment.CourseID
+
+	// Use transaction to ensure consistency between enrollment deletion and counter update
+	err = s.store.DB().Transaction(func(tx *gorm.DB) error {
+		// Delete the enrollment
+		if err := tx.Delete(&models.Enrollment{}, id).Error; err != nil {
+			return fmt.Errorf("failed to delete enrollment: %w", err)
+		}
+
+		// Decrement student count for the course
+		if err := tx.Model(&models.Course{}).Where("id = ?", courseID).
+			Update("student_count", tx.Raw("GREATEST(0, student_count - 1)")).Error; err != nil {
+			return fmt.Errorf("failed to decrement student count: %w", err)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

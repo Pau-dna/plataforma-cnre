@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/imlargo/go-api-template/internal/repositories"
+	"gorm.io/gorm"
 )
 
 type Store struct {
@@ -18,6 +19,7 @@ type Store struct {
 	Modules            repositories.ModuleRepository
 	UserProgresss      repositories.UserProgressRepository
 	Questions          repositories.QuestionRepository
+	repository         *repositories.Repository
 }
 
 func NewStorage(container *repositories.Repository) *Store {
@@ -35,5 +37,11 @@ func NewStorage(container *repositories.Repository) *Store {
 		Modules:            repositories.NewModuleRepository(container),
 		UserProgresss:      repositories.NewUserProgressRepository(container),
 		Questions:          repositories.NewQuestionRepository(container),
+		repository:         container,
 	}
+}
+
+// DB returns the database instance for transactions
+func (s *Store) DB() *gorm.DB {
+	return s.repository.DB()
 }

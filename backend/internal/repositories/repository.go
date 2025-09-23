@@ -27,3 +27,8 @@ func NewRepository(
 		logger,
 	}
 }
+
+// DB returns the database instance for transactions
+func (r *Repository) DB() *gorm.DB {
+	return r.db
+}
