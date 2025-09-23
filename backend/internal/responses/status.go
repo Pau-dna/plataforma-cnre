@@ -1,10 +1,10 @@
 package responses
 
 const (
-	errBindJson       = "BIND_JSON"
-	errNotFound       = "NOT_FOUND"
-	errInternalServer = "INTERNAL_SERVER_ERROR"
-	errBadRequest     = "BAD_REQUEST"
+	errBindJson        = "BIND_JSON"
+	errNotFound        = "NOT_FOUND"
+	errInternalServer  = "INTERNAL_SERVER_ERROR"
+	errBadRequest      = "BAD_REQUEST"
 	errTooManyRequests = "TOO_MANY_REQUESTS"
-	errUnauthorized   = "UNAUTHORIZED"
+	errUnauthorized    = "UNAUTHORIZED"
 )

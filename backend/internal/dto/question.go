@@ -4,11 +4,11 @@ import "github.com/imlargo/go-api-template/internal/enums"
 
 // CreateQuestionRequest DTO for creating questions
 type CreateQuestionRequest struct {
-	Text         string              `json:"text" binding:"required"`
-	Type         enums.QuestionType  `json:"type" binding:"required"`
-	Explanation  string              `json:"explanation"`
-	Points       int                 `json:"points" binding:"required"`
-	EvaluationID uint                `json:"evaluation_id" binding:"required"`
+	Text         string             `json:"text" binding:"required"`
+	Type         enums.QuestionType `json:"type" binding:"required"`
+	Explanation  string             `json:"explanation"`
+	Points       int                `json:"points" binding:"required"`
+	EvaluationID uint               `json:"evaluation_id" binding:"required"`
 }
 
 // UpdateQuestionRequest DTO for updating questions (PUT)
