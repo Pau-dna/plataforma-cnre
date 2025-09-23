@@ -3,6 +3,8 @@ name: build-push-deploy (prod)
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'backend/**'
   workflow_dispatch:
 
 jobs:
@@ -12,6 +14,11 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    
+    # Configurar el directorio de trabajo por defecto
+    defaults:
+      run:
+        working-directory: ./backend
 
     steps:
       - name: Checkout
@@ -43,8 +50,7 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./backend
           push: true
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
