@@ -27,7 +27,7 @@
 	<iframe
 		src={embedUrl}
 		title="YouTube video player"
-		class={`h-full w-8/12 ${isLoading ? 'hidden' : 'block'}`}
+		class={`h-full w-full ${isLoading ? 'hidden' : 'block'}`}
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 		allowfullscreen
 		onload={() => (isLoading = false)}
