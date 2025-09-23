@@ -5,11 +5,11 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "cnre",
-	"main": ".svelte-kit/cloudflare/_worker.js",
+	"main": "frontend/.svelte-kit/cloudflare/_worker.js",
 	"compatibility_date": "2025-05-13",
 	"assets": {
 		"binding": "ASSETS",
-		"directory": ".svelte-kit/cloudflare"
+		"directory": "frontend/.svelte-kit/cloudflare"
 	},
 	"observability": {
 		"enabled": true
