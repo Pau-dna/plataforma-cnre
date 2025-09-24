@@ -23,27 +23,21 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
-		<Avatar.Root class="size-10">
+		<Avatar.Root class="size-10 border">
 			<Avatar.Fallback>
-				{getInitials(authStore.user?.fullname || '')}
+				{getInitials(authStore.user?.fullname || 'N/A')}
 			</Avatar.Fallback>
-			<Avatar.Image
-				src={authStore.user?.avatar_url || '/images/default-avatar.png'}
-				alt="User Avatar"
-			/>
+			<Avatar.Image src={authStore.user?.avatar_url} alt="User Avatar" />
 		</Avatar.Root>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-64">
 		<DropdownMenu.Label class="p-0 font-normal">
 			<div class="flex items-center gap-3 px-2 py-3">
-				<Avatar.Root class="size-12">
+				<Avatar.Root class="size-12 border">
 					<Avatar.Fallback>
 						{getInitials(authStore.user?.fullname || '')}
 					</Avatar.Fallback>
-					<Avatar.Image
-						src={authStore.user?.avatar_url || '/images/default-avatar.png'}
-						alt="User Avatar"
-					/>
+					<Avatar.Image src={authStore.user?.avatar_url} alt="User Avatar" />
 				</Avatar.Root>
 				<div class="grid flex-1 text-left text-sm leading-tight">
 					<span class="truncate font-semibold"
