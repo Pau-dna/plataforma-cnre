@@ -101,11 +101,7 @@ func (s *evaluationAttemptService) generateAttemptQuestions(evaluation *models.E
 
 	for i, question := range selectedQuestions {
 		// Get all answers for this question
-		allAnswers, err := s.store.Answers.GetByQuestionID(question.ID)
-		if err != nil {
-			s.logger.Warnf("Failed to get answers for question %d: %v", question.ID, err)
-			continue
-		}
+		allAnswers := question.Answers
 
 		// Generate answer options for this question
 		answerOptions, err := s.generateAnswerOptions(allAnswers, evaluation.AnswerOptionsCount)
