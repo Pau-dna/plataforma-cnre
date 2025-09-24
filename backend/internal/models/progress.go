@@ -14,10 +14,10 @@ type UserProgress struct {
 	Attempts    int       `json:"attempts" gorm:"not null;default:0"`
 
 	// Relaciones
-	User    *User    `json:"user" gorm:"foreignKey:UserID"`
-	Course  *Course  `json:"course" gorm:"foreignKey:CourseID"`
-	Module  *Module  `json:"module" gorm:"foreignKey:ModuleID"`
-	Content *Content `json:"content" gorm:"foreignKey:ContentID"`
+	User    *User    `json:"user" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Course  *Course  `json:"course" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
+	Module  *Module  `json:"module" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
+	Content *Content `json:"content" gorm:"foreignKey:ContentID;constraint:OnDelete:CASCADE"`
 }
 
 func (UserProgress) TableName() string {

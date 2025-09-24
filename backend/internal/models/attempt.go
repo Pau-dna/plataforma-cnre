@@ -94,8 +94,8 @@ type EvaluationAttempt struct {
 	TimeSpent    int              `json:"time_spent"` // en minutos
 
 	// Relaciones
-	User       *User       `json:"user" gorm:"foreignKey:UserID"`
-	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
+	User       *User       `json:"user" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
 }
 
 func (EvaluationAttempt) TableName() string {

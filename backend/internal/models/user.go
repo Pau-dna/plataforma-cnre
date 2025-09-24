@@ -11,7 +11,7 @@ type User struct {
 	Role      enums.UserRole `json:"role" gorm:"not null;default:'student'"`
 
 	// Relaciones
-	Enrollments []*Enrollment `json:"enrollments" gorm:"foreignKey:UserID"`
+	Enrollments []*Enrollment `json:"enrollments" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }
 
 func (User) TableName() string {

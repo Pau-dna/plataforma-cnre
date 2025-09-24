@@ -11,8 +11,8 @@ type Course struct {
 	ModuleCount      int    `json:"module_count"`
 
 	// Relaciones
-	Modules     []*Module     `json:"modules" gorm:"foreignKey:CourseID"`
-	Enrollments []*Enrollment `json:"enrollments" gorm:"foreignKey:CourseID"`
+	Modules     []*Module     `json:"modules" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
+	Enrollments []*Enrollment `json:"enrollments" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
 }
 
 func (Course) TableName() string {

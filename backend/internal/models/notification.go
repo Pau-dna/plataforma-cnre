@@ -16,7 +16,7 @@ type Notification struct {
 	Read        bool                   `json:"read" gorm:"default:false;index:idx_user_read"`
 	UserID      uint                   `json:"user_id" gorm:"index;index:idx_user_read;default:null"`
 
-	User *User `swaggerignore:"true" json:"-"`
+	User *User `swaggerignore:"true" json:"-" gorm:"foreignKey:UserID;constraint:OnDelete:SET NULL"`
 }
 
 type PushNotificationSubscription struct {
@@ -29,7 +29,7 @@ type PushNotificationSubscription struct {
 
 	UserID uint `json:"user_id" gorm:"index;default:null"`
 
-	User *User `swaggerignore:"true" json:"-"`
+	User *User `swaggerignore:"true" json:"-" gorm:"foreignKey:UserID;constraint:OnDelete:SET NULL"`
 }
 
 func (s *PushNotificationSubscription) ToWebPush() map[string]string {
