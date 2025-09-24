@@ -1,5 +1,6 @@
 import { apiUrl } from '$lib/constants';
 import { authStore } from '$lib/stores/auth.svelte';
+import { ApiError } from '$lib/utils/error';
 
 // Type definitions for backend error format
 export interface ApiErrorResponse {
@@ -63,14 +64,12 @@ export class ApiClient {
 			return responseData as T;
 		}
 
-		// If there's an error, use the backend's specific format
-		const error: ApiErrorResponse = {
-			code: responseData.code || 'UNKNOWN_ERROR',
-			message: responseData.message || 'An unknown error occurred',
-			payload: responseData.payload
-		};
-
-		throw error;
+		// If there's an error, throw an ApiError with backend's format
+		throw new ApiError(
+			responseData.code || 'UNKNOWN_ERROR',
+			responseData.message || 'An unknown error occurred',
+			responseData.payload
+		);
 	}
 
 	/**
@@ -111,14 +110,10 @@ export class ApiClient {
 			return this.handleResponse<T>(response);
 		} catch (error) {
 			// If it's a network error (not an API error)
-			if (error instanceof Error && !(error as any).code) {
-				throw {
-					code: 'NETWORK_ERROR',
-					message: error.message,
-					payload: { originalError: error.toString() }
-				} as ApiErrorResponse;
+			if (error instanceof Error && !(error instanceof ApiError)) {
+				throw new ApiError('NETWORK_ERROR', error.message, { originalError: error.toString() });
 			}
-			// Re-throw if it's already an ApiErrorResponse
+			// Re-throw if it's already an ApiError
 			throw error;
 		}
 	}
