@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/imlargo/go-api-template/internal/dto"
+	"github.com/imlargo/go-api-template/internal/enums"
 	"github.com/imlargo/go-api-template/internal/models"
 	"github.com/imlargo/go-api-template/pkg/utils"
 )
@@ -104,7 +105,7 @@ func (s *evaluationAttemptService) generateAttemptQuestions(evaluation *models.E
 		allAnswers := question.Answers
 
 		// Generate answer options for this question
-		answerOptions, err := s.generateAnswerOptions(allAnswers, evaluation.AnswerOptionsCount)
+		answerOptions, err := s.generateAnswerOptions(allAnswers, evaluation.AnswerOptionsCount, question.Type)
 		if err != nil {
 			s.logger.Warnf("Failed to generate answer options for question %d: %v", question.ID, err)
 			continue
@@ -152,7 +153,7 @@ func (s *evaluationAttemptService) selectRandomQuestions(questions []*models.Que
 }
 
 // generateAnswerOptions generates random answer options ensuring proper distribution
-func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.Answer, optionsCount int) ([]models.AttemptAnswerOption, error) {
+func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.Answer, optionsCount int, questionType enums.QuestionType) ([]models.AttemptAnswerOption, error) {
 	if len(allAnswers) < 2 {
 		return nil, fmt.Errorf("insufficient answers available: need at least 2, have %d", len(allAnswers))
 	}
@@ -173,17 +174,40 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 		return nil, fmt.Errorf("no correct answers available")
 	}
 
-	// Calculate how many correct and incorrect answers to include
-	maxCorrect := optionsCount / 2
-	if maxCorrect == 0 {
-		maxCorrect = 1 // Always at least 1 correct answer
-	}
-
-	// Ensure we have at least 1 correct answer
-	correctToInclude := 1
-	if len(correctAnswers) > 1 && maxCorrect > 1 {
-		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		correctToInclude = r.Intn(maxCorrect) + 1
+	// Calculate how many correct and incorrect answers to include based on question type
+	var maxCorrect int
+	var correctToInclude int
+	
+	switch questionType {
+	case enums.QuestionTypeSingle:
+		// Single choice questions must have exactly 1 correct answer
+		maxCorrect = 1
+		correctToInclude = 1
+	case enums.QuestionTypeMultiple:
+		// Multiple choice questions can have 1 to (optionsCount-1) correct answers
+		maxCorrect = optionsCount - 1
+		if maxCorrect < 1 {
+			maxCorrect = 1
+		}
+		
+		// Random number of correct answers between 1 and maxCorrect
+		correctToInclude = 1
+		if len(correctAnswers) > 1 && maxCorrect > 1 {
+			r := rand.New(rand.NewSource(time.Now().UnixNano()))
+			correctToInclude = r.Intn(maxCorrect) + 1
+		}
+	default:
+		// Fallback to original logic for unknown question types
+		maxCorrect = optionsCount / 2
+		if maxCorrect == 0 {
+			maxCorrect = 1 // Always at least 1 correct answer
+		}
+		
+		correctToInclude = 1
+		if len(correctAnswers) > 1 && maxCorrect > 1 {
+			r := rand.New(rand.NewSource(time.Now().UnixNano()))
+			correctToInclude = r.Intn(maxCorrect) + 1
+		}
 	}
 
 	// Don't exceed available correct answers
