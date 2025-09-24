@@ -207,8 +207,6 @@
 
 <Back href="/admin/courses/{courseID}/{moduleID}/evaluations/{evaluationID}" />
 
-{JSON.stringify(question)}
-
 <div class="flex flex-col gap-6">
 	<div>
 		<h1 class="text-h1">Editar Pregunta</h1>
