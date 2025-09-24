@@ -91,9 +91,9 @@
 	</CardHeader>
 	<CardContent>
 		{#if evaluation.description}
-			<p class="text-muted-foreground text-sm mb-2">{evaluation.description}</p>
+			<p class="text-muted-foreground mb-2 text-sm">{evaluation.description}</p>
 		{/if}
-		<div class="flex flex-wrap gap-2 text-sm text-muted-foreground">
+		<div class="text-muted-foreground flex flex-wrap gap-2 text-sm">
 			<span>Preguntas: {evaluation.question_count}</span>
 			<span>•</span>
 			<span>Opciones: {evaluation.answer_options_count}</span>

@@ -22,7 +22,7 @@
 <a href="/courses/{course.id}">
 	<Card.Root class="pt-0 hover:shadow-lg">
 		<!-- Header con gradiente -->
-		<div class="h-44 w-full rounded-t-xl bg-gradient-to-r from-sky-500 to-pink-500 overflow-hidden">
+		<div class="h-44 w-full overflow-hidden rounded-t-xl bg-gradient-to-r from-sky-500 to-pink-500">
 			<img src={course.image_url} alt="" class="h-full w-full rounded-t-xl object-cover" />
 		</div>
 

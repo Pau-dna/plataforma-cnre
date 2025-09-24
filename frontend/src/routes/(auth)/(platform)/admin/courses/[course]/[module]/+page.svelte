@@ -116,8 +116,12 @@
 
 		try {
 			// Update the orders
-			await evaluationController.updateEvaluationPatch(evaluation.id, { order: previousEvaluation.order });
-			await evaluationController.updateEvaluationPatch(previousEvaluation.id, { order: evaluation.order });
+			await evaluationController.updateEvaluationPatch(evaluation.id, {
+				order: previousEvaluation.order
+			});
+			await evaluationController.updateEvaluationPatch(previousEvaluation.id, {
+				order: evaluation.order
+			});
 
 			// Update local state - swap the evaluations and their orders
 			const updatedEvaluation = { ...evaluation, order: previousEvaluation.order };
@@ -146,8 +150,12 @@
 
 		try {
 			// Update the orders
-			await evaluationController.updateEvaluationPatch(evaluation.id, { order: nextEvaluation.order });
-			await evaluationController.updateEvaluationPatch(nextEvaluation.id, { order: evaluation.order });
+			await evaluationController.updateEvaluationPatch(evaluation.id, {
+				order: nextEvaluation.order
+			});
+			await evaluationController.updateEvaluationPatch(nextEvaluation.id, {
+				order: evaluation.order
+			});
 
 			// Update local state - swap the evaluations and their orders
 			const updatedEvaluation = { ...evaluation, order: nextEvaluation.order };

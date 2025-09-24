@@ -39,7 +39,7 @@
 			{#if evaluation.description}
 				<p class="text-muted-foreground">{evaluation.description}</p>
 			{/if}
-			<div class="flex flex-wrap gap-2 text-sm text-muted-foreground">
+			<div class="text-muted-foreground flex flex-wrap gap-2 text-sm">
 				<span>Preguntas: {evaluation.question_count}</span>
 				<span>•</span>
 				<span>Opciones por pregunta: {evaluation.answer_options_count}</span>
@@ -91,10 +91,10 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-gray-300 rounded-lg">
-				<p class="text-muted-foreground mb-4 text-lg">
-					Esta evaluación no tiene preguntas aún
-				</p>
+			<div
+				class="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 py-12 text-center"
+			>
+				<p class="text-muted-foreground mb-4 text-lg">Esta evaluación no tiene preguntas aún</p>
 				<p class="text-muted-foreground mb-6 text-sm">
 					Comienza agregando preguntas para que los estudiantes puedan realizar la evaluación
 				</p>

@@ -20,15 +20,8 @@
 		ondelete?: (question: Question) => void;
 	}
 
-	let {
-		question,
-		questionNumber,
-		evaluationId,
-		courseId,
-		moduleId,
-		onupdate,
-		ondelete
-	}: Props = $props();
+	let { question, questionNumber, evaluationId, courseId, moduleId, onupdate, ondelete }: Props =
+		$props();
 
 	const questionController = new QuestionController();
 
@@ -60,7 +53,9 @@
 		}
 	}
 
-	function getQuestionTypeBadgeVariant(type: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+	function getQuestionTypeBadgeVariant(
+		type: string
+	): 'default' | 'secondary' | 'destructive' | 'outline' {
 		switch (type) {
 			case 'single_choice':
 				return 'default';
@@ -75,12 +70,14 @@
 <Card class="w-full">
 	<CardHeader class="flex flex-row items-start justify-between space-y-0 pb-2">
 		<div class="flex items-start gap-3">
-			<div class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-semibold text-sm">
+			<div
+				class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold"
+			>
 				{questionNumber}
 			</div>
 			<div class="flex flex-col gap-2">
 				<div class="flex items-center gap-2">
-					<MessageSquare class="h-4 w-4 text-muted-foreground" />
+					<MessageSquare class="text-muted-foreground h-4 w-4" />
 					<Badge variant={getQuestionTypeBadgeVariant(question.type)}>
 						{getQuestionTypeLabel(question.type)}
 					</Badge>
@@ -107,36 +104,39 @@
 	</CardHeader>
 	<CardContent>
 		{#if question.explanation}
-			<div class="text-sm text-muted-foreground">
-				<strong>Explicación:</strong> {question.explanation}
+			<div class="text-muted-foreground text-sm">
+				<strong>Explicación:</strong>
+				{question.explanation}
 			</div>
 		{/if}
 		{#if question.answers && question.answers.length > 0}
 			<div class="mt-3">
-				<p class="text-sm font-medium text-muted-foreground mb-2">
+				<p class="text-muted-foreground mb-2 text-sm font-medium">
 					Respuestas ({question.answers.length}):
 				</p>
 				<div class="space-y-1">
 					{#each question.answers.slice(0, 3) as answer}
 						<div class="flex items-center gap-2 text-sm">
-							<div class="w-2 h-2 rounded-full {answer.is_correct ? 'bg-green-500' : 'bg-gray-300'}"></div>
-							<span class={answer.is_correct ? 'text-green-700 font-medium' : 'text-muted-foreground'}>
+							<div
+								class="h-2 w-2 rounded-full {answer.is_correct ? 'bg-green-500' : 'bg-gray-300'}"
+							></div>
+							<span
+								class={answer.is_correct ? 'font-medium text-green-700' : 'text-muted-foreground'}
+							>
 								{answer.text}
 							</span>
 						</div>
 					{/each}
 					{#if question.answers.length > 3}
-						<p class="text-xs text-muted-foreground">
+						<p class="text-muted-foreground text-xs">
 							... y {question.answers.length - 3} respuesta(s) más
 						</p>
 					{/if}
 				</div>
 			</div>
 		{:else}
-			<div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-				<p class="text-sm text-yellow-800">
-					Esta pregunta no tiene respuestas configuradas aún.
-				</p>
+			<div class="mt-3 rounded-md border border-yellow-200 bg-yellow-50 p-3">
+				<p class="text-sm text-yellow-800">Esta pregunta no tiene respuestas configuradas aún.</p>
 			</div>
 		{/if}
 	</CardContent>

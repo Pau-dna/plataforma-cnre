@@ -107,7 +107,7 @@
 		</CardHeader>
 		<CardContent>
 			<div class="space-y-6">
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 					<div class="space-y-2 md:col-span-2">
 						<Label for="title">Título *</Label>
 						<Input
@@ -154,7 +154,7 @@
 							required
 							disabled={isSubmitting}
 						/>
-						<p class="text-xs text-muted-foreground">
+						<p class="text-muted-foreground text-xs">
 							Número de opciones de respuesta mostradas por pregunta
 						</p>
 					</div>
@@ -182,7 +182,7 @@
 							placeholder="Sin límite"
 							disabled={isSubmitting}
 						/>
-						<p class="text-sm text-muted-foreground">
+						<p class="text-muted-foreground text-sm">
 							Dejar vacío para permitir intentos ilimitados
 						</p>
 					</div>
@@ -197,9 +197,7 @@
 							placeholder="Sin límite de tiempo"
 							disabled={isSubmitting}
 						/>
-						<p class="text-sm text-muted-foreground">
-							Dejar vacío para permitir tiempo ilimitado
-						</p>
+						<p class="text-muted-foreground text-sm">Dejar vacío para permitir tiempo ilimitado</p>
 					</div>
 				</div>
 
