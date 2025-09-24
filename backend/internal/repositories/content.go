@@ -63,9 +63,17 @@ func (r *contentRepository) Patch(id uint, data map[string]interface{}) error {
 }
 
 func (r *contentRepository) Delete(id uint) error {
-	var content models.Content
-	content.ID = id
-	return r.db.Delete(&content).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Delete user progress for this content
+		if err := tx.Where("content_id = ?", id).Delete(&models.UserProgress{}).Error; err != nil {
+			return err
+		}
+		
+		// Delete the content itself
+		var content models.Content
+		content.ID = id
+		return tx.Delete(&content).Error
+	})
 }
 
 func (r *contentRepository) GetAll() ([]*models.Content, error) {
