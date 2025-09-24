@@ -297,7 +297,7 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 		return nil, fmt.Errorf("attempt already submitted")
 	}
 
-	// Get evaluation to check time limit
+	// Get evaluation to check time limit (cache this if needed)
 	evaluation, err := s.store.Evaluations.Get(attempt.EvaluationID)
 	if err != nil {
 		return nil, fmt.Errorf("evaluation not found: %w", err)
@@ -319,18 +319,55 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	attempt.SubmittedAt = time.Now()
 	attempt.TimeSpent = timeSpent
 
-	// Save attempt with answers
+	// Perform scoring and saving in a single optimized operation
+	s.scoreAttemptInline(attempt, evaluation)
+
+	// Save attempt with all updates (answers + scores) in single transaction
 	if err := s.store.EvaluationAttempts.Update(attempt); err != nil {
 		return nil, fmt.Errorf("failed to update attempt: %w", err)
 	}
 
-	// Score the attempt
-	scoredAttempt, err := s.ScoreAttempt(attemptID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to score attempt: %w", err)
+	return attempt, nil
+}
+
+// scoreAttemptInline performs scoring directly on the attempt object without database round trips
+func (s *evaluationAttemptService) scoreAttemptInline(attempt *models.EvaluationAttempt, evaluation *models.Evaluation) {
+	totalScore := 0
+	totalPoints := attempt.TotalPoints
+
+	// Create a map for faster question lookups
+	questionMap := make(map[uint]*models.AttemptQuestion)
+	for i := range attempt.Questions {
+		questionMap[attempt.Questions[i].ID] = &attempt.Questions[i]
 	}
 
-	return scoredAttempt, nil
+	// Score each answer using the optimized map lookup
+	for i, answer := range attempt.Answers {
+		// Find the corresponding attempt question using map (O(1) vs O(n))
+		attemptQuestion, exists := questionMap[answer.AttemptQuestionID]
+		if !exists {
+			s.logger.Warnf("Attempt question %d not found for answer", answer.AttemptQuestionID)
+			continue
+		}
+
+		// Validate the selected options
+		isCorrect, points := s.validateAttemptAnswer(attemptQuestion, answer.SelectedOptionIDs)
+
+		// Update the answer in the attempt
+		attempt.Answers[i].IsCorrect = isCorrect
+		attempt.Answers[i].Points = points
+
+		totalScore += points
+	}
+
+	// Update attempt with scores
+	attempt.Score = totalScore
+
+	// Check if passed based on passing score
+	if totalPoints > 0 {
+		percentage := float64(totalScore) / float64(totalPoints) * 100
+		attempt.Passed = percentage >= float64(evaluation.PassingScore)
+	}
 }
 
 func (s *evaluationAttemptService) GetAttempt(id uint) (*models.EvaluationAttempt, error) {

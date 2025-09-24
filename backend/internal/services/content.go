@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
@@ -42,6 +43,13 @@ func (s *contentService) CreateContent(content *models.Content) (*models.Content
 	if err := s.store.Contents.Create(content); err != nil {
 		return nil, fmt.Errorf("failed to create content: %w", err)
 	}
+
+	// Invalidate contents cache for the module
+	go func() {
+		cacheKey := s.cacheKeys.ContentsByModule(content.ModuleID)
+		_ = s.cache.Delete(cacheKey)
+	}()
+
 	return content, nil
 }
 
@@ -104,11 +112,26 @@ func (s *contentService) DeleteContent(id uint) error {
 }
 
 func (s *contentService) GetContentsByModule(moduleID uint) ([]*models.Content, error) {
-	// Use the new repository method to filter by module ID at database level
-	contents, err := s.store.Contents.GetByModuleID(moduleID)
+	// Check cache first
+	cacheKey := s.cacheKeys.ContentsByModule(moduleID)
+	
+	// Try to get from cache
+	var contents []*models.Content
+	err := s.cache.GetJSON(cacheKey, &contents)
+	if err == nil {
+		return contents, nil
+	}
+
+	// Use the optimized repository method to filter by module ID at database level
+	contents, err = s.store.Contents.GetByModuleID(moduleID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get contents: %w", err)
 	}
+
+	// Cache the result for 15 minutes (contents change less frequently than progress)
+	go func() {
+		_ = s.cache.Set(cacheKey, contents, 15*time.Minute)
+	}()
 
 	return contents, nil
 }

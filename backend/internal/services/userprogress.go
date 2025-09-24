@@ -188,18 +188,10 @@ func (s *userProgressService) CalculateModuleProgress(userID, moduleID uint) (fl
 		return 100.0, nil // No content means 100% complete
 	}
 
-	// Get user progress for this module using optimized query
-	userProgress, err := s.GetUserModuleProgress(userID, moduleID)
+	// Use optimized count query instead of loading all records
+	completedItems, err := s.store.UserProgresss.CountCompletedByUserAndModule(userID, moduleID)
 	if err != nil {
-		return 0, err
-	}
-
-	// Count completed items
-	completedItems := 0
-	for _, progress := range userProgress {
-		if !progress.CompletedAt.IsZero() {
-			completedItems++
-		}
+		return 0, fmt.Errorf("failed to count completed items: %w", err)
 	}
 
 	return float64(completedItems) / float64(totalItems) * 100.0, nil
