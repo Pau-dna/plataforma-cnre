@@ -7,7 +7,6 @@ import (
 	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
 	"github.com/imlargo/go-api-template/pkg/utils"
-	"gorm.io/gorm"
 )
 
 type ModuleService interface {
@@ -41,42 +40,17 @@ func (s *moduleService) CreateModule(module *models.Module) (*models.Module, err
 		return nil, fmt.Errorf("course not found: %w", err)
 	}
 
-	// Use transaction to ensure consistency between module creation and counter update
-	var createdModule *models.Module
-	err = s.store.DB().Transaction(func(tx *gorm.DB) error {
-		// Get the maximum order for this course
-		var maxOrder int
-		err := tx.Model(&models.Module{}).
-			Where("course_id = ?", module.CourseID).
-			Select("COALESCE(MAX(\"order\"), 0)").
-			Scan(&maxOrder).Error
-		if err != nil {
-			return err
-		}
-
-		// Set the next order
-		module.Order = maxOrder + 1
-
-		// Create the module
-		if err := tx.Create(module).Error; err != nil {
-			return fmt.Errorf("failed to create module: %w", err)
-		}
-		createdModule = module
-
-		// Increment module count for the course
-		if err := tx.Model(&models.Course{}).Where("id = ?", module.CourseID).
-			Update("module_count", tx.Raw("module_count + 1")).Error; err != nil {
-			return fmt.Errorf("failed to increment module count: %w", err)
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
+	if err := s.store.Modules.Create(module); err != nil {
+		return nil, fmt.Errorf("failed to create module: %w", err)
 	}
 
-	return createdModule, nil
+	// Increment module count for the course
+	if err := s.store.Courses.IncrementModuleCount(module.CourseID); err != nil {
+		// Log error but don't fail the operation
+		fmt.Printf("Warning: failed to increment module count for course %d: %v\n", module.CourseID, err)
+	}
+
+	return module, nil
 }
 
 func (s *moduleService) GetModule(id uint) (*models.Module, error) {
@@ -136,24 +110,14 @@ func (s *moduleService) DeleteModule(id uint) error {
 
 	courseID := module.CourseID
 
-	// Use transaction to ensure consistency between module deletion and counter update
-	err = s.store.DB().Transaction(func(tx *gorm.DB) error {
-		// Delete the module
-		if err := tx.Delete(&models.Module{}, id).Error; err != nil {
-			return fmt.Errorf("failed to delete module: %w", err)
-		}
+	if err := s.store.Modules.Delete(id); err != nil {
+		return fmt.Errorf("failed to delete module: %w", err)
+	}
 
-		// Decrement module count for the course
-		if err := tx.Model(&models.Course{}).Where("id = ?", courseID).
-			Update("module_count", tx.Raw("GREATEST(0, module_count - 1)")).Error; err != nil {
-			return fmt.Errorf("failed to decrement module count: %w", err)
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return err
+	// Decrement module count for the course
+	if err := s.store.Courses.DecrementModuleCount(courseID); err != nil {
+		// Log error but don't fail the operation
+		fmt.Printf("Warning: failed to decrement module count for course %d: %v\n", courseID, err)
 	}
 
 	return nil
