@@ -5,7 +5,7 @@ import "github.com/imlargo/go-api-template/internal/enums"
 // Evaluation - modelo de evaluación (quizzes, exámenes)
 type Evaluation struct {
 	BaseModel
-	Order              int               `json:"order" gorm:"not null"`
+	Order              int               `json:"order" gorm:"not null;index:idx_evaluations_module_order,priority:2"`
 	Title              string            `json:"title" gorm:"not null"`
 	Description        string            `json:"description" gorm:"type:text"`
 	Type               enums.ContentType `json:"type" gorm:"not null;default:'evaluation'"`
@@ -14,7 +14,7 @@ type Evaluation struct {
 	PassingScore       int               `json:"passing_score" gorm:"not null"`
 	MaxAttempts        int               `json:"max_attempts"`
 	TimeLimit          int               `json:"time_limit"` // en minutos
-	ModuleID           uint              `json:"module_id" gorm:"not null"`
+	ModuleID           uint              `json:"module_id" gorm:"not null;index;index:idx_evaluations_module_order,priority:1"`
 
 	// Relaciones
 	Module             *Module              `json:"module" gorm:"foreignKey:ModuleID"`

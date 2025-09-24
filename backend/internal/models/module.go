@@ -5,8 +5,8 @@ type Module struct {
 	BaseModel
 	Title       string `json:"title" gorm:"not null"`
 	Description string `json:"description"`
-	Order       int    `json:"order" gorm:"not null"`
-	CourseID    uint   `json:"course_id" gorm:"not null"`
+	Order       int    `json:"order" gorm:"not null;index:idx_modules_course_order,priority:2"`
+	CourseID    uint   `json:"course_id" gorm:"not null;index;index:idx_modules_course_order,priority:1"`
 
 	// Relaciones
 	Course      *Course       `json:"course" gorm:"foreignKey:CourseID"`

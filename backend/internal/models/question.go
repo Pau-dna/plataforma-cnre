@@ -9,7 +9,7 @@ type Question struct {
 	Type         enums.QuestionType `json:"type" gorm:"not null"`
 	Explanation  string             `json:"explanation" gorm:"type:text"`
 	Points       int                `json:"points" gorm:"not null;default:1"`
-	EvaluationID uint               `json:"evaluation_id" gorm:"not null"`
+	EvaluationID uint               `json:"evaluation_id" gorm:"not null;index"`
 
 	// Relaciones
 	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`

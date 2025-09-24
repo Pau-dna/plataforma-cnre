@@ -82,8 +82,8 @@ func (a *AttemptAnswers) Scan(value interface{}) error {
 // EvaluationAttempt - modelo de intento de evaluación
 type EvaluationAttempt struct {
 	BaseModel
-	UserID       uint             `json:"user_id" gorm:"not null"`
-	EvaluationID uint             `json:"evaluation_id" gorm:"not null"`
+	UserID       uint             `json:"user_id" gorm:"not null;index;index:idx_eval_attempts_user_eval,priority:1"`
+	EvaluationID uint             `json:"evaluation_id" gorm:"not null;index;index:idx_eval_attempts_user_eval,priority:2"`
 	Questions    AttemptQuestions `json:"questions" gorm:"type:json"` // Preguntas generadas para este intento
 	Answers      AttemptAnswers   `json:"answers" gorm:"type:json"`   // Respuestas del usuario
 	Score        int              `json:"score" gorm:"not null;default:0"`
