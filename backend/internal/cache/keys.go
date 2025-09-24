@@ -221,3 +221,45 @@ func (ck *CacheKeys) OnlyfansChartViews(externalID string, startDate, endDate ti
 	}
 	return ck.builder.BuildForQuery("onlyfans", "chart_views", params)
 }
+
+// Course and Module related cache keys
+func (ck *CacheKeys) CourseByID(courseID uint) string {
+	return ck.builder.BuildForEntity("course", strconv.Itoa(int(courseID)))
+}
+
+func (ck *CacheKeys) ModulesByCourse(courseID uint) string {
+	params := map[string]interface{}{
+		"course_id": courseID,
+	}
+	return ck.builder.BuildForQuery("modules", "by_course", params)
+}
+
+func (ck *CacheKeys) ContentsByModule(moduleID uint) string {
+	params := map[string]interface{}{
+		"module_id": moduleID,
+	}
+	return ck.builder.BuildForQuery("contents", "by_module", params)
+}
+
+func (ck *CacheKeys) EvaluationsByModule(moduleID uint) string {
+	params := map[string]interface{}{
+		"module_id": moduleID,
+	}
+	return ck.builder.BuildForQuery("evaluations", "by_module", params)
+}
+
+func (ck *CacheKeys) UserProgress(userID, courseID uint) string {
+	params := map[string]interface{}{
+		"user_id":   userID,
+		"course_id": courseID,
+	}
+	return ck.builder.BuildForQuery("user_progress", "by_user_course", params)
+}
+
+func (ck *CacheKeys) UserModuleProgress(userID, moduleID uint) string {
+	params := map[string]interface{}{
+		"user_id":   userID,
+		"module_id": moduleID,
+	}
+	return ck.builder.BuildForQuery("user_progress", "by_user_module", params)
+}
