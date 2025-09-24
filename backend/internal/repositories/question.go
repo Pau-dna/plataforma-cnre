@@ -62,7 +62,7 @@ func (r *questionRepository) GetAll() ([]*models.Question, error) {
 
 func (r *questionRepository) GetByEvaluationID(evaluationID uint) ([]*models.Question, error) {
 	var questions []*models.Question
-	if err := r.db.Where("evaluation_id = ?", evaluationID).Find(&questions).Error; err != nil {
+	if err := r.db.Preload("Answers").Where("evaluation_id = ?", evaluationID).Find(&questions).Error; err != nil {
 		return nil, err
 	}
 	return questions, nil
