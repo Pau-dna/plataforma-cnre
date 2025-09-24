@@ -330,7 +330,15 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	return attempt, nil
 }
 
-// scoreAttemptInline performs scoring directly on the attempt object without database round trips
+// scoreAttemptInline performs scoring directly on the attempt object without database round trips.
+// 
+// Parameters:
+//   - attempt: Pointer to the EvaluationAttempt to be scored. Must be non-nil and have its Questions and Answers fields populated.
+//              This object will be mutated: its Score and Passed fields will be updated based on the evaluation.
+//   - evaluation: Pointer to the Evaluation containing scoring rules (e.g., PassingScore). Must be non-nil.
+//
+// Side effects:
+//   - Mutates the provided attempt object by setting its Score and Passed fields.
 func (s *evaluationAttemptService) scoreAttemptInline(attempt *models.EvaluationAttempt, evaluation *models.Evaluation) {
 	totalScore := 0
 	totalPoints := attempt.TotalPoints
