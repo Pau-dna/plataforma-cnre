@@ -36,14 +36,14 @@ func NewEvaluationHandler(handler *Handler, evaluationService services.Evaluatio
 func (h *EvaluationHandler) CreateEvaluation(c *gin.Context) {
 	var evaluation models.Evaluation
 	if err := c.ShouldBindJSON(&evaluation); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	createdEvaluation, err := h.evaluationService.CreateEvaluation(&evaluation)
 	if err != nil {
 		h.logger.Errorf("Failed to create evaluation: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create evaluation"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to create evaluation")
 		return
 	}
 
@@ -63,18 +63,18 @@ func (h *EvaluationHandler) GetEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "Invalid evaluation ID")
 		return
 	}
 
 	evaluation, err := h.evaluationService.GetEvaluation(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get evaluation: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Evaluation not found"})
+		responses.ErrorNotFound(c, "Evaluation")
 		return
 	}
 
-	c.JSON(http.StatusOK, evaluation)
+	responses.Ok(c, evaluation)
 }
 
 // @Summary Update evaluation
@@ -92,24 +92,24 @@ func (h *EvaluationHandler) UpdateEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "Invalid evaluation ID")
 		return
 	}
 
 	var evaluation models.Evaluation
 	if err := c.ShouldBindJSON(&evaluation); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	updatedEvaluation, err := h.evaluationService.UpdateEvaluation(uint(id), &evaluation)
 	if err != nil {
 		h.logger.Errorf("Failed to update evaluation: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update evaluation"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to update evaluation")
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedEvaluation)
+	responses.Ok(c, updatedEvaluation)
 }
 
 // @SummaryUpdate evaluation
@@ -165,14 +165,14 @@ func (h *EvaluationHandler) DeleteEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "Invalid evaluation ID")
 		return
 	}
 
 	err = h.evaluationService.DeleteEvaluation(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to delete evaluation: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete evaluation"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to delete evaluation")
 		return
 	}
 
@@ -192,16 +192,16 @@ func (h *EvaluationHandler) GetEvaluationsByModule(c *gin.Context) {
 	moduleIDStr := c.Param("id")
 	moduleID, err := strconv.ParseUint(moduleIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
+		responses.ErrorBadRequest(c, "Invalid module ID")
 		return
 	}
 
 	evaluations, err := h.evaluationService.GetEvaluationsByModule(uint(moduleID))
 	if err != nil {
 		h.logger.Errorf("Failed to get evaluations by module: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get evaluations"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get evaluations")
 		return
 	}
 
-	c.JSON(http.StatusOK, evaluations)
+	responses.Ok(c, evaluations)
 }

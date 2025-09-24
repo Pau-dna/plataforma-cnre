@@ -36,7 +36,7 @@ func NewAnswerHandler(handler *Handler, answerService services.AnswerService) *A
 func (h *AnswerHandler) CreateAnswer(c *gin.Context) {
 	var answerReq dto.CreateAnswerRequest
 	if err := c.ShouldBindJSON(&answerReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -50,7 +50,7 @@ func (h *AnswerHandler) CreateAnswer(c *gin.Context) {
 	createdAnswer, err := h.answerService.CreateAnswer(answer)
 	if err != nil {
 		h.logger.Errorf("Failed to create answer: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create answer"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to create answer")
 		return
 	}
 
@@ -70,18 +70,18 @@ func (h *AnswerHandler) GetAnswer(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid answer ID"})
+		responses.ErrorBadRequest(c, "Invalid answer ID")
 		return
 	}
 
 	answer, err := h.answerService.GetAnswer(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get answer: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Answer not found"})
+		responses.ErrorNotFound(c, "Answer")
 		return
 	}
 
-	c.JSON(http.StatusOK, answer)
+	responses.Ok(c, answer)
 }
 
 // @Summary Update answer
@@ -99,13 +99,13 @@ func (h *AnswerHandler) UpdateAnswer(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid answer ID"})
+		responses.ErrorBadRequest(c, "Invalid answer ID")
 		return
 	}
 
 	var answerReq dto.UpdateAnswerRequest
 	if err := c.ShouldBindJSON(&answerReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -118,11 +118,11 @@ func (h *AnswerHandler) UpdateAnswer(c *gin.Context) {
 	updatedAnswer, err := h.answerService.UpdateAnswer(uint(id), answer)
 	if err != nil {
 		h.logger.Errorf("Failed to update answer: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update answer"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to update answer")
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedAnswer)
+	responses.Ok(c, updatedAnswer)
 }
 
 // @Summary Update answer
@@ -178,14 +178,14 @@ func (h *AnswerHandler) DeleteAnswer(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid answer ID"})
+		responses.ErrorBadRequest(c, "Invalid answer ID")
 		return
 	}
 
 	err = h.answerService.DeleteAnswer(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to delete answer: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete answer"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to delete answer")
 		return
 	}
 
@@ -205,16 +205,16 @@ func (h *AnswerHandler) GetAnswersByQuestion(c *gin.Context) {
 	questionIDStr := c.Param("id")
 	questionID, err := strconv.ParseUint(questionIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid question ID"})
+		responses.ErrorBadRequest(c, "Invalid question ID")
 		return
 	}
 
 	answers, err := h.answerService.GetAnswersByQuestion(uint(questionID))
 	if err != nil {
 		h.logger.Errorf("Failed to get answers by question: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get answers"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get answers")
 		return
 	}
 
-	c.JSON(http.StatusOK, answers)
+	responses.Ok(c, answers)
 }

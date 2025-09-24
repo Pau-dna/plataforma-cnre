@@ -36,7 +36,7 @@ func NewQuestionHandler(handler *Handler, questionService services.QuestionServi
 func (h *QuestionHandler) CreateQuestion(c *gin.Context) {
 	var questionReq dto.CreateQuestionRequest
 	if err := c.ShouldBindJSON(&questionReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *QuestionHandler) CreateQuestion(c *gin.Context) {
 	createdQuestion, err := h.questionService.CreateQuestion(question)
 	if err != nil {
 		h.logger.Errorf("Failed to create question: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create question"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to create question")
 		return
 	}
 
@@ -71,18 +71,18 @@ func (h *QuestionHandler) GetQuestion(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid question ID"})
+		responses.ErrorBadRequest(c, "Invalid question ID")
 		return
 	}
 
 	question, err := h.questionService.GetQuestion(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get question: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Question not found"})
+		responses.ErrorNotFound(c, "Question")
 		return
 	}
 
-	c.JSON(http.StatusOK, question)
+	responses.Ok(c, question)
 }
 
 // @Summary Update question
@@ -100,13 +100,13 @@ func (h *QuestionHandler) UpdateQuestion(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid question ID"})
+		responses.ErrorBadRequest(c, "Invalid question ID")
 		return
 	}
 
 	var questionReq dto.UpdateQuestionRequest
 	if err := c.ShouldBindJSON(&questionReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -120,11 +120,11 @@ func (h *QuestionHandler) UpdateQuestion(c *gin.Context) {
 	updatedQuestion, err := h.questionService.UpdateQuestion(uint(id), question)
 	if err != nil {
 		h.logger.Errorf("Failed to update question: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update question"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to update question")
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedQuestion)
+	responses.Ok(c, updatedQuestion)
 }
 
 // @Summary Update question
@@ -180,14 +180,14 @@ func (h *QuestionHandler) DeleteQuestion(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid question ID"})
+		responses.ErrorBadRequest(c, "Invalid question ID")
 		return
 	}
 
 	err = h.questionService.DeleteQuestion(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to delete question: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete question"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to delete question")
 		return
 	}
 
@@ -207,18 +207,18 @@ func (h *QuestionHandler) GetQuestionsByEvaluation(c *gin.Context) {
 	evaluationIDStr := c.Param("id")
 	evaluationID, err := strconv.ParseUint(evaluationIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "Invalid evaluation ID")
 		return
 	}
 
 	questions, err := h.questionService.GetQuestionsByEvaluation(uint(evaluationID))
 	if err != nil {
 		h.logger.Errorf("Failed to get questions by evaluation: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get questions"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get questions")
 		return
 	}
 
-	c.JSON(http.StatusOK, questions)
+	responses.Ok(c, questions)
 }
 
 // @Summary Get question with answers
@@ -234,16 +234,16 @@ func (h *QuestionHandler) GetQuestionWithAnswers(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid question ID"})
+		responses.ErrorBadRequest(c, "Invalid question ID")
 		return
 	}
 
 	question, err := h.questionService.GetQuestionWithAnswers(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get question with answers: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Question not found"})
+		responses.ErrorNotFound(c, "Question")
 		return
 	}
 
-	c.JSON(http.StatusOK, question)
+	responses.Ok(c, question)
 }

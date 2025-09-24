@@ -36,14 +36,14 @@ func NewModuleHandler(handler *Handler, moduleService services.ModuleService) *M
 func (h *ModuleHandler) CreateModule(c *gin.Context) {
 	var module models.Module
 	if err := c.ShouldBindJSON(&module); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	createdModule, err := h.moduleService.CreateModule(&module)
 	if err != nil {
 		h.logger.Errorf("Failed to create module: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create module"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to create module")
 		return
 	}
 
@@ -63,18 +63,18 @@ func (h *ModuleHandler) GetModule(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
+		responses.ErrorBadRequest(c, "Invalid module ID")
 		return
 	}
 
 	module, err := h.moduleService.GetModule(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get module: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Module not found"})
+		responses.ErrorNotFound(c, "Module")
 		return
 	}
 
-	c.JSON(http.StatusOK, module)
+	responses.Ok(c, module)
 }
 
 // @Summary Update module
@@ -93,24 +93,24 @@ func (h *ModuleHandler) UpdateModule(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
+		responses.ErrorBadRequest(c, "Invalid module ID")
 		return
 	}
 
 	var module models.Module
 	if err := c.ShouldBindJSON(&module); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	updatedModule, err := h.moduleService.UpdateModule(uint(id), &module)
 	if err != nil {
 		h.logger.Errorf("Failed to update module: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update module"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to update module")
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedModule)
+	responses.Ok(c, updatedModule)
 }
 
 // @SummaryUpdate module
@@ -167,14 +167,14 @@ func (h *ModuleHandler) DeleteModule(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
+		responses.ErrorBadRequest(c, "Invalid module ID")
 		return
 	}
 
 	err = h.moduleService.DeleteModule(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to delete module: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete module"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to delete module")
 		return
 	}
 
@@ -194,18 +194,18 @@ func (h *ModuleHandler) GetModulesByCourse(c *gin.Context) {
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
 	modules, err := h.moduleService.GetModulesByCourse(uint(courseID))
 	if err != nil {
 		h.logger.Errorf("Failed to get modules by course: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get modules"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get modules")
 		return
 	}
 
-	c.JSON(http.StatusOK, modules)
+	responses.Ok(c, modules)
 }
 
 // @Summary Get module with content
@@ -221,18 +221,18 @@ func (h *ModuleHandler) GetModuleWithContent(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
+		responses.ErrorBadRequest(c, "Invalid module ID")
 		return
 	}
 
 	module, err := h.moduleService.GetModuleWithContent(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get module with content: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Module not found"})
+		responses.ErrorNotFound(c, "Module")
 		return
 	}
 
-	c.JSON(http.StatusOK, module)
+	responses.Ok(c, module)
 }
 
 // @Summary Reorder modules
@@ -249,7 +249,7 @@ func (h *ModuleHandler) ReorderModules(c *gin.Context) {
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
@@ -259,7 +259,7 @@ func (h *ModuleHandler) ReorderModules(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&moduleOrders); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -281,9 +281,9 @@ func (h *ModuleHandler) ReorderModules(c *gin.Context) {
 	err = h.moduleService.ReorderModules(uint(courseID), convertedOrders)
 	if err != nil {
 		h.logger.Errorf("Failed to reorder modules: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to reorder modules"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to reorder modules")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Modules reordered successfully"})
+	responses.Ok(c, gin.H{"message": "Modules reordered successfully"})
 }

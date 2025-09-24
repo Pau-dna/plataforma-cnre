@@ -36,14 +36,14 @@ func NewCourseHandler(handler *Handler, courseService services.CourseService) *C
 func (h *CourseHandler) CreateCourse(c *gin.Context) {
 	var course models.Course
 	if err := c.ShouldBindJSON(&course); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	createdCourse, err := h.courseService.CreateCourse(&course)
 	if err != nil {
 		h.logger.Errorf("Failed to create course: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create course"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to create course")
 		return
 	}
 
@@ -63,18 +63,18 @@ func (h *CourseHandler) GetCourse(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
 	course, err := h.courseService.GetCourse(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get course: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
+		responses.ErrorNotFound(c, "Course")
 		return
 	}
 
-	c.JSON(http.StatusOK, course)
+	responses.Ok(c, course)
 }
 
 // @Summary Update course
@@ -93,24 +93,24 @@ func (h *CourseHandler) UpdateCourse(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
 	var course models.Course
 	if err := c.ShouldBindJSON(&course); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	updatedCourse, err := h.courseService.UpdateCourse(uint(id), &course)
 	if err != nil {
 		h.logger.Errorf("Failed to update course: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update course"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to update course")
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedCourse)
+	responses.Ok(c, updatedCourse)
 }
 
 // @Summary		Update course
@@ -167,14 +167,14 @@ func (h *CourseHandler) DeleteCourse(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
 	err = h.courseService.DeleteCourse(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to delete course: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete course"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to delete course")
 		return
 	}
 
@@ -192,11 +192,11 @@ func (h *CourseHandler) GetAllCourses(c *gin.Context) {
 	courses, err := h.courseService.GetAllCourses()
 	if err != nil {
 		h.logger.Errorf("Failed to get courses: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get courses"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get courses")
 		return
 	}
 
-	c.JSON(http.StatusOK, courses)
+	responses.Ok(c, courses)
 }
 
 // @Summary Get course with modules
@@ -212,16 +212,16 @@ func (h *CourseHandler) GetCourseWithModules(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
 	course, err := h.courseService.GetCourseWithModules(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get course with modules: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
+		responses.ErrorNotFound(c, "Course")
 		return
 	}
 
-	c.JSON(http.StatusOK, course)
+	responses.Ok(c, course)
 }

@@ -41,7 +41,7 @@ func (h *EnrollmentHandler) CreateEnrollment(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&enrollmentData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -49,10 +49,10 @@ func (h *EnrollmentHandler) CreateEnrollment(c *gin.Context) {
 	if err != nil {
 		h.logger.Errorf("Failed to create enrollment: %v", err)
 		if err.Error() == "user is already enrolled in this course" {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			responses.ErrorConflict(c, err.Error())
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create enrollment"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to create enrollment")
 		return
 	}
 
@@ -72,18 +72,18 @@ func (h *EnrollmentHandler) GetEnrollment(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid enrollment ID"})
+		responses.ErrorBadRequest(c, "Invalid enrollment ID")
 		return
 	}
 
 	enrollment, err := h.enrollmentService.GetEnrollment(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get enrollment: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Enrollment not found"})
+		responses.ErrorNotFound(c, "Enrollment")
 		return
 	}
 
-	c.JSON(http.StatusOK, enrollment)
+	responses.Ok(c, enrollment)
 }
 
 // @Summary		Update enrollment
@@ -140,14 +140,14 @@ func (h *EnrollmentHandler) DeleteEnrollment(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid enrollment ID"})
+		responses.ErrorBadRequest(c, "Invalid enrollment ID")
 		return
 	}
 
 	err = h.enrollmentService.DeleteEnrollment(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to delete enrollment: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete enrollment"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to delete enrollment")
 		return
 	}
 
@@ -167,18 +167,18 @@ func (h *EnrollmentHandler) GetUserEnrollments(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		responses.ErrorBadRequest(c, "Invalid user ID")
 		return
 	}
 
 	enrollments, err := h.enrollmentService.GetUserEnrollments(uint(userID))
 	if err != nil {
 		h.logger.Errorf("Failed to get user enrollments: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get enrollments"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get enrollments")
 		return
 	}
 
-	c.JSON(http.StatusOK, enrollments)
+	responses.Ok(c, enrollments)
 }
 
 // @Summary Get course enrollments
@@ -194,18 +194,18 @@ func (h *EnrollmentHandler) GetCourseEnrollments(c *gin.Context) {
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
 	enrollments, err := h.enrollmentService.GetCourseEnrollments(uint(courseID))
 	if err != nil {
 		h.logger.Errorf("Failed to get course enrollments: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get enrollments"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get enrollments")
 		return
 	}
 
-	c.JSON(http.StatusOK, enrollments)
+	responses.Ok(c, enrollments)
 }
 
 // @Summary Get user course enrollment
@@ -223,25 +223,25 @@ func (h *EnrollmentHandler) GetUserCourseEnrollment(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		responses.ErrorBadRequest(c, "Invalid user ID")
 		return
 	}
 
 	courseIDStr := c.Param("courseId")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
 	enrollment, err := h.enrollmentService.GetUserCourseEnrollment(uint(userID), uint(courseID))
 	if err != nil {
 		h.logger.Errorf("Failed to get user course enrollment: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Enrollment not found"})
+		responses.ErrorNotFound(c, "Enrollment")
 		return
 	}
 
-	c.JSON(http.StatusOK, enrollment)
+	responses.Ok(c, enrollment)
 }
 
 // @Summary Complete enrollment
@@ -258,14 +258,14 @@ func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		responses.ErrorBadRequest(c, "Invalid user ID")
 		return
 	}
 
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
@@ -273,14 +273,14 @@ func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 	if err != nil {
 		h.logger.Errorf("Failed to complete enrollment: %v", err)
 		if err.Error() == "enrollment not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Enrollment not found"})
+			responses.ErrorNotFound(c, "Enrollment")
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to complete enrollment"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to complete enrollment")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Enrollment completed successfully"})
+	responses.Ok(c, gin.H{"message": "Enrollment completed successfully"})
 }
 
 // @Summary Update enrollment progress
@@ -298,14 +298,14 @@ func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		responses.ErrorBadRequest(c, "Invalid user ID")
 		return
 	}
 
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		responses.ErrorBadRequest(c, "Invalid course ID")
 		return
 	}
 
@@ -314,7 +314,7 @@ func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&progressData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -322,12 +322,12 @@ func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 	if err != nil {
 		h.logger.Errorf("Failed to update enrollment progress: %v", err)
 		if err.Error() == "enrollment not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Enrollment not found"})
+			responses.ErrorNotFound(c, "Enrollment")
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update progress"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to update progress")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Progress updated successfully"})
+	responses.Ok(c, gin.H{"message": "Progress updated successfully"})
 }
