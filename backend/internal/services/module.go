@@ -43,6 +43,13 @@ func (s *moduleService) CreateModule(module *models.Module) (*models.Module, err
 	if err := s.store.Modules.Create(module); err != nil {
 		return nil, fmt.Errorf("failed to create module: %w", err)
 	}
+
+	// Increment module count for the course
+	if err := s.store.Courses.IncrementModuleCount(module.CourseID); err != nil {
+		// Log error but don't fail the operation
+		fmt.Printf("Warning: failed to increment module count for course %d: %v\n", module.CourseID, err)
+	}
+
 	return module, nil
 }
 
@@ -95,9 +102,24 @@ func (s *moduleService) UpdateModulePatch(moduleID uint, data map[string]interfa
 }
 
 func (s *moduleService) DeleteModule(id uint) error {
+	// Get the module to get the course ID before deleting
+	module, err := s.store.Modules.Get(id)
+	if err != nil {
+		return fmt.Errorf("failed to get module: %w", err)
+	}
+
+	courseID := module.CourseID
+
 	if err := s.store.Modules.Delete(id); err != nil {
 		return fmt.Errorf("failed to delete module: %w", err)
 	}
+
+	// Decrement module count for the course
+	if err := s.store.Courses.DecrementModuleCount(courseID); err != nil {
+		// Log error but don't fail the operation
+		fmt.Printf("Warning: failed to decrement module count for course %d: %v\n", courseID, err)
+	}
+
 	return nil
 }
 

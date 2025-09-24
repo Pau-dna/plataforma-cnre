@@ -84,8 +84,8 @@ type EvaluationAttempt struct {
 	BaseModel
 	UserID       uint             `json:"user_id" gorm:"not null"`
 	EvaluationID uint             `json:"evaluation_id" gorm:"not null"`
-	Questions    AttemptQuestions `json:"questions" gorm:"type:json"`    // Preguntas generadas para este intento
-	Answers      AttemptAnswers   `json:"answers" gorm:"type:json"`      // Respuestas del usuario
+	Questions    AttemptQuestions `json:"questions" gorm:"type:json"` // Preguntas generadas para este intento
+	Answers      AttemptAnswers   `json:"answers" gorm:"type:json"`   // Respuestas del usuario
 	Score        int              `json:"score" gorm:"not null;default:0"`
 	TotalPoints  int              `json:"total_points" gorm:"not null"`
 	Passed       bool             `json:"passed" gorm:"not null;default:false"`

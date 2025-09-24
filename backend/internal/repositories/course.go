@@ -12,6 +12,10 @@ type CourseRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.Course, error)
+	IncrementStudentCount(courseID uint) error
+	DecrementStudentCount(courseID uint) error
+	IncrementModuleCount(courseID uint) error
+	DecrementModuleCount(courseID uint) error
 }
 
 type courseRepository struct {
@@ -56,4 +60,24 @@ func (r *courseRepository) GetAll() ([]*models.Course, error) {
 		return nil, err
 	}
 	return courses, nil
+}
+
+func (r *courseRepository) IncrementStudentCount(courseID uint) error {
+	return r.db.Model(&models.Course{}).Where("id = ?", courseID).
+		Update("student_count", r.db.Raw("student_count + 1")).Error
+}
+
+func (r *courseRepository) DecrementStudentCount(courseID uint) error {
+	return r.db.Model(&models.Course{}).Where("id = ?", courseID).
+		Update("student_count", r.db.Raw("GREATEST(0, student_count - 1)")).Error
+}
+
+func (r *courseRepository) IncrementModuleCount(courseID uint) error {
+	return r.db.Model(&models.Course{}).Where("id = ?", courseID).
+		Update("module_count", r.db.Raw("module_count + 1")).Error
+}
+
+func (r *courseRepository) DecrementModuleCount(courseID uint) error {
+	return r.db.Model(&models.Course{}).Where("id = ?", courseID).
+		Update("module_count", r.db.Raw("GREATEST(0, module_count - 1)")).Error
 }

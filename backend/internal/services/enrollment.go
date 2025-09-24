@@ -63,6 +63,12 @@ func (s *enrollmentService) CreateEnrollment(userID, courseID uint) (*models.Enr
 		return nil, fmt.Errorf("failed to create enrollment: %w", err)
 	}
 
+	// Increment student count for the course
+	if err := s.store.Courses.IncrementStudentCount(courseID); err != nil {
+		// Log error but don't fail the operation
+		fmt.Printf("Warning: failed to increment student count for course %d: %v\n", courseID, err)
+	}
+
 	return enrollment, nil
 }
 
@@ -114,9 +120,24 @@ func (s *enrollmentService) UpdateEnrollmentPatch(enrollmentID uint, data map[st
 }
 
 func (s *enrollmentService) DeleteEnrollment(id uint) error {
+	// Get the enrollment to get the course ID before deleting
+	enrollment, err := s.store.Enrollments.Get(id)
+	if err != nil {
+		return fmt.Errorf("failed to get enrollment: %w", err)
+	}
+
+	courseID := enrollment.CourseID
+
 	if err := s.store.Enrollments.Delete(id); err != nil {
 		return fmt.Errorf("failed to delete enrollment: %w", err)
 	}
+
+	// Decrement student count for the course
+	if err := s.store.Courses.DecrementStudentCount(courseID); err != nil {
+		// Log error but don't fail the operation
+		fmt.Printf("Warning: failed to decrement student count for course %d: %v\n", courseID, err)
+	}
+
 	return nil
 }
 
