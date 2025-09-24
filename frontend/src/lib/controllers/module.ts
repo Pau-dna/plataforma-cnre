@@ -18,9 +18,20 @@ export class ModuleController extends BaseController {
 
 	/**
 	 * Get module with all content loaded
+	 * Note: This endpoint doesn't exist in backend, use getModule + getModuleContents instead
 	 */
 	async getModuleWithContent(id: number): Promise<Module> {
-		return this.get<Module>(`/api/v1/modules/${id}/content`);
+		// Since backend doesn't have this endpoint, get module and contents separately
+		const module = await this.getModule(id);
+		const contents = await this.getModuleContents(id);
+		const evaluations = await this.getModuleEvaluations(id);
+		
+		// Combine them into the expected structure
+		return {
+			...module,
+			contents: contents || [],
+			evaluations: evaluations || []
+		};
 	}
 
 	/**
@@ -62,11 +73,8 @@ export class ModuleController extends BaseController {
 	 * Reorder modules within a course
 	 */
 	async reorderModules(courseId: number, moduleOrders: ReorderItemDTO[]): Promise<void> {
-		for (const modulo of moduleOrders) {
-			this.updateModulePatch(modulo.id, {
-				order: modulo.order
-			});
-		}
+		// Use the efficient batch reorder endpoint instead of individual PATCH calls
+		return this.post(`/api/v1/courses/${courseId}/modules/reorder`, moduleOrders);
 	}
 
 	/**

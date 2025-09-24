@@ -56,9 +56,18 @@ export class QuestionController extends BaseController {
 
 	/**
 	 * Get question with answers
+	 * Note: Backend endpoint returns Answer[] not Question, so we combine the data
 	 */
 	async getQuestionWithAnswers(questionId: number): Promise<Question> {
-		return this.get<Question>(`/api/v1/questions/${questionId}/answers`);
+		// Get question and answers separately since backend doesn't return combined data
+		const question = await this.getQuestion(questionId);
+		const answers = await this.get<Answer[]>(`/api/v1/questions/${questionId}/answers`);
+		
+		// Combine them into the expected structure
+		return {
+			...question,
+			answers: answers || []
+		};
 	}
 }
 

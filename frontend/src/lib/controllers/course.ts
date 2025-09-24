@@ -17,10 +17,19 @@ export class CourseController extends BaseController {
 	}
 
 	/**
-	 * Get course with all modules loaded
+	 * Get course with all modules loaded  
+	 * Note: Backend endpoint returns Module[] not Course, so we combine the data
 	 */
 	async getCourseWithModules(id: number): Promise<Course> {
-		return this.get<Course>(`/api/v1/courses/${id}/modules`);
+		// Get course and modules separately since backend doesn't return combined data
+		const course = await this.getCourse(id);
+		const modules = await this.getCourseModules(id);
+		
+		// Combine them into the expected structure
+		return {
+			...course,
+			modules: modules || []
+		};
 	}
 
 	/**

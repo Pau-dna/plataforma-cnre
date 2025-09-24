@@ -11,43 +11,49 @@ export class UserController extends BaseController {
 
 	/**
 	 * Get user by ID
+	 * WARNING: This endpoint doesn't exist in backend - user handler not implemented
 	 */
 	async getUser(id: number): Promise<User> {
-		return this.get<User>(`/api/v1/users/${id}`);
+		throw new Error('User endpoints not implemented in backend');
 	}
 
 	/**
 	 * Update user profile
+	 * WARNING: This endpoint doesn't exist in backend - user handler not implemented
 	 */
 	async updateUser(id: number, userData: Partial<User>): Promise<User> {
-		return this.put<User>(`/api/v1/users/${id}`, userData);
+		throw new Error('User endpoints not implemented in backend');
 	}
 
 	/**
 	 * Partially update a user (PATCH)
+	 * WARNING: This endpoint doesn't exist in backend - user handler not implemented
 	 */
 	async updateUserPatch(id: number, userData: Partial<User>): Promise<User> {
-		return this.patch<User>(`/api/v1/users/${id}`, userData);
+		throw new Error('User endpoints not implemented in backend');
 	}
 
 	/**
 	 * Delete user
+	 * WARNING: This endpoint doesn't exist in backend - user handler not implemented
 	 */
 	async deleteUser(id: number): Promise<void> {
-		return this.delete(`/api/v1/users/${id}`);
+		throw new Error('User endpoints not implemented in backend');
 	}
 
 	/**
 	 * Get all users (admin only)
+	 * WARNING: This endpoint doesn't exist in backend - user handler not implemented
 	 */
 	async getAllUsers(): Promise<User[]> {
-		return this.get<User[]>('/api/v1/users');
+		throw new Error('User endpoints not implemented in backend');
 	}
 
 	/**
 	 * Search users by email or name
+	 * WARNING: This endpoint doesn't exist in backend - user handler not implemented
 	 */
 	async searchUsers(query: string): Promise<User[]> {
-		return this.get<User[]>(`/api/v1/users/search?q=${encodeURIComponent(query)}`);
+		throw new Error('User endpoints not implemented in backend');
 	}
 }

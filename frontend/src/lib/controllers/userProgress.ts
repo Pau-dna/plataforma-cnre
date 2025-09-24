@@ -4,20 +4,23 @@ import type { UserProgress } from '$lib/types';
 export class UserProgressController extends BaseController {
 	/**
 	 * Get user progress for a specific course
+	 * WARNING: This endpoint doesn't exist in backend
 	 */
 	async getUserCourseProgress(userId: number, courseId: number): Promise<UserProgress[]> {
-		return this.get<UserProgress[]>(`/api/v1/users/${userId}/courses/${courseId}/progress`);
+		throw new Error('User progress endpoints not implemented in backend');
 	}
 
 	/**
 	 * Get user progress for a specific module
+	 * WARNING: This endpoint doesn't exist in backend
 	 */
 	async getUserModuleProgress(userId: number, moduleId: number): Promise<UserProgress[]> {
-		return this.get<UserProgress[]>(`/api/v1/users/${userId}/modules/${moduleId}/progress`);
+		throw new Error('User progress endpoints not implemented in backend');
 	}
 
 	/**
 	 * Mark content as completed
+	 * WARNING: This endpoint doesn't exist in backend
 	 */
 	async markContentComplete(
 		userId: number,
@@ -25,16 +28,12 @@ export class UserProgressController extends BaseController {
 		moduleId: number,
 		contentId: number
 	): Promise<UserProgress> {
-		return this.post<UserProgress>('/api/v1/user-progress/complete', {
-			user_id: userId,
-			course_id: courseId,
-			module_id: moduleId,
-			content_id: contentId
-		});
+		throw new Error('User progress endpoints not implemented in backend');
 	}
 
 	/**
 	 * Mark content as incomplete
+	 * WARNING: This endpoint doesn't exist in backend
 	 */
 	async markContentIncomplete(
 		userId: number,
@@ -42,40 +41,31 @@ export class UserProgressController extends BaseController {
 		moduleId: number,
 		contentId: number
 	): Promise<void> {
-		return this.post('/api/v1/user-progress/incomplete', {
-			user_id: userId,
-			course_id: courseId,
-			module_id: moduleId,
-			content_id: contentId
-		});
+		throw new Error('User progress endpoints not implemented in backend');
 	}
 
 	/**
 	 * Calculate course progress percentage
+	 * WARNING: This endpoint doesn't exist in backend
 	 */
 	async calculateCourseProgress(userId: number, courseId: number): Promise<number> {
-		return this.get<number>(`/api/v1/users/${userId}/courses/${courseId}/progress-percentage`);
+		throw new Error('User progress endpoints not implemented in backend');
 	}
 
 	/**
 	 * Calculate module progress percentage
+	 * WARNING: This endpoint doesn't exist in backend
 	 */
 	async calculateModuleProgress(userId: number, moduleId: number): Promise<number> {
-		return this.get<number>(`/api/v1/users/${userId}/modules/${moduleId}/progress-percentage`);
+		throw new Error('User progress endpoints not implemented in backend');
 	}
 
 	/**
 	 * Helper method to check if content is completed by user
+	 * WARNING: This endpoint doesn't exist in backend
 	 */
 	async isContentCompleted(userId: number, contentId: number): Promise<boolean> {
-		try {
-			const progress = await this.get<UserProgress>(
-				`/api/v1/users/${userId}/content/${contentId}/progress`
-			);
-			return !!progress.completed_at;
-		} catch (error) {
-			return false;
-		}
+		throw new Error('User progress endpoints not implemented in backend');
 	}
 
 	/**
@@ -85,10 +75,24 @@ export class UserProgressController extends BaseController {
 		if (contentIds.length === 0) return 0;
 
 		const completionChecks = await Promise.all(
-			contentIds.map((contentId) => this.isContentCompleted(userId, contentId))
+			contentIds.map(async (contentId) => {
+				try {
+					return await this.isContentCompleted(userId, contentId);
+				} catch {
+					return false;
+				}
+			})
 		);
 
 		const completedCount = completionChecks.filter(Boolean).length;
 		return (completedCount / contentIds.length) * 100;
+	}
+
+	/**
+	 * Update course enrollment progress (WORKING ENDPOINT)
+	 * This is the only progress endpoint that exists in backend
+	 */
+	async updateCourseProgress(userId: number, courseId: number, progress: number): Promise<void> {
+		return this.put(`/api/v1/users/${userId}/courses/${courseId}/progress`, { progress });
 	}
 }
