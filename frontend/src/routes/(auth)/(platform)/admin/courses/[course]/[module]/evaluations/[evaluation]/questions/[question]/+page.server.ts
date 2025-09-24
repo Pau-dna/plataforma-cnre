@@ -1,4 +1,4 @@
-import { QuestionController, AnswerController } from '$lib/controllers';
+import { QuestionController } from '$lib/controllers';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -14,10 +14,9 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	try {
 		const questionController = new QuestionController();
-		const answerController = new AnswerController();
 
 		const question = await questionController.getQuestionWithAnswers(questionId);
-		
+
 		return {
 			question,
 			courseId,
