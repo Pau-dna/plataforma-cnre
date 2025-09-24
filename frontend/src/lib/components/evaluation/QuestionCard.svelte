@@ -115,7 +115,7 @@
 					Respuestas ({question.answers.length}):
 				</p>
 				<div class="space-y-1">
-					{#each question.answers.slice(0, 3) as answer}
+					{#each question.answers.slice(0, 4) as answer}
 						<div class="flex items-center gap-2 text-sm">
 							<div
 								class="h-2 w-2 rounded-full {answer.is_correct ? 'bg-green-500' : 'bg-gray-300'}"
