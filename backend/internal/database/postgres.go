@@ -8,12 +8,7 @@ import (
 )
 
 func NewPostgres(url string) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(url), &gorm.Config{
-		// Optimize GORM settings for better performance
-		SkipDefaultTransaction: true,                   // Skip auto transactions for better performance
-		PrepareStmt:            true,                   // Cache prepared statements
-		DisableForeignKeyConstraintWhenMigrating: true, // Faster migrations
-	})
+	db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
