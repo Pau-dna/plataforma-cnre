@@ -32,7 +32,7 @@ func (r *questionRepository) Create(question *models.Question) error {
 
 func (r *questionRepository) Get(id uint) (*models.Question, error) {
 	var question models.Question
-	if err := r.db.First(&question, id).Error; err != nil {
+	if err := r.db.Preload("Answers").First(&question, id).Error; err != nil {
 		return nil, err
 	}
 	return &question, nil

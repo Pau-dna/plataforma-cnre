@@ -19,9 +19,9 @@
 	let { data }: PageProps = $props();
 
 	const question = data.question;
-	const courseId = data.courseId;
-	const moduleId = data.moduleId;
-	const evaluationId = data.evaluationId;
+	const courseID = data.courseId;
+	const moduleID = data.moduleId;
+	const evaluationID = data.evaluationId;
 	const questionController = new QuestionController();
 	const answerController = new AnswerController();
 
@@ -185,7 +185,7 @@
 
 			toast.success('Pregunta actualizada exitosamente');
 			// eslint-disable-next-line svelte/no-navigation-without-resolve
-			goto(`/admin/courses/${courseId}/${moduleId}/evaluations/${evaluationId}`);
+			goto(`/admin/courses/${courseID}/${moduleID}/evaluations/${evaluationID}`);
 		} catch (error) {
 			console.error('Error updating question:', error);
 			toast.error('Error al actualizar la pregunta', {
@@ -198,14 +198,16 @@
 
 	function handleCancel() {
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
-		goto(`/admin/courses/${courseId}/${moduleId}/evaluations/${evaluationId}`);
+		goto(`/admin/courses/${courseID}/${moduleID}/evaluations/${evaluationID}`);
 	}
 
 	// Filter out deleted answers for display
 	let visibleAnswers = $derived(answers.filter((a) => !a.isDeleted));
 </script>
 
-<Back href="/admin/courses/{courseId}/{moduleId}/evaluations/{evaluationId}" />
+<Back href="/admin/courses/{courseID}/{moduleID}/evaluations/{evaluationID}" />
+
+{JSON.stringify(question)}
 
 <div class="flex flex-col gap-6">
 	<div>
