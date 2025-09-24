@@ -9,6 +9,7 @@
 	import CardTitle from '$lib/components/ui/card/card-title.svelte';
 	import CardContent from '$lib/components/ui/card/card-content.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import DeleteConfirmDialog from '$lib/components/ui/DeleteConfirmDialog.svelte';
 
 	interface Props {
 		question: Question;
@@ -23,13 +24,11 @@
 	let { question, questionNumber, evaluationId, courseId, moduleId, onupdate, ondelete }: Props =
 		$props();
 
+	let openDelete = $state(false);
+
 	const questionController = new QuestionController();
 
 	async function handleDeleteQuestion() {
-		if (!confirm('¿Estás seguro de que quieres eliminar esta pregunta?')) {
-			return;
-		}
-
 		try {
 			await questionController.deleteQuestion(question.id);
 			toast.success('Pregunta eliminada exitosamente.');
@@ -97,7 +96,7 @@
 				<Edit class="h-4 w-4" />
 				<span>Editar</span>
 			</Button>
-			<Button variant="destructive" size="sm" onclick={handleDeleteQuestion}>
+			<Button variant="destructive" size="sm" onclick={() => (openDelete = true)}>
 				<Trash class="h-4 w-4" />
 			</Button>
 		</div>
@@ -141,3 +140,13 @@
 		{/if}
 	</CardContent>
 </Card>
+
+<DeleteConfirmDialog
+	bind:open={openDelete}
+	title="¿Eliminar pregunta?"
+	description="Esta acción eliminará permanentemente la pregunta '{question.text.slice(
+		0,
+		50
+	)}...' y todas sus respuestas asociadas. No se puede deshacer."
+	onConfirm={handleDeleteQuestion}
+/>

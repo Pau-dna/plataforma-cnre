@@ -8,6 +8,7 @@
 	import CardHeader from '$lib/components/ui/card/card-header.svelte';
 	import CardTitle from '$lib/components/ui/card/card-title.svelte';
 	import CardContent from '$lib/components/ui/card/card-content.svelte';
+	import DeleteConfirmDialog from '$lib/components/ui/DeleteConfirmDialog.svelte';
 
 	interface Props {
 		evaluation: Evaluation;
@@ -31,13 +32,11 @@
 		canMoveDown = false
 	}: Props = $props();
 
+	let openDelete = $state(false);
+
 	const evaluationController = new EvaluationController();
 
 	async function handleDeleteEvaluation() {
-		if (!confirm('¿Estás seguro de que quieres eliminar esta evaluación?')) {
-			return;
-		}
-
 		try {
 			await evaluationController.deleteEvaluation(evaluation.id);
 			toast.success('Evaluación eliminada exitosamente.');
@@ -84,7 +83,7 @@
 				<Edit class="h-4 w-4" />
 				<span>Gestionar</span>
 			</Button>
-			<Button variant="destructive" size="sm" onclick={handleDeleteEvaluation}>
+			<Button variant="destructive" size="sm" onclick={() => (openDelete = true)}>
 				<Trash class="h-4 w-4" />
 			</Button>
 		</div>
@@ -110,3 +109,10 @@
 		</div>
 	</CardContent>
 </Card>
+
+<DeleteConfirmDialog
+	bind:open={openDelete}
+	title="¿Eliminar evaluación?"
+	description="Esta acción eliminará permanentemente la evaluación '{evaluation.title}' y todas sus preguntas asociadas. No se puede deshacer."
+	onConfirm={handleDeleteEvaluation}
+/>
