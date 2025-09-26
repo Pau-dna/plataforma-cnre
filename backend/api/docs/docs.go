@@ -4386,13 +4386,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "message": {
                     "type": "string"
                 },
-                "status": {
-                    "type": "string"
+                "payload": {
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
