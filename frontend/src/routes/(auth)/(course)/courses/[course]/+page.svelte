@@ -27,7 +27,4 @@
 	</div>
 </div>
 
-<style>
-	.bg {
-	}
-</style>
+
