@@ -140,17 +140,10 @@ func (s *userProgressService) GetUserModuleProgress(userID, moduleID uint) ([]*m
 }
 
 func (s *userProgressService) CalculateCourseProgress(userID, courseID uint) (float64, error) {
-	// Get all modules for the course
-	modules, err := s.store.Modules.GetAll()
+	// Use optimized query to get modules for the specific course
+	courseModules, err := s.store.Modules.GetByCourseID(courseID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get modules: %w", err)
-	}
-
-	var courseModules []*models.Module
-	for _, module := range modules {
-		if module.CourseID == courseID {
-			courseModules = append(courseModules, module)
-		}
 	}
 
 	if len(courseModules) == 0 {
@@ -177,47 +170,28 @@ func (s *userProgressService) CalculateCourseProgress(userID, courseID uint) (fl
 }
 
 func (s *userProgressService) CalculateModuleProgress(userID, moduleID uint) (float64, error) {
-	// Get all content for the module
-	contents, err := s.store.Contents.GetAll()
+	// Use optimized queries to get content and evaluations for the specific module
+	contents, err := s.store.Contents.GetByModuleID(moduleID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get contents: %w", err)
 	}
 
-	// Get all evaluations for the module
-	evaluations, err := s.store.Evaluations.GetAll()
+	evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get evaluations: %w", err)
 	}
 
 	// Count total items in module
-	totalItems := 0
-	for _, content := range contents {
-		if content.ModuleID == moduleID {
-			totalItems++
-		}
-	}
-	for _, evaluation := range evaluations {
-		if evaluation.ModuleID == moduleID {
-			totalItems++
-		}
-	}
+	totalItems := len(contents) + len(evaluations)
 
 	if totalItems == 0 {
 		return 100.0, nil // No content means 100% complete
 	}
 
-	// Get user progress for this module
-	userProgress, err := s.GetUserModuleProgress(userID, moduleID)
+	// Use optimized count query instead of loading all records
+	completedItems, err := s.store.UserProgresss.CountCompletedByUserAndModule(userID, moduleID)
 	if err != nil {
-		return 0, err
-	}
-
-	// Count completed items
-	completedItems := 0
-	for _, progress := range userProgress {
-		if !progress.CompletedAt.IsZero() {
-			completedItems++
-		}
+		return 0, fmt.Errorf("failed to count completed items: %w", err)
 	}
 
 	return float64(completedItems) / float64(totalItems) * 100.0, nil

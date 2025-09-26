@@ -15,6 +15,9 @@ type UserProgressRepository interface {
 	GetByUserAndCourse(userID, courseID uint) ([]*models.UserProgress, error)
 	GetByUserAndModule(userID, moduleID uint) ([]*models.UserProgress, error)
 	GetByUserAndContent(userID, contentID uint) (*models.UserProgress, error)
+	CountCompletedByUserAndCourse(userID, courseID uint) (int64, error)
+	CountCompletedByUserAndModule(userID, moduleID uint) (int64, error)
+	BatchCreate(progressItems []*models.UserProgress) error
 }
 
 type userprogressRepository struct {
@@ -83,4 +86,32 @@ func (r *userprogressRepository) GetByUserAndContent(userID, contentID uint) (*m
 		return nil, err
 	}
 	return &userProgress, nil
+}
+
+func (r *userprogressRepository) CountCompletedByUserAndCourse(userID, courseID uint) (int64, error) {
+	var count int64
+	if err := r.db.Model(&models.UserProgress{}).
+		Where("user_id = ? AND course_id = ? AND completed_at IS NOT NULL", userID, courseID).
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *userprogressRepository) CountCompletedByUserAndModule(userID, moduleID uint) (int64, error) {
+	var count int64
+	if err := r.db.Model(&models.UserProgress{}).
+		Where("user_id = ? AND module_id = ? AND completed_at IS NOT NULL", userID, moduleID).
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *userprogressRepository) BatchCreate(progressItems []*models.UserProgress) error {
+	if len(progressItems) == 0 {
+		return nil
+	}
+	// Use batch insert for better performance
+	return r.db.CreateInBatches(progressItems, 100).Error
 }

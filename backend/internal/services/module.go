@@ -124,7 +124,7 @@ func (s *moduleService) DeleteModule(id uint) error {
 }
 
 func (s *moduleService) GetModulesByCourse(courseID uint) ([]*models.Module, error) {
-	// Use the new repository method to filter by course ID at database level
+	// Use the optimized repository method to filter by course ID at database level
 	modules, err := s.store.Modules.GetByCourseID(courseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get modules: %w", err)

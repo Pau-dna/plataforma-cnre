@@ -104,7 +104,7 @@ func (s *contentService) DeleteContent(id uint) error {
 }
 
 func (s *contentService) GetContentsByModule(moduleID uint) ([]*models.Content, error) {
-	// Use the new repository method to filter by module ID at database level
+	// Use the optimized repository method to filter by module ID at database level
 	contents, err := s.store.Contents.GetByModuleID(moduleID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get contents: %w", err)
