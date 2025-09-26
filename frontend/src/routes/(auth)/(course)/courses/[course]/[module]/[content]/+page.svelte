@@ -1,5 +1,6 @@
 <script lang="ts">
 	import VideoPlayer from '$lib/components/course/VideoPlayer.svelte';
+	import TextWithLinks from '$lib/components/ui/TextWithLinks.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { ChevronRight } from '@lucide/svelte';
 	import type { PageProps } from './$types';
@@ -77,9 +78,10 @@
 
 	{#if content.body}
 		<div class="prose prose-sm max-w-none">
-			<div class="whitespace-pre-wrap text-sm leading-relaxed">
-				{content.body}
-			</div>
+			<TextWithLinks 
+				text={content.body}
+				class="whitespace-pre-wrap text-sm leading-relaxed"
+			/>
 		</div>
 	{/if}
 
