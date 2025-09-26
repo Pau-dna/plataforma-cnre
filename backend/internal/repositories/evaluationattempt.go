@@ -19,13 +19,11 @@ type EvaluationAttemptRepository interface {
 
 type evaluationattemptRepository struct {
 	*Repository
-	optimizer *QueryOptimizer
 }
 
 func NewEvaluationAttemptRepository(r *Repository) EvaluationAttemptRepository {
 	return &evaluationattemptRepository{
 		Repository: r,
-		optimizer:  NewQueryOptimizer(r.db),
 	}
 }
 
@@ -65,8 +63,7 @@ func (r *evaluationattemptRepository) GetAll() ([]*models.EvaluationAttempt, err
 
 func (r *evaluationattemptRepository) GetByUserAndEvaluation(userID, evaluationID uint) ([]*models.EvaluationAttempt, error) {
 	var attempts []*models.EvaluationAttempt
-	query := r.optimizer.OptimizeForReads(r.db)
-	if err := query.Where("user_id = ? AND evaluation_id = ?", userID, evaluationID).
+	if err := r.db.Where("user_id = ? AND evaluation_id = ?", userID, evaluationID).
 		Order("created_at DESC").Find(&attempts).Error; err != nil {
 		return nil, err
 	}
@@ -75,8 +72,7 @@ func (r *evaluationattemptRepository) GetByUserAndEvaluation(userID, evaluationI
 
 func (r *evaluationattemptRepository) CountCompletedAttempts(userID, evaluationID uint) (int64, error) {
 	var count int64
-	query := r.optimizer.OptimizeForReads(r.db)
-	if err := query.Model(&models.EvaluationAttempt{}).
+	if err := r.db.Model(&models.EvaluationAttempt{}).
 		Where("user_id = ? AND evaluation_id = ? AND submitted_at IS NOT NULL", userID, evaluationID).
 		Count(&count).Error; err != nil {
 		return 0, err
@@ -86,8 +82,7 @@ func (r *evaluationattemptRepository) CountCompletedAttempts(userID, evaluationI
 
 func (r *evaluationattemptRepository) GetInProgressAttempt(userID, evaluationID uint) (*models.EvaluationAttempt, error) {
 	var attempt models.EvaluationAttempt
-	query := r.optimizer.OptimizeForReads(r.db)
-	if err := query.Where("user_id = ? AND evaluation_id = ? AND submitted_at IS NULL", userID, evaluationID).
+	if err := r.db.Where("user_id = ? AND evaluation_id = ? AND submitted_at IS NULL", userID, evaluationID).
 		First(&attempt).Error; err != nil {
 		return nil, err
 	}
