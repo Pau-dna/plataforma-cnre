@@ -297,7 +297,7 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 		return nil, fmt.Errorf("attempt already submitted")
 	}
 
-	// Get evaluation to check time limit (cache this if needed)
+	// Get evaluation to check time limit
 	evaluation, err := s.store.Evaluations.Get(attempt.EvaluationID)
 	if err != nil {
 		return nil, fmt.Errorf("evaluation not found: %w", err)

@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
@@ -104,26 +103,11 @@ func (s *evaluationService) DeleteEvaluation(id uint) error {
 }
 
 func (s *evaluationService) GetEvaluationsByModule(moduleID uint) ([]*models.Evaluation, error) {
-	// Check cache first
-	cacheKey := s.cacheKeys.EvaluationsByModule(moduleID)
-	
-	// Try to get from cache
-	var evaluations []*models.Evaluation
-	err := s.cache.GetJSON(cacheKey, &evaluations)
-	if err == nil {
-		return evaluations, nil
-	}
-
 	// Use the optimized repository method to filter by module ID at database level
-	evaluations, err = s.store.Evaluations.GetByModuleID(moduleID)
+	evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get evaluations: %w", err)
 	}
-
-	// Cache the result for 20 minutes (evaluations are quite static)
-	go func() {
-		_ = s.cache.Set(cacheKey, evaluations, 20*time.Minute)
-	}()
 
 	return evaluations, nil
 }

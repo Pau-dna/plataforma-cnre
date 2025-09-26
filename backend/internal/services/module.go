@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/imlargo/go-api-template/internal/dto"
 	"github.com/imlargo/go-api-template/internal/models"
@@ -51,12 +50,6 @@ func (s *moduleService) CreateModule(module *models.Module) (*models.Module, err
 		fmt.Printf("Warning: failed to increment module count for course %d: %v\n", module.CourseID, err)
 	}
 
-	// Invalidate modules cache for the course
-	go func() {
-		cacheKey := s.cacheKeys.ModulesByCourse(module.CourseID)
-		_ = s.cache.Delete(cacheKey)
-	}()
-
 	return module, nil
 }
 
@@ -74,8 +67,6 @@ func (s *moduleService) UpdateModule(id uint, moduleData *models.Module) (*model
 		return nil, fmt.Errorf("module not found: %w", err)
 	}
 
-	courseID := existingModule.CourseID
-
 	// Update fields
 	existingModule.Title = moduleData.Title
 	existingModule.Description = moduleData.Description
@@ -84,12 +75,6 @@ func (s *moduleService) UpdateModule(id uint, moduleData *models.Module) (*model
 	if err := s.store.Modules.Update(existingModule); err != nil {
 		return nil, fmt.Errorf("failed to update module: %w", err)
 	}
-
-	// Invalidate modules cache for the course
-	go func() {
-		cacheKey := s.cacheKeys.ModulesByCourse(courseID)
-		_ = s.cache.Delete(cacheKey)
-	}()
 
 	return existingModule, nil
 }
@@ -135,36 +120,15 @@ func (s *moduleService) DeleteModule(id uint) error {
 		fmt.Printf("Warning: failed to decrement module count for course %d: %v\n", courseID, err)
 	}
 
-	// Invalidate modules cache for the course
-	go func() {
-		cacheKey := s.cacheKeys.ModulesByCourse(courseID)
-		_ = s.cache.Delete(cacheKey)
-	}()
-
 	return nil
 }
 
 func (s *moduleService) GetModulesByCourse(courseID uint) ([]*models.Module, error) {
-	// Check cache first
-	cacheKey := s.cacheKeys.ModulesByCourse(courseID)
-	
-	// Try to get from cache
-	var modules []*models.Module
-	err := s.cache.GetJSON(cacheKey, &modules)
-	if err == nil {
-		return modules, nil
-	}
-
 	// Use the optimized repository method to filter by course ID at database level
-	modules, err = s.store.Modules.GetByCourseID(courseID)
+	modules, err := s.store.Modules.GetByCourseID(courseID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get modules: %w", err)
 	}
-
-	// Cache the result for 10 minutes (modules don't change frequently)
-	go func() {
-		_ = s.cache.Set(cacheKey, modules, 10*time.Minute)
-	}()
 
 	return modules, nil
 }
