@@ -17,10 +17,10 @@ type Evaluation struct {
 	ModuleID           uint              `json:"module_id" gorm:"not null;index;index:idx_evaluations_module_order,priority:1"`
 
 	// Relaciones
-	Module             *Module              `json:"module" gorm:"foreignKey:ModuleID"`
-	Questions          []*Question          `json:"questions" gorm:"foreignKey:EvaluationID"`
-	EvaluationAttempts []*EvaluationAttempt `json:"evaluation_attempts" gorm:"foreignKey:EvaluationID"`
-	UserProgress       []*UserProgress      `json:"user_progress" gorm:"foreignKey:ContentID"`
+	Module             *Module              `json:"module" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
+	Questions          []*Question          `json:"questions" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
+	EvaluationAttempts []*EvaluationAttempt `json:"evaluation_attempts" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
+	UserProgress       []*UserProgress      `json:"user_progress" gorm:"foreignKey:ContentID;constraint:OnDelete:CASCADE"`
 }
 
 func (Evaluation) TableName() string {

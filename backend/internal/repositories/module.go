@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/imlargo/go-api-template/internal/models"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -62,9 +63,56 @@ func (r *moduleRepository) Patch(id uint, data map[string]interface{}) error {
 }
 
 func (r *moduleRepository) Delete(id uint) error {
-	var module models.Module
-	module.ID = id
-	return r.db.Delete(&module).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Get all evaluations for this module and cascade delete them
+		var evaluations []*models.Evaluation
+		if err := tx.Where("module_id = ?", id).Find(&evaluations).Error; err != nil {
+			return err
+		}
+		
+		for _, evaluation := range evaluations {
+			// Delete answers for all questions in this evaluation
+			var questions []*models.Question
+			if err := tx.Where("evaluation_id = ?", evaluation.ID).Find(&questions).Error; err != nil {
+				return err
+			}
+			for _, question := range questions {
+				if err := tx.Where("question_id = ?", question.ID).Delete(&models.Answer{}).Error; err != nil {
+					return err
+				}
+			}
+			
+			// Delete questions for this evaluation
+			if err := tx.Where("evaluation_id = ?", evaluation.ID).Delete(&models.Question{}).Error; err != nil {
+				return err
+			}
+			
+			// Delete evaluation attempts for this evaluation
+			if err := tx.Where("evaluation_id = ?", evaluation.ID).Delete(&models.EvaluationAttempt{}).Error; err != nil {
+				return err
+			}
+		}
+		
+		// Delete all evaluations for this module
+		if err := tx.Where("module_id = ?", id).Delete(&models.Evaluation{}).Error; err != nil {
+			return err
+		}
+		
+		// Delete all contents for this module
+		if err := tx.Where("module_id = ?", id).Delete(&models.Content{}).Error; err != nil {
+			return err
+		}
+		
+		// Delete user progress for this module
+		if err := tx.Where("module_id = ?", id).Delete(&models.UserProgress{}).Error; err != nil {
+			return err
+		}
+		
+		// Finally delete the module itself
+		var module models.Module
+		module.ID = id
+		return tx.Delete(&module).Error
+	})
 }
 
 func (r *moduleRepository) GetAll() ([]*models.Module, error) {

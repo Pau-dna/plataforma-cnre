@@ -12,8 +12,8 @@ type Enrollment struct {
 	Progress    float64   `json:"progress" gorm:"not null;default:0.0"` // porcentaje 0-100
 
 	// Relaciones
-	User   *User   `json:"user" gorm:"foreignKey:UserID"`
-	Course *Course `json:"course" gorm:"foreignKey:CourseID"`
+	User   *User   `json:"user" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Course *Course `json:"course" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
 }
 
 func (Enrollment) TableName() string {

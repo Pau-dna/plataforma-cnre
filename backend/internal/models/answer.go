@@ -9,7 +9,7 @@ type Answer struct {
 	QuestionID uint   `json:"question_id" gorm:"not null;index;index:idx_answers_question_order,priority:1"`
 
 	// Relaciones
-	Question *Question `json:"question" gorm:"foreignKey:QuestionID"`
+	Question *Question `json:"question" gorm:"foreignKey:QuestionID;constraint:OnDelete:CASCADE"`
 }
 
 func (Answer) TableName() string {

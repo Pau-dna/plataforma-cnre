@@ -12,8 +12,8 @@ type Question struct {
 	EvaluationID uint               `json:"evaluation_id" gorm:"not null;index"`
 
 	// Relaciones
-	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
-	Answers    []*Answer   `json:"answers" gorm:"foreignKey:QuestionID"`
+	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
+	Answers    []*Answer   `json:"answers" gorm:"foreignKey:QuestionID;constraint:OnDelete:CASCADE"`
 }
 
 func (Question) TableName() string {

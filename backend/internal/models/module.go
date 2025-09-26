@@ -9,9 +9,9 @@ type Module struct {
 	CourseID    uint   `json:"course_id" gorm:"not null;index;index:idx_modules_course_order,priority:1"`
 
 	// Relaciones
-	Course      *Course       `json:"course" gorm:"foreignKey:CourseID"`
-	Contents    []*Content    `json:"contents" gorm:"foreignKey:ModuleID"`
-	Evaluations []*Evaluation `json:"evaluations" gorm:"foreignKey:ModuleID"`
+	Course      *Course       `json:"course" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
+	Contents    []*Content    `json:"contents" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
+	Evaluations []*Evaluation `json:"evaluations" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
 }
 
 func (Module) TableName() string {
