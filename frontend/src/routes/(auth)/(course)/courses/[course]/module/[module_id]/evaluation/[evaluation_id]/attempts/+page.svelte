@@ -23,7 +23,10 @@
 
 		userId = authStore.user.id;
 		try {
-			const userAttempts = await evaluationAttemptController.getUserAttempts(authStore.user.id, data.evaluationId);
+			const userAttempts = await evaluationAttemptController.getUserAttempts(
+				authStore.user.id,
+				data.evaluationId
+			);
 			attempts = userAttempts;
 		} catch (error) {
 			console.error('Error loading attempts:', error);
@@ -33,9 +36,7 @@
 
 	// Sort attempts by date (newest first)
 	const sortedAttempts = $derived(
-		attempts.sort((a, b) => 
-			new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
-		)
+		attempts.sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
 	);
 
 	const bestAttempt = $derived(
@@ -60,7 +61,9 @@
 			});
 
 			toast.success('Nuevo intento iniciado');
-			goto(`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${attempt.id}`);
+			goto(
+				`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${attempt.id}`
+			);
 		} catch (error) {
 			console.error('Error starting attempt:', error);
 			toast.error('No se pudo iniciar el examen. Por favor intenta de nuevo.');
@@ -98,19 +101,19 @@
 	}
 </script>
 
-<div class="max-w-4xl mx-auto p-6">
+<div class="mx-auto max-w-4xl p-6">
 	<!-- Header -->
 	<div class="mb-6">
 		<Back href="/courses/{data.courseId}/module/{data.moduleId}" class="mb-4" />
 		<div class="flex items-center justify-between">
 			<div>
-				<h1 class="text-2xl font-bold mb-2">{data.evaluation.title}</h1>
+				<h1 class="mb-2 text-2xl font-bold">{data.evaluation.title}</h1>
 				<p class="text-muted-foreground">Historial de intentos</p>
 			</div>
-			
+
 			{#if canAttempt && !loading && userId}
 				<Button onclick={startNewAttempt} class="bg-blue-600 hover:bg-blue-700">
-					<Plus class="h-4 w-4 mr-2" />
+					<Plus class="mr-2 h-4 w-4" />
 					Nuevo Intento
 				</Button>
 			{/if}
@@ -118,7 +121,7 @@
 	</div>
 
 	<!-- Summary Stats -->
-	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+	<div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 		<Card.Root>
 			<Card.Header class="pb-2">
 				<div class="flex items-center gap-2">
@@ -128,8 +131,10 @@
 			</Card.Header>
 			<Card.Content>
 				<div class="text-2xl font-bold">{attempts.length}</div>
-				<p class="text-xs text-muted-foreground">
-					{data.evaluation.max_attempts ? `de ${data.evaluation.max_attempts} máximo` : 'Sin límite'}
+				<p class="text-muted-foreground text-xs">
+					{data.evaluation.max_attempts
+						? `de ${data.evaluation.max_attempts} máximo`
+						: 'Sin límite'}
 				</p>
 			</Card.Content>
 		</Card.Root>
@@ -146,7 +151,7 @@
 					<div class="text-2xl font-bold {passed ? 'text-green-600' : 'text-red-600'}">
 						{bestAttempt.score}/{bestAttempt.total_points}
 					</div>
-					<p class="text-xs text-muted-foreground">
+					<p class="text-muted-foreground text-xs">
 						{Math.round((bestAttempt.score / bestAttempt.total_points) * 100)}%
 					</p>
 				</Card.Content>
@@ -164,7 +169,7 @@
 				<Badge class={passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
 					{passed ? 'Aprobado' : 'No Aprobado'}
 				</Badge>
-				<p class="text-xs text-muted-foreground mt-1">
+				<p class="text-muted-foreground mt-1 text-xs">
 					Mínimo: {data.evaluation.passing_score}%
 				</p>
 			</Card.Content>
@@ -198,15 +203,15 @@
 
 		{#if attempts.length === 0}
 			<Card.Root>
-				<Card.Content class="text-center py-12">
-					<FileText class="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<h3 class="text-lg font-semibold mb-2">No hay intentos aún</h3>
+				<Card.Content class="py-12 text-center">
+					<FileText class="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+					<h3 class="mb-2 text-lg font-semibold">No hay intentos aún</h3>
 					<p class="text-muted-foreground mb-4">
 						¿Listo para comenzar tu primer intento de este examen?
 					</p>
 					{#if canAttempt && userId}
 						<Button onclick={startNewAttempt} disabled={loading}>
-							<Plus class="h-4 w-4 mr-2" />
+							<Plus class="mr-2 h-4 w-4" />
 							{loading ? 'Iniciando...' : 'Comenzar Primer Intento'}
 						</Button>
 					{/if}
@@ -214,7 +219,7 @@
 			</Card.Root>
 		{:else}
 			{#each sortedAttempts as attempt, index}
-				<Card.Root class="hover:shadow-md transition-shadow">
+				<Card.Root class="transition-shadow hover:shadow-md">
 					<Card.Header>
 						<div class="flex items-center justify-between">
 							<div class="flex items-center gap-3">
@@ -225,34 +230,34 @@
 									</Badge>
 									{#if attempt.id === bestAttempt?.id && attempts.length > 1}
 										<Badge class="bg-yellow-100 text-yellow-800">
-											<Trophy class="h-3 w-3 mr-1" />
+											<Trophy class="mr-1 h-3 w-3" />
 											Mejor
 										</Badge>
 									{/if}
 								</div>
 							</div>
-							
+
 							{#if attempt.submitted_at}
 								<div class="text-right">
-									<div class="text-lg font-bold {attempt.passed ? 'text-green-600' : 'text-red-600'}">
+									<div
+										class="text-lg font-bold {attempt.passed ? 'text-green-600' : 'text-red-600'}"
+									>
 										{attempt.score}/{attempt.total_points}
 									</div>
-									<div class="text-sm text-muted-foreground">
+									<div class="text-muted-foreground text-sm">
 										{Math.round((attempt.score / attempt.total_points) * 100)}%
 									</div>
 								</div>
 							{:else}
-								<Badge variant="secondary" class="bg-yellow-100 text-yellow-800">
-									En progreso
-								</Badge>
+								<Badge variant="secondary" class="bg-yellow-100 text-yellow-800">En progreso</Badge>
 							{/if}
 						</div>
 					</Card.Header>
 
 					<Card.Content>
-						<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+						<div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
 							<div class="flex items-center gap-2">
-								<Calendar class="h-4 w-4 text-muted-foreground" />
+								<Calendar class="text-muted-foreground h-4 w-4" />
 								<div>
 									<div class="font-medium">Iniciado</div>
 									<div class="text-muted-foreground">
@@ -260,10 +265,10 @@
 									</div>
 								</div>
 							</div>
-							
+
 							{#if attempt.submitted_at}
 								<div class="flex items-center gap-2">
-									<Clock class="h-4 w-4 text-muted-foreground" />
+									<Clock class="text-muted-foreground h-4 w-4" />
 									<div>
 										<div class="font-medium">Completado</div>
 										<div class="text-muted-foreground">
@@ -271,9 +276,9 @@
 										</div>
 									</div>
 								</div>
-								
+
 								<div class="flex items-center gap-2">
-									<Clock class="h-4 w-4 text-muted-foreground" />
+									<Clock class="text-muted-foreground h-4 w-4" />
 									<div>
 										<div class="font-medium">Tiempo utilizado</div>
 										<div class="text-muted-foreground">
@@ -286,9 +291,7 @@
 									<X class="h-4 w-4 text-yellow-600" />
 									<div>
 										<div class="font-medium text-yellow-600">Sin completar</div>
-										<div class="text-muted-foreground">
-											Intento en progreso
-										</div>
+										<div class="text-muted-foreground">Intento en progreso</div>
 									</div>
 								</div>
 							{/if}
@@ -302,7 +305,7 @@
 								href="/courses/{data.courseId}/module/{data.moduleId}/evaluation/{data.evaluationId}/attempt/{attempt.id}/results"
 								class="flex-1"
 							>
-								<Eye class="h-4 w-4 mr-2" />
+								<Eye class="mr-2 h-4 w-4" />
 								Ver Resultados
 							</Button>
 						{:else}

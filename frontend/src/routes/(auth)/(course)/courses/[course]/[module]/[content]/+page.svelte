@@ -78,10 +78,7 @@
 
 	{#if content.body}
 		<div class="prose prose-sm max-w-none">
-			<TextWithLinks 
-				text={content.body}
-				class="whitespace-pre-wrap text-sm leading-relaxed"
-			/>
+			<TextWithLinks text={content.body} class="whitespace-pre-wrap text-sm leading-relaxed" />
 		</div>
 	{/if}
 

@@ -19,10 +19,10 @@ export const load = (async ({ params }) => {
 
 	const evaluationAttemptController = new EvaluationAttemptController();
 	const evaluationController = new EvaluationController();
-	
+
 	// Get evaluation first, then attempts if user is authenticated
 	const evaluation = await evaluationController.getEvaluation(parseInt(params.evaluation_id));
-	
+
 	// For now, we'll load attempts in the component where we have access to authStore
 	return {
 		evaluation,

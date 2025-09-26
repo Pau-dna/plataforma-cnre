@@ -3,7 +3,7 @@ import type { PageLoad } from './$types';
 
 export const load = (async ({ params }) => {
 	const evaluationAttemptController = new EvaluationAttemptController();
-	
+
 	const attempt = await evaluationAttemptController.getAttempt(parseInt(params.attempt_id));
 
 	return {

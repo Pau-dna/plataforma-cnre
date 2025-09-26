@@ -58,12 +58,12 @@
 			});
 
 			toast.success('Examen iniciado exitosamente');
-			
+
 			// Navigate to the exam taking page
 			window.location.href = `/courses/${courseId}/module/${evaluation.module_id}/evaluation/${evaluation.id}/attempt/${attempt.id}`;
 		} catch (error: any) {
 			console.error('Error starting attempt:', error);
-			
+
 			// More specific error messages
 			if (error?.response?.status === 429) {
 				toast.error('Demasiados intentos. Por favor espera antes de intentar de nuevo.');
@@ -99,7 +99,7 @@
 	const passed = $derived(bestAttempt && bestAttempt.passed);
 </script>
 
-<Card.Root class="hover:shadow-md transition-shadow">
+<Card.Root class="transition-shadow hover:shadow-md">
 	<Card.Header>
 		<div class="flex items-start justify-between">
 			<div class="flex-1">
@@ -113,7 +113,7 @@
 			</div>
 			{#if passed}
 				<Badge variant="secondary" class="bg-green-100 text-green-800">
-					<Trophy class="h-3 w-3 mr-1" />
+					<Trophy class="mr-1 h-3 w-3" />
 					Aprobado
 				</Badge>
 			{:else if userAttempts.length > 0}
@@ -125,7 +125,7 @@
 	</Card.Header>
 
 	<Card.Content>
-		<div class="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
+		<div class="text-muted-foreground grid grid-cols-2 gap-4 text-sm">
 			<div class="flex items-center gap-2">
 				<FileText class="h-4 w-4" />
 				{evaluation.question_count} preguntas
@@ -149,13 +149,13 @@
 		</div>
 
 		{#if bestAttempt}
-			<div class="mt-4 p-3 bg-muted/50 rounded-lg">
+			<div class="bg-muted/50 mt-4 rounded-lg p-3">
 				<div class="text-sm font-medium">Mejor intento:</div>
-				<div class="flex items-center justify-between mt-1">
+				<div class="mt-1 flex items-center justify-between">
 					<span class="text-2xl font-bold {passed ? 'text-green-600' : 'text-orange-600'}">
 						{bestAttempt.score}/{bestAttempt.total_points}
 					</span>
-					<span class="text-sm text-muted-foreground">
+					<span class="text-muted-foreground text-sm">
 						{Math.round((bestAttempt.score / bestAttempt.total_points) * 100)}%
 					</span>
 				</div>
@@ -163,7 +163,7 @@
 		{/if}
 
 		{#if !canAttempt && attemptStatus}
-			<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+			<div class="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
 				<p class="text-sm text-yellow-800">{attemptStatus.reason}</p>
 			</div>
 		{/if}
@@ -180,11 +180,9 @@
 				{/if}
 			</Button>
 		{/if}
-		
+
 		{#if userAttempts.length > 0}
-			<Button variant="outline" onclick={viewAttempts}>
-				Ver Intentos
-			</Button>
+			<Button variant="outline" onclick={viewAttempts}>Ver Intentos</Button>
 		{/if}
 	</Card.Footer>
 </Card.Root>

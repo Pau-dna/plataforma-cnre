@@ -4,19 +4,19 @@ import { toast } from 'svelte-sonner';
 /**
  * Standard error handler for API operations
  * Can be used across the application for consistent error handling
- * 
+ *
  * @param error - The error caught from API calls
  * @param operation - Description of the operation for logging
  * @param showToast - Whether to show a toast notification
  * @returns ApiError instance for further handling
  */
 export function handleApiError(
-	error: unknown, 
+	error: unknown,
 	operation: string = 'operation',
 	showToast: boolean = true
 ): ApiError {
 	const apiError = ApiError.from(error);
-	
+
 	// Log error for debugging
 	console.error(`Error during ${operation}:`, {
 		code: apiError.code,
@@ -58,7 +58,7 @@ export function handleApiError(
 
 /**
  * Wrapper for API calls with consistent error handling
- * 
+ *
  * @param apiCall - The API call function
  * @param operation - Description of the operation
  * @param onSuccess - Success callback

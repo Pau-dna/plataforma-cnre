@@ -7,7 +7,15 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import type { PageProps } from './$types';
 	import { QuestionType } from '$lib/types';
-	import { Clock, ChevronLeft, ChevronRight, Send, AlertTriangle, Wifi, WifiOff } from '@lucide/svelte';
+	import {
+		Clock,
+		ChevronLeft,
+		ChevronRight,
+		Send,
+		AlertTriangle,
+		Wifi,
+		WifiOff
+	} from '@lucide/svelte';
 	import { EvaluationAttemptController } from '$lib/controllers/evaluationAttempt';
 	import { onMount, onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -17,7 +25,7 @@
 	let { data }: PageProps = $props();
 
 	const evaluationAttemptController = new EvaluationAttemptController();
-	
+
 	let currentQuestionIndex = $state(0);
 	let answers = $state<Map<number, number[]>>(new Map());
 	let timeLeft = $state<number>(0);
@@ -32,7 +40,7 @@
 	const progress = $derived(((currentQuestionIndex + 1) / data.attempt.questions.length) * 100);
 	const answeredCount = $derived(answers.size);
 	const allAnswered = $derived(answers.size === data.attempt.questions.length);
-	
+
 	// Check if attempt is still valid
 	const attemptIsActive = $derived(
 		isAttemptActive(data.attempt, data.attempt.evaluation?.time_limit)
@@ -42,26 +50,28 @@
 	onMount(() => {
 		// Check online status
 		isOnline = navigator.onLine;
-		window.addEventListener('online', () => isOnline = true);
-		window.addEventListener('offline', () => isOnline = false);
+		window.addEventListener('online', () => (isOnline = true));
+		window.addEventListener('offline', () => (isOnline = false));
 
 		// Check if attempt is already submitted
 		if (data.attempt.submitted_at) {
 			toast.error('Este intento ya ha sido enviado');
-			goto(`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`);
+			goto(
+				`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`
+			);
 			return;
 		}
 
 		// Initialize timer if evaluation has time limit
 		if (data.attempt.evaluation?.time_limit) {
 			timeLeft = calculateRemainingTime(data.attempt, data.attempt.evaluation.time_limit);
-			
+
 			if (timeLeft <= 0) {
 				toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
 				submitExam();
 				return;
 			}
-			
+
 			timer = setInterval(() => {
 				timeLeft--;
 				if (timeLeft <= 0) {
@@ -81,7 +91,7 @@
 		// Load any existing answers (if continuing an attempt)
 		if (data.attempt.answers && data.attempt.answers.length > 0) {
 			const existingAnswers = new Map();
-			data.attempt.answers.forEach(answer => {
+			data.attempt.answers.forEach((answer) => {
 				existingAnswers.set(answer.attempt_question_id, answer.selected_option_ids);
 			});
 			answers = existingAnswers;
@@ -91,8 +101,8 @@
 	onDestroy(() => {
 		if (timer) clearInterval(timer);
 		if (autoSaveTimer) clearInterval(autoSaveTimer);
-		window.removeEventListener('online', () => isOnline = true);
-		window.removeEventListener('offline', () => isOnline = false);
+		window.removeEventListener('online', () => (isOnline = true));
+		window.removeEventListener('offline', () => (isOnline = false));
 	});
 
 	function formatTime(seconds: number): string {
@@ -115,7 +125,10 @@
 		if (checked) {
 			handleAnswer(questionId, [...currentAnswers, optionId]);
 		} else {
-			handleAnswer(questionId, currentAnswers.filter(id => id !== optionId));
+			handleAnswer(
+				questionId,
+				currentAnswers.filter((id) => id !== optionId)
+			);
 		}
 	}
 
@@ -145,7 +158,7 @@
 
 	async function submitExam() {
 		if (submitting || !attemptIsActive) return;
-		
+
 		// Validate answers before submitting
 		const validation = validateAnswers(data.attempt.questions, answers);
 		if (!validation.isValid) {
@@ -157,19 +170,21 @@
 			toast.error('Sin conexión a internet. Por favor verifica tu conexión e intenta de nuevo.');
 			return;
 		}
-		
+
 		submitting = true;
 		try {
 			// Convert answers to the required format
-			const submissionAnswers = Array.from(answers.entries()).map(([questionId, selectedOptionIds]) => ({
-				attempt_question_id: questionId,
-				selected_option_ids: selectedOptionIds,
-				is_correct: false, // This will be calculated by the backend
-				points: 0 // This will be calculated by the backend
-			}));
+			const submissionAnswers = Array.from(answers.entries()).map(
+				([questionId, selectedOptionIds]) => ({
+					attempt_question_id: questionId,
+					selected_option_ids: selectedOptionIds,
+					is_correct: false, // This will be calculated by the backend
+					points: 0 // This will be calculated by the backend
+				})
+			);
 
 			// Add empty answers for unanswered questions
-			data.attempt.questions.forEach(question => {
+			data.attempt.questions.forEach((question) => {
 				if (!answers.has(question.id)) {
 					submissionAnswers.push({
 						attempt_question_id: question.id,
@@ -185,10 +200,11 @@
 			});
 
 			toast.success('¡Examen enviado exitosamente!');
-			
+
 			// Redirect to results page
-			goto(`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`);
-			
+			goto(
+				`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`
+			);
 		} catch (error) {
 			console.error('Error submitting exam:', error);
 			toast.error('Error al enviar el examen. Por favor intenta de nuevo.');
@@ -200,7 +216,7 @@
 
 	function confirmSubmit() {
 		const validation = validateAnswers(data.attempt.questions, answers);
-		
+
 		if (validation.warnings.length > 0) {
 			showConfirmSubmit = true;
 		} else {
@@ -220,25 +236,25 @@
 				return e.returnValue;
 			}
 		};
-		
+
 		window.addEventListener('beforeunload', handleBeforeUnload);
-		
+
 		return () => {
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
 	});
 </script>
 
-<div class="max-w-4xl mx-auto p-6">
+<div class="mx-auto max-w-4xl p-6">
 	<!-- Header with timer and progress -->
-	<div class="flex items-center justify-between mb-6">
+	<div class="mb-6 flex items-center justify-between">
 		<div>
 			<h1 class="text-2xl font-bold">{data.attempt.evaluation?.title}</h1>
 			<p class="text-muted-foreground">
 				Pregunta {currentQuestionIndex + 1} de {data.attempt.questions.length}
 			</p>
 		</div>
-		
+
 		<div class="flex items-center gap-4">
 			<!-- Connection status -->
 			<div class="flex items-center gap-2">
@@ -254,7 +270,9 @@
 
 			<!-- Timer -->
 			{#if timeLeft > 0}
-				<div class="flex items-center gap-2 text-lg font-mono {timeLeft < 300 ? 'text-red-600' : ''}">
+				<div
+					class="flex items-center gap-2 font-mono text-lg {timeLeft < 300 ? 'text-red-600' : ''}"
+				>
 					<Clock class="h-5 w-5" />
 					{formatTime(timeLeft)}
 				</div>
@@ -264,10 +282,12 @@
 
 	<!-- Progress bar -->
 	<div class="mb-6">
-		<div class="flex items-center justify-between mb-2">
-			<span class="text-sm text-muted-foreground">Progreso del examen</span>
+		<div class="mb-2 flex items-center justify-between">
+			<span class="text-muted-foreground text-sm">Progreso del examen</span>
 			<div class="flex items-center gap-4">
-				<span class="text-sm text-muted-foreground">{answeredCount}/{data.attempt.questions.length} respondidas</span>
+				<span class="text-muted-foreground text-sm"
+					>{answeredCount}/{data.attempt.questions.length} respondidas</span
+				>
 				{#if lastSaved}
 					<span class="text-xs text-green-600">
 						Guardado a las {lastSaved.toLocaleTimeString()}
@@ -275,8 +295,11 @@
 				{/if}
 			</div>
 		</div>
-		<div class="w-full bg-gray-200 rounded-full h-2">
-			<div class="bg-primary h-2 rounded-full transition-all duration-300" style="width: {progress}%"></div>
+		<div class="h-2 w-full rounded-full bg-gray-200">
+			<div
+				class="bg-primary h-2 rounded-full transition-all duration-300"
+				style="width: {progress}%"
+			></div>
 		</div>
 	</div>
 
@@ -286,13 +309,12 @@
 			{#each data.attempt.questions as question, index}
 				<button
 					onclick={() => goToQuestion(index)}
-					class="w-10 h-10 rounded-lg border-2 text-sm font-medium transition-colors
-						{index === currentQuestionIndex 
-							? 'border-primary bg-primary text-primary-foreground'
-							: answers.has(question.id) 
-								? 'border-green-500 bg-green-100 text-green-800'
-								: 'border-gray-300 bg-white hover:bg-gray-50'
-						}"
+					class="h-10 w-10 rounded-lg border-2 text-sm font-medium transition-colors
+						{index === currentQuestionIndex
+						? 'border-primary bg-primary text-primary-foreground'
+						: answers.has(question.id)
+							? 'border-green-500 bg-green-100 text-green-800'
+							: 'border-gray-300 bg-white hover:bg-gray-50'}"
 				>
 					{index + 1}
 				</button>
@@ -317,7 +339,8 @@
 					</div>
 					<div class="flex items-center gap-2">
 						<Badge variant="secondary">
-							{currentQuestion.points} {currentQuestion.points === 1 ? 'punto' : 'puntos'}
+							{currentQuestion.points}
+							{currentQuestion.points === 1 ? 'punto' : 'puntos'}
 						</Badge>
 						<Badge variant={currentQuestion.type === QuestionType.SINGLE ? 'default' : 'outline'}>
 							{currentQuestion.type === QuestionType.SINGLE ? 'Una opción' : 'Múltiple opción'}
@@ -331,7 +354,7 @@
 					<!-- Single choice question -->
 					<div class="space-y-3">
 						{#each currentQuestion.answer_options as option}
-							<div class="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50">
+							<div class="hover:bg-muted/50 flex items-center space-x-3 rounded-lg border p-3">
 								<input
 									type="radio"
 									name="question-{currentQuestion.id}"
@@ -339,7 +362,7 @@
 									value={option.id}
 									checked={currentAnswers.includes(option.id)}
 									onchange={() => handleSingleChoice(currentQuestion.id, option.id)}
-									class="w-4 h-4 text-primary"
+									class="text-primary h-4 w-4"
 								/>
 								<Label for="option-{option.id}" class="flex-1 cursor-pointer">
 									{option.text}
@@ -351,13 +374,18 @@
 					<!-- Multiple choice question -->
 					<div class="space-y-3">
 						{#each currentQuestion.answer_options as option}
-							<div class="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50">
+							<div class="hover:bg-muted/50 flex items-center space-x-3 rounded-lg border p-3">
 								<input
 									type="checkbox"
 									id="option-{option.id}"
 									checked={currentAnswers.includes(option.id)}
-									onchange={(e) => handleMultipleChoice(currentQuestion.id, option.id, (e.target as HTMLInputElement).checked)}
-									class="w-4 h-4 text-primary"
+									onchange={(e) =>
+										handleMultipleChoice(
+											currentQuestion.id,
+											option.id,
+											(e.target as HTMLInputElement).checked
+										)}
+									class="text-primary h-4 w-4"
 								/>
 								<Label for="option-{option.id}" class="flex-1 cursor-pointer">
 									{option.text}
@@ -372,23 +400,23 @@
 
 	<!-- Navigation and submit -->
 	<div class="flex items-center justify-between">
-		<Button
-			variant="outline"
-			onclick={prevQuestion}
-			disabled={currentQuestionIndex === 0}
-		>
-			<ChevronLeft class="h-4 w-4 mr-2" />
+		<Button variant="outline" onclick={prevQuestion} disabled={currentQuestionIndex === 0}>
+			<ChevronLeft class="mr-2 h-4 w-4" />
 			Anterior
 		</Button>
 
 		<div class="flex gap-2">
 			{#if currentQuestionIndex === data.attempt.questions.length - 1}
-				<Button onclick={confirmSubmit} disabled={submitting || !isOnline} class="bg-green-600 hover:bg-green-700">
+				<Button
+					onclick={confirmSubmit}
+					disabled={submitting || !isOnline}
+					class="bg-green-600 hover:bg-green-700"
+				>
 					{#if submitting}
 						<LoadingSpinner size="sm" class="mr-2" />
 						Enviando...
 					{:else}
-						<Send class="h-4 w-4 mr-2" />
+						<Send class="mr-2 h-4 w-4" />
 						Enviar Examen
 					{/if}
 				</Button>
@@ -398,7 +426,7 @@
 					disabled={currentQuestionIndex === data.attempt.questions.length - 1}
 				>
 					Siguiente
-					<ChevronRight class="h-4 w-4 ml-2" />
+					<ChevronRight class="ml-2 h-4 w-4" />
 				</Button>
 			{/if}
 		</div>
@@ -407,7 +435,7 @@
 
 <!-- Confirmation dialog -->
 {#if showConfirmSubmit}
-	<div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
 		<Card.Root class="w-full max-w-md">
 			<Card.Header>
 				<Card.Title class="flex items-center gap-2">
@@ -416,22 +444,26 @@
 				</Card.Title>
 			</Card.Header>
 			<Card.Content>
-				<div class="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+				<div class="mb-4 rounded-lg border border-orange-200 bg-orange-50 p-4">
 					<div class="flex items-center">
-						<AlertTriangle class="h-4 w-4 text-orange-600 mr-2" />
+						<AlertTriangle class="mr-2 h-4 w-4 text-orange-600" />
 						<span class="text-sm font-medium text-orange-800">Preguntas sin responder</span>
 					</div>
-					<p class="text-sm text-orange-700 mt-1">
-						Tienes {data.attempt.questions.length - answeredCount} preguntas sin responder. 
-						¿Estás seguro de que quieres enviar el examen?
+					<p class="mt-1 text-sm text-orange-700">
+						Tienes {data.attempt.questions.length - answeredCount} preguntas sin responder. ¿Estás seguro
+						de que quieres enviar el examen?
 					</p>
 				</div>
 			</Card.Content>
 			<Card.Footer class="flex gap-2">
-				<Button variant="outline" onclick={() => showConfirmSubmit = false} class="flex-1">
+				<Button variant="outline" onclick={() => (showConfirmSubmit = false)} class="flex-1">
 					Cancelar
 				</Button>
-				<Button onclick={submitExam} disabled={submitting} class="flex-1 bg-green-600 hover:bg-green-700">
+				<Button
+					onclick={submitExam}
+					disabled={submitting}
+					class="flex-1 bg-green-600 hover:bg-green-700"
+				>
 					{#if submitting}
 						<LoadingSpinner size="sm" class="mr-2" />
 						Enviando...

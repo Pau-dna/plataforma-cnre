@@ -43,7 +43,7 @@
 			goto(`/admin/courses/${data.courseId}/${data.moduleId}`);
 		} catch (error) {
 			const apiError = ApiError.from(error);
-			
+
 			// Handle specific error types
 			if (apiError.isValidationError()) {
 				toast.error('Datos inválidos', {
