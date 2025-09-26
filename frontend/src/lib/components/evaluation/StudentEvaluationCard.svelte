@@ -2,6 +2,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import LoadingSpinner from '$lib/components/ui/loading-spinner.svelte';
 	import type { Evaluation } from '$lib/types';
 	import { Clock, FileText, Target, Trophy, User } from '@lucide/svelte';
 	import { authStore } from '$lib/stores/auth.svelte';
@@ -36,11 +37,18 @@
 			canAttempt = statusResponse.can_attempt;
 		} catch (error) {
 			console.error('Error loading evaluation status:', error);
+			toast.error('Error cargando estado de la evaluación');
 		}
 	});
 
 	async function startAttempt() {
 		if (!authStore.user || !canAttempt) return;
+
+		// Additional validation before starting
+		if (evaluation.max_attempts && userAttempts.length >= evaluation.max_attempts) {
+			toast.error('Has alcanzado el máximo número de intentos para esta evaluación');
+			return;
+		}
 
 		loading = true;
 		try {
@@ -49,11 +57,23 @@
 				evaluation_id: evaluation.id
 			});
 
+			toast.success('Examen iniciado exitosamente');
+			
 			// Navigate to the exam taking page
 			window.location.href = `/courses/${courseId}/module/${evaluation.module_id}/evaluation/${evaluation.id}/attempt/${attempt.id}`;
-		} catch (error) {
+		} catch (error: any) {
 			console.error('Error starting attempt:', error);
-			toast.error('No se pudo iniciar el examen. Por favor intenta de nuevo.');
+			
+			// More specific error messages
+			if (error?.response?.status === 429) {
+				toast.error('Demasiados intentos. Por favor espera antes de intentar de nuevo.');
+			} else if (error?.response?.status === 403) {
+				toast.error('No tienes permisos para realizar esta evaluación.');
+			} else if (error?.response?.status === 409) {
+				toast.error('Ya tienes un intento en progreso para esta evaluación.');
+			} else {
+				toast.error('No se pudo iniciar el examen. Por favor intenta de nuevo.');
+			}
 		} finally {
 			loading = false;
 		}
@@ -152,7 +172,12 @@
 	<Card.Footer class="flex gap-2">
 		{#if canAttempt}
 			<Button onclick={startAttempt} disabled={loading} class="flex-1">
-				{loading ? 'Iniciando...' : 'Tomar Examen'}
+				{#if loading}
+					<LoadingSpinner size="sm" class="mr-2" />
+					Iniciando...
+				{:else}
+					Tomar Examen
+				{/if}
 			</Button>
 		{/if}
 		

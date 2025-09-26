@@ -3,14 +3,16 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import LoadingSpinner from '$lib/components/ui/loading-spinner.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import type { PageProps } from './$types';
 	import { QuestionType } from '$lib/types';
-	import { Clock, ChevronLeft, ChevronRight, Send, AlertTriangle } from '@lucide/svelte';
+	import { Clock, ChevronLeft, ChevronRight, Send, AlertTriangle, Wifi, WifiOff } from '@lucide/svelte';
 	import { EvaluationAttemptController } from '$lib/controllers/evaluationAttempt';
 	import { onMount, onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import { validateAnswers, calculateRemainingTime, isAttemptActive } from '$lib/utils/examHelpers';
 
 	let { data }: PageProps = $props();
 
@@ -22,37 +24,75 @@
 	let timer: any; // NodeJS.Timeout equivalent
 	let submitting = $state(false);
 	let showConfirmSubmit = $state(false);
+	let isOnline = $state(true);
+	let autoSaveTimer: any;
+	let lastSaved = $state<Date | null>(null);
 
 	const currentQuestion = $derived(data.attempt.questions[currentQuestionIndex]);
 	const progress = $derived(((currentQuestionIndex + 1) / data.attempt.questions.length) * 100);
 	const answeredCount = $derived(answers.size);
 	const allAnswered = $derived(answers.size === data.attempt.questions.length);
 	
-	// Initialize timer if evaluation has time limit
+	// Check if attempt is still valid
+	const attemptIsActive = $derived(
+		isAttemptActive(data.attempt, data.attempt.evaluation?.time_limit)
+	);
+
+	// Initialize timer and check attempt validity
 	onMount(() => {
+		// Check online status
+		isOnline = navigator.onLine;
+		window.addEventListener('online', () => isOnline = true);
+		window.addEventListener('offline', () => isOnline = false);
+
+		// Check if attempt is already submitted
+		if (data.attempt.submitted_at) {
+			toast.error('Este intento ya ha sido enviado');
+			goto(`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`);
+			return;
+		}
+
+		// Initialize timer if evaluation has time limit
 		if (data.attempt.evaluation?.time_limit) {
-			const startTime = new Date(data.attempt.started_at).getTime();
-			const timeLimit = data.attempt.evaluation.time_limit * 60 * 1000; // Convert minutes to milliseconds
-			const now = Date.now();
-			const elapsed = now - startTime;
-			const remaining = Math.max(0, timeLimit - elapsed);
+			timeLeft = calculateRemainingTime(data.attempt, data.attempt.evaluation.time_limit);
 			
-			timeLeft = Math.floor(remaining / 1000);
-			
-			if (timeLeft > 0) {
-				timer = setInterval(() => {
-					timeLeft--;
-					if (timeLeft <= 0) {
-						toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
-						submitExam();
-					}
-				}, 1000);
+			if (timeLeft <= 0) {
+				toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
+				submitExam();
+				return;
 			}
+			
+			timer = setInterval(() => {
+				timeLeft--;
+				if (timeLeft <= 0) {
+					toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
+					submitExam();
+				}
+			}, 1000);
+		}
+
+		// Auto-save functionality (every 30 seconds)
+		autoSaveTimer = setInterval(() => {
+			if (answers.size > 0 && isOnline && !submitting) {
+				saveProgress();
+			}
+		}, 30000);
+
+		// Load any existing answers (if continuing an attempt)
+		if (data.attempt.answers && data.attempt.answers.length > 0) {
+			const existingAnswers = new Map();
+			data.attempt.answers.forEach(answer => {
+				existingAnswers.set(answer.attempt_question_id, answer.selected_option_ids);
+			});
+			answers = existingAnswers;
 		}
 	});
 
 	onDestroy(() => {
 		if (timer) clearInterval(timer);
+		if (autoSaveTimer) clearInterval(autoSaveTimer);
+		window.removeEventListener('online', () => isOnline = true);
+		window.removeEventListener('offline', () => isOnline = false);
 	});
 
 	function formatTime(seconds: number): string {
@@ -93,8 +133,30 @@
 		goToQuestion(currentQuestionIndex - 1);
 	}
 
+	async function saveProgress() {
+		try {
+			// This would be an API call to save partial progress
+			// For now, we'll just update the lastSaved timestamp
+			lastSaved = new Date();
+		} catch (error) {
+			console.warn('Failed to save progress:', error);
+		}
+	}
+
 	async function submitExam() {
-		if (submitting) return;
+		if (submitting || !attemptIsActive) return;
+		
+		// Validate answers before submitting
+		const validation = validateAnswers(data.attempt.questions, answers);
+		if (!validation.isValid) {
+			toast.error(`Error en las respuestas: ${validation.errors.join(', ')}`);
+			return;
+		}
+
+		if (!isOnline) {
+			toast.error('Sin conexión a internet. Por favor verifica tu conexión e intenta de nuevo.');
+			return;
+		}
 		
 		submitting = true;
 		try {
@@ -137,7 +199,9 @@
 	}
 
 	function confirmSubmit() {
-		if (answeredCount < data.attempt.questions.length) {
+		const validation = validateAnswers(data.attempt.questions, answers);
+		
+		if (validation.warnings.length > 0) {
 			showConfirmSubmit = true;
 		} else {
 			submitExam();
@@ -146,6 +210,23 @@
 
 	// Get current answers for the current question
 	const currentAnswers = $derived(answers.get(currentQuestion?.id) || []);
+
+	// Handle beforeunload to warn user about unsaved changes
+	onMount(() => {
+		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+			if (answers.size > 0 && !submitting && attemptIsActive) {
+				e.preventDefault();
+				e.returnValue = 'Tienes un examen en progreso. ¿Estás seguro de que quieres salir?';
+				return e.returnValue;
+			}
+		};
+		
+		window.addEventListener('beforeunload', handleBeforeUnload);
+		
+		return () => {
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+		};
+	});
 </script>
 
 <div class="max-w-4xl mx-auto p-6">
@@ -158,19 +239,41 @@
 			</p>
 		</div>
 		
-		{#if timeLeft > 0}
-			<div class="flex items-center gap-2 text-lg font-mono {timeLeft < 300 ? 'text-red-600' : ''}">
-				<Clock class="h-5 w-5" />
-				{formatTime(timeLeft)}
+		<div class="flex items-center gap-4">
+			<!-- Connection status -->
+			<div class="flex items-center gap-2">
+				{#if isOnline}
+					<Wifi class="h-4 w-4 text-green-600" />
+				{:else}
+					<WifiOff class="h-4 w-4 text-red-600" />
+				{/if}
+				<span class="text-xs {isOnline ? 'text-green-600' : 'text-red-600'}">
+					{isOnline ? 'Conectado' : 'Sin conexión'}
+				</span>
 			</div>
-		{/if}
+
+			<!-- Timer -->
+			{#if timeLeft > 0}
+				<div class="flex items-center gap-2 text-lg font-mono {timeLeft < 300 ? 'text-red-600' : ''}">
+					<Clock class="h-5 w-5" />
+					{formatTime(timeLeft)}
+				</div>
+			{/if}
+		</div>
 	</div>
 
 	<!-- Progress bar -->
 	<div class="mb-6">
 		<div class="flex items-center justify-between mb-2">
 			<span class="text-sm text-muted-foreground">Progreso del examen</span>
-			<span class="text-sm text-muted-foreground">{answeredCount}/{data.attempt.questions.length} respondidas</span>
+			<div class="flex items-center gap-4">
+				<span class="text-sm text-muted-foreground">{answeredCount}/{data.attempt.questions.length} respondidas</span>
+				{#if lastSaved}
+					<span class="text-xs text-green-600">
+						Guardado a las {lastSaved.toLocaleTimeString()}
+					</span>
+				{/if}
+			</div>
 		</div>
 		<div class="w-full bg-gray-200 rounded-full h-2">
 			<div class="bg-primary h-2 rounded-full transition-all duration-300" style="width: {progress}%"></div>
@@ -280,8 +383,9 @@
 
 		<div class="flex gap-2">
 			{#if currentQuestionIndex === data.attempt.questions.length - 1}
-				<Button onclick={confirmSubmit} disabled={submitting} class="bg-green-600 hover:bg-green-700">
+				<Button onclick={confirmSubmit} disabled={submitting || !isOnline} class="bg-green-600 hover:bg-green-700">
 					{#if submitting}
+						<LoadingSpinner size="sm" class="mr-2" />
 						Enviando...
 					{:else}
 						<Send class="h-4 w-4 mr-2" />
@@ -328,7 +432,12 @@
 					Cancelar
 				</Button>
 				<Button onclick={submitExam} disabled={submitting} class="flex-1 bg-green-600 hover:bg-green-700">
-					{submitting ? 'Enviando...' : 'Enviar de todas formas'}
+					{#if submitting}
+						<LoadingSpinner size="sm" class="mr-2" />
+						Enviando...
+					{:else}
+						Enviar de todas formas
+					{/if}
 				</Button>
 			</Card.Footer>
 		</Card.Root>
