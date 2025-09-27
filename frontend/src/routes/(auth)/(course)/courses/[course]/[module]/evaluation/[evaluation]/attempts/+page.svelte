@@ -103,8 +103,8 @@
 
 <div class="mx-auto max-w-4xl p-6">
 	<!-- Header -->
-	<div class="mb-6">
-		<Back href="/courses/{data.courseId}/module/{data.moduleId}" class="mb-4" />
+	<div class="mb-6 space-y-4">
+		<Back href="/courses/{data.courseId}/module/{data.moduleId}" />
 		<div class="flex items-center justify-between">
 			<div>
 				<h1 class="mb-2 text-2xl font-bold">{data.evaluation.title}</h1>
