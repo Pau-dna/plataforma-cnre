@@ -15,7 +15,9 @@
 
 	let { data }: PageProps = $props();
 
-	const evaluationUrl = $derived(`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}`)
+	const evaluationUrl = $derived(
+		`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}`
+	);
 
 	const evaluationAttemptController = new EvaluationAttemptController();
 	let loading = $state(false);
@@ -49,9 +51,7 @@
 			});
 
 			toast.success('Nuevo intento iniciado');
-			await goto(
-				`${evaluationUrl}/attempt/${attempt.id}`
-			);
+			await goto(`${evaluationUrl}/attempt/${attempt.id}`);
 		} catch (error) {
 			console.error('Error starting attempt:', error);
 			toast.error('No se pudo iniciar el examen. Por favor intenta de nuevo.');
@@ -87,7 +87,6 @@
 		if (!attempt.submitted_at) return 'En progreso';
 		return attempt.passed ? 'Aprobado' : 'No aprobado';
 	}
-
 </script>
 
 <div class="mx-auto max-w-4xl p-6">

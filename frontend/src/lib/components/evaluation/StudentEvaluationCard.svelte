@@ -42,7 +42,8 @@
 		}
 	});
 
-	const getEvaluationUrl = () => `/courses/${courseId}/${evaluation.module_id}/evaluation/${evaluation.id}`;
+	const getEvaluationUrl = () =>
+		`/courses/${courseId}/${evaluation.module_id}/evaluation/${evaluation.id}`;
 
 	async function startAttempt() {
 		if (!authStore.user || !canAttempt) return;
@@ -181,7 +182,9 @@
 		{/if}
 
 		{#if userAttempts.length > 0}
-			<Button variant="outline" href="{getEvaluationUrl()}/attempts" data-sveltekit-reload>Ver Intentos</Button>
+			<Button variant="outline" href="{getEvaluationUrl()}/attempts" data-sveltekit-reload
+				>Ver Intentos</Button
+			>
 		{/if}
 	</Card.Footer>
 </Card.Root>

@@ -58,7 +58,7 @@
 			// Check if attempt is already submitted
 			if (data.attempt.submitted_at) {
 				console.log(data.attempt.submitted_at);
-				
+
 				toast.error('Este intento ya ha sido enviado');
 				goto(
 					`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`
@@ -70,7 +70,7 @@
 			if (data.attempt.evaluation?.time_limit) {
 				timeLeft = calculateRemainingTime(data.attempt, data.attempt.evaluation.time_limit);
 				console.log(timeLeft);
-				
+
 				if (timeLeft <= 0) {
 					toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
 					submitExam();
