@@ -218,7 +218,7 @@
 
 			// Redirect to results page
 			goto(
-				`/courses/${page.params.course}/module/${page.params.module}/evaluation/${page.params.evaluation}/attempt/${page.params.attempt}/results`
+				`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}/attempt/${page.params.attempt}/results`
 			);
 		} catch (error) {
 			console.error('Error submitting exam:', error);

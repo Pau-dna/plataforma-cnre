@@ -13,7 +13,7 @@ This implementation provides a comprehensive exam taking system for students wit
   - Smart action buttons based on eligibility
 
 ### 2. **Full Exam Taking Experience**
-- **Location**: `/frontend/src/routes/(auth)/(course)/courses/[course]/module/[module_id]/evaluation/[evaluation_id]/attempt/[attempt_id]/+page.svelte`
+- **Location**: `/frontend/src/routes/(auth)/(course)/courses/[course]/[module_id]/evaluation/[evaluation_id]/attempt/[attempt_id]/+page.svelte`
 - **Features**:
   - Real-time countdown timer with auto-submission
   - Question navigation with progress tracking
@@ -62,7 +62,7 @@ This implementation provides a comprehensive exam taking system for students wit
 
 ### Route Structure:
 ```
-/courses/[course]/module/[module_id]/evaluation/[evaluation_id]/
+/courses/[course]/[module_id]/evaluation/[evaluation_id]/
 ├── attempts/               # View all attempts for an evaluation
 ├── attempt/[attempt_id]/   # Take/continue an exam
 └── attempt/[attempt_id]/results/  # Review completed attempt

@@ -40,7 +40,7 @@
 <div class="mx-auto max-w-4xl p-6">
 	<!-- Header -->
 	<div class="mb-6">
-		<Back href="/courses/{data.courseId}/module/{data.moduleId}" class="mb-4" />
+		<Back href="/courses/{data.courseId}/{data.moduleId}" class="mb-4" />
 		<div class="text-center">
 			<h1 class="mb-2 text-3xl font-bold">{data.attempt.evaluation?.title}</h1>
 			<p class="text-muted-foreground">Resultados del examen</p>
@@ -126,7 +126,7 @@
 			<h2 class="text-xl font-semibold">Revisión detallada</h2>
 			<Button
 				variant="outline"
-				href="/courses/{data.courseId}/module/{data.moduleId}/evaluation/{data.evaluationId}/attempts"
+				href="/courses/{data.courseId}/{data.moduleId}/evaluation/{data.evaluationId}/attempts"
 			>
 				<Eye class="mr-2 h-4 w-4" />
 				Ver todos los intentos
@@ -241,13 +241,13 @@
 
 	<!-- Action buttons -->
 	<div class="mt-8 flex justify-center gap-4">
-		<Button variant="outline" href="/courses/{data.courseId}/module/{data.moduleId}">
+		<Button variant="outline" href="/courses/{data.courseId}/{data.moduleId}">
 			<ArrowLeft class="mr-2 h-4 w-4" />
 			Volver al módulo
 		</Button>
 
 		<Button
-			href="/courses/{data.courseId}/module/{data.moduleId}/evaluation/{data.evaluationId}/attempts"
+			href="/courses/{data.courseId}/{data.moduleId}/evaluation/{data.evaluationId}/attempts"
 		>
 			<Eye class="mr-2 h-4 w-4" />
 			Ver todos los intentos
