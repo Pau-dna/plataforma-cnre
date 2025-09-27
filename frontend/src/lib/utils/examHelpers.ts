@@ -81,7 +81,8 @@ export function validateAnswers(
 	const warnings: string[] = [];
 
 	// Check for unanswered questions
-	const unansweredCount = questions.length - Object.values(answers).filter((a) => a.length > 0).length;
+	const unansweredCount =
+		questions.length - Object.values(answers).filter((a) => a.length > 0).length;
 	if (unansweredCount > 0) {
 		warnings.push(
 			`Tienes ${unansweredCount} pregunta${unansweredCount > 1 ? 's' : ''} sin responder`

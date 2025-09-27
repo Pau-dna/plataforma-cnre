@@ -189,14 +189,12 @@
 		submitting = true;
 		try {
 			// Convert answers to the required format
-			const submissionAnswers = Object.entries(answers).map(
-				([questionId, selectedOptionIds]) => ({
-					attempt_question_id: Number(questionId),
-					selected_option_ids: selectedOptionIds,
-					is_correct: false, // This will be calculated by the backend
-					points: 0 // This will be calculated by the backend
-				})
-			);
+			const submissionAnswers = Object.entries(answers).map(([questionId, selectedOptionIds]) => ({
+				attempt_question_id: Number(questionId),
+				selected_option_ids: selectedOptionIds,
+				is_correct: false, // This will be calculated by the backend
+				points: 0 // This will be calculated by the backend
+			}));
 
 			// Add empty answers for unanswered questions
 			questions.forEach((question) => {

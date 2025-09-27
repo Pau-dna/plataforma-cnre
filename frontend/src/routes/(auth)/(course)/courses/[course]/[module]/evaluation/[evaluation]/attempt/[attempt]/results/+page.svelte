@@ -246,9 +246,7 @@
 			Volver al módulo
 		</Button>
 
-		<Button
-			href="/courses/{data.courseId}/{data.moduleId}/evaluation/{data.evaluationId}/attempts"
-		>
+		<Button href="/courses/{data.courseId}/{data.moduleId}/evaluation/{data.evaluationId}/attempts">
 			<Eye class="mr-2 h-4 w-4" />
 			Ver todos los intentos
 		</Button>
