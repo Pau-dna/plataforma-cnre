@@ -390,15 +390,22 @@ func (s *evaluationAttemptService) CanUserAttempt(userID, evaluationID uint) (bo
 		return false, "", fmt.Errorf("evaluation not found: %w", err)
 	}
 
-	// If no max attempts set, user can always attempt
-	if evaluation.MaxAttempts <= 0 {
-		return true, "", nil
-	}
-
 	// Get user's previous attempts
 	attempts, err := s.GetUserAttempts(userID, evaluationID)
 	if err != nil {
 		return false, "", fmt.Errorf("failed to get user attempts: %w", err)
+	}
+
+	// Check if there's an ongoing attempt
+	for _, attempt := range attempts {
+		if attempt.SubmittedAt == nil {
+			return false, "attempt already in progress", nil
+		}
+	}
+
+	// If no max attempts set, user can always attempt
+	if evaluation.MaxAttempts <= 0 {
+		return true, "", nil
 	}
 
 	// Count completed attempts (submitted)
@@ -411,13 +418,6 @@ func (s *evaluationAttemptService) CanUserAttempt(userID, evaluationID uint) (bo
 
 	if completedAttempts >= evaluation.MaxAttempts {
 		return false, "maximum attempts reached", nil
-	}
-
-	// Check if there's an ongoing attempt
-	for _, attempt := range attempts {
-		if attempt.SubmittedAt == nil {
-			return false, "attempt already in progress", nil
-		}
 	}
 
 	return true, "", nil

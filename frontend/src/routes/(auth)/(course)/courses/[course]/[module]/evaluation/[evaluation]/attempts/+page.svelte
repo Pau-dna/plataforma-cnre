@@ -24,7 +24,7 @@
 
 	// Sort attempts by date (newest first)
 	const sortedAttempts = $derived(
-		attempts.sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
+		attempts.toSorted((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
 	);
 
 	const bestAttempt = $derived(
