@@ -15,17 +15,17 @@ const URL_REGEX = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/gi;
  */
 export function detectUrls(text: string): Array<{ text: string; isUrl: boolean }> {
 	if (!text) return [];
-	
+
 	const result: Array<{ text: string; isUrl: boolean }> = [];
 	let lastIndex = 0;
-	
+
 	// Find all URL matches
 	const matches = [...text.matchAll(URL_REGEX)];
-	
+
 	for (const match of matches) {
 		const matchStart = match.index!;
 		const matchEnd = matchStart + match[0].length;
-		
+
 		// Add text before the URL
 		if (matchStart > lastIndex) {
 			const beforeText = text.slice(lastIndex, matchStart);
@@ -33,12 +33,12 @@ export function detectUrls(text: string): Array<{ text: string; isUrl: boolean }
 				result.push({ text: beforeText, isUrl: false });
 			}
 		}
-		
+
 		// Add the URL
 		result.push({ text: match[0], isUrl: true });
 		lastIndex = matchEnd;
 	}
-	
+
 	// Add remaining text after the last URL
 	if (lastIndex < text.length) {
 		const remainingText = text.slice(lastIndex);
@@ -46,12 +46,12 @@ export function detectUrls(text: string): Array<{ text: string; isUrl: boolean }
 			result.push({ text: remainingText, isUrl: false });
 		}
 	}
-	
+
 	// If no URLs found, return the original text
 	if (result.length === 0) {
 		result.push({ text, isUrl: false });
 	}
-	
+
 	return result;
 }
 
