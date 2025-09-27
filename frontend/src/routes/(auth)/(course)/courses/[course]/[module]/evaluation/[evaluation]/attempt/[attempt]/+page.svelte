@@ -32,7 +32,7 @@
 	const questions = $derived(attempt.questions.toSorted((a, b) => a.id - b.id));
 
 	let currentQuestionIndex = $state(0);
-	let answers = $state<Map<number, number[]>>(new Map());
+	let answers = $state<Record<string, number[]>>({});
 	let timeLeft = $state<number>(0);
 	let timer: any; // NodeJS.Timeout equivalent
 	let submitting = $state(false);
@@ -42,9 +42,11 @@
 	let lastSaved = $state<Date | null>(null);
 
 	const currentQuestion = $derived(questions[currentQuestionIndex]);
-	const progress = $derived(Number((((currentQuestionIndex + 1) / questions.length) * 100).toFixed(2)));
-	const answeredCount = $derived(answers.size);
-	const allAnswered = $derived(answers.size === questions.length);
+	const progress = $derived(
+		Number((((currentQuestionIndex + 1) / questions.length) * 100).toFixed(2))
+	);
+	const answeredCount = $derived(Object.keys(answers).length);
+	const allAnswered = $derived(answeredCount === questions.length);
 
 	// Check if attempt is still valid
 	const attemptIsActive = $derived(
@@ -92,7 +94,7 @@
 
 			// Auto-save functionality (every 30 seconds)
 			autoSaveTimer = setInterval(() => {
-				if (answers.size > 0 && isOnline && !submitting) {
+				if (Object.keys(answers).length > 0 && isOnline && !submitting) {
 					saveProgress();
 				}
 			}, 30000);
@@ -124,8 +126,7 @@
 	}
 
 	function handleAnswer(questionId: number, optionIds: number[]) {
-		answers.set(questionId, optionIds);
-		answers = answers; // Trigger reactivity
+		answers[questionId.toString()] = optionIds;
 	}
 
 	function handleSingleChoice(questionId: number, optionId: number) {
@@ -133,7 +134,7 @@
 	}
 
 	function handleMultipleChoice(questionId: number, optionId: number, checked: boolean) {
-		const currentAnswers = answers.get(questionId) || [];
+		const currentAnswers = answers[questionId.toString()] || [];
 		if (checked) {
 			handleAnswer(questionId, [...currentAnswers, optionId]);
 		} else {
@@ -237,12 +238,12 @@
 	}
 
 	// Get current answers for the current question
-	const currentAnswers = $derived(answers.get(currentQuestion?.id) || []);
+	const currentAnswers = $derived(answers[currentQuestion?.id.toString()] || []);
 
 	// Handle beforeunload to warn user about unsaved changes
 	onMount(() => {
 		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-			if (answers.size > 0 && !submitting && attemptIsActive) {
+			if (Object.keys(answers).length > 0 && !submitting && attemptIsActive) {
 				e.preventDefault();
 				e.returnValue = 'Tienes un examen en progreso. ¿Estás seguro de que quieres salir?';
 				return e.returnValue;
@@ -274,14 +275,10 @@
 		<div class="flex items-center gap-4">
 			<!-- Connection status -->
 			<div class="flex items-center gap-2">
-				{#if isOnline}
-					<Wifi class="h-4 w-4 text-green-600" />
-				{:else}
+				{#if !isOnline}
 					<WifiOff class="h-4 w-4 text-red-600" />
+					<span class="text-xs text-red-600"> Sin conexión </span>
 				{/if}
-				<span class="text-xs {isOnline ? 'text-green-600' : 'text-red-600'}">
-					{isOnline ? 'Conectado' : 'Sin conexión'}
-				</span>
 			</div>
 
 			<!-- Timer -->
@@ -328,7 +325,8 @@
 					class="h-10 w-10 rounded-lg border-2 text-sm font-medium transition-colors
 						{index === currentQuestionIndex
 						? 'border-primary bg-primary text-primary-foreground'
-						: answers.has(question.id)
+						: answers[question.id.toString()] != undefined &&
+							  answers[question.id.toString()].length > 0
 							? 'border-green-500 bg-green-100 text-green-800'
 							: 'border-gray-300 bg-white hover:bg-gray-50'}"
 				>
@@ -339,79 +337,81 @@
 	</div>
 
 	{#if currentQuestion}
-		<!-- Question Card -->
-		<Card.Root class="mb-6">
-			<Card.Header>
-				<div class="flex items-start justify-between">
-					<div class="flex-1">
-						<Card.Title class="text-lg">
-							{currentQuestion.text}
-						</Card.Title>
-						{#if currentQuestion.explanation}
-							<Card.Description class="mt-2">
-								{currentQuestion.explanation}
-							</Card.Description>
-						{/if}
+		{#key currentQuestion}
+			<!-- Question Card -->
+			<Card.Root class="mb-6">
+				<Card.Header>
+					<div class="flex items-start justify-between">
+						<div class="flex-1">
+							<Card.Title class="text-lg">
+								{currentQuestion.text}
+							</Card.Title>
+							{#if currentQuestion.explanation}
+								<Card.Description class="mt-2">
+									{currentQuestion.explanation}
+								</Card.Description>
+							{/if}
+						</div>
+						<div class="flex items-center gap-2">
+							<Badge variant="secondary">
+								{currentQuestion.points}
+								{currentQuestion.points === 1 ? 'punto' : 'puntos'}
+							</Badge>
+							<Badge variant={currentQuestion.type === QuestionType.SINGLE ? 'default' : 'outline'}>
+								{currentQuestion.type === QuestionType.SINGLE ? 'Una opción' : 'Múltiple opción'}
+							</Badge>
+						</div>
 					</div>
-					<div class="flex items-center gap-2">
-						<Badge variant="secondary">
-							{currentQuestion.points}
-							{currentQuestion.points === 1 ? 'punto' : 'puntos'}
-						</Badge>
-						<Badge variant={currentQuestion.type === QuestionType.SINGLE ? 'default' : 'outline'}>
-							{currentQuestion.type === QuestionType.SINGLE ? 'Una opción' : 'Múltiple opción'}
-						</Badge>
-					</div>
-				</div>
-			</Card.Header>
+				</Card.Header>
 
-			<Card.Content>
-				{#if currentQuestion.type === QuestionType.SINGLE}
-					<!-- Single choice question -->
-					<div class="space-y-3">
-						{#each currentQuestion.answer_options as option}
-							<div class="hover:bg-muted/50 flex items-center space-x-3 rounded-lg border p-3">
-								<input
-									type="radio"
-									name="question-{currentQuestion.id}"
-									id="option-{option.id}"
-									value={option.id}
-									checked={currentAnswers.includes(option.id)}
-									onchange={() => handleSingleChoice(currentQuestion.id, option.id)}
-									class="text-primary h-4 w-4"
-								/>
-								<Label for="option-{option.id}" class="flex-1 cursor-pointer">
-									{option.text}
-								</Label>
-							</div>
-						{/each}
-					</div>
-				{:else}
-					<!-- Multiple choice question -->
-					<div class="space-y-3">
-						{#each currentQuestion.answer_options as option}
-							<div class="hover:bg-muted/50 flex items-center space-x-3 rounded-lg border p-3">
-								<input
-									type="checkbox"
-									id="option-{option.id}"
-									checked={currentAnswers.includes(option.id)}
-									onchange={(e) =>
-										handleMultipleChoice(
-											currentQuestion.id,
-											option.id,
-											(e.target as HTMLInputElement).checked
-										)}
-									class="text-primary h-4 w-4"
-								/>
-								<Label for="option-{option.id}" class="flex-1 cursor-pointer">
-									{option.text}
-								</Label>
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</Card.Content>
-		</Card.Root>
+				<Card.Content>
+					{#if currentQuestion.type === QuestionType.SINGLE}
+						<!-- Single choice question -->
+						<div class="space-y-3">
+							{#each currentQuestion.answer_options as option}
+								<div class="hover:bg-muted/50 flex items-center space-x-3 rounded-lg border p-3">
+									<input
+										type="radio"
+										name="question-{currentQuestion.id}"
+										id="option-{option.id}"
+										value={option.id}
+										checked={currentAnswers.includes(option.id)}
+										onchange={() => handleSingleChoice(currentQuestion.id, option.id)}
+										class="text-primary h-4 w-4"
+									/>
+									<Label for="option-{option.id}" class="flex-1 cursor-pointer">
+										{option.text}
+									</Label>
+								</div>
+							{/each}
+						</div>
+					{:else}
+						<!-- Multiple choice question -->
+						<div class="space-y-3">
+							{#each currentQuestion.answer_options as option}
+								<div class="hover:bg-muted/50 flex items-center space-x-3 rounded-lg border p-3">
+									<input
+										type="checkbox"
+										id="option-{option.id}"
+										checked={currentAnswers.includes(option.id)}
+										onchange={(e) =>
+											handleMultipleChoice(
+												currentQuestion.id,
+												option.id,
+												(e.target as HTMLInputElement).checked
+											)}
+										class="text-primary h-4 w-4"
+									/>
+									<Label for="option-{option.id}" class="flex-1 cursor-pointer">
+										{option.text}
+									</Label>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				</Card.Content>
+			</Card.Root>
+		{/key}
 	{/if}
 
 	<!-- Navigation and submit -->
@@ -437,10 +437,7 @@
 					{/if}
 				</Button>
 			{:else}
-				<Button
-					onclick={nextQuestion}
-					disabled={currentQuestionIndex === questions.length - 1}
-				>
+				<Button onclick={nextQuestion} disabled={currentQuestionIndex === questions.length - 1}>
 					Siguiente
 					<ChevronRight class="ml-2 h-4 w-4" />
 				</Button>
@@ -466,8 +463,8 @@
 						<span class="text-sm font-medium text-orange-800">Preguntas sin responder</span>
 					</div>
 					<p class="mt-1 text-sm text-orange-700">
-						Tienes {questions.length - answeredCount} preguntas sin responder. ¿Estás seguro
-						de que quieres enviar el examen?
+						Tienes {questions.length - answeredCount} preguntas sin responder. ¿Estás seguro de que quieres
+						enviar el examen?
 					</p>
 				</div>
 			</Card.Content>
