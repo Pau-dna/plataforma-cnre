@@ -177,7 +177,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 	// Calculate how many correct and incorrect answers to include based on question type
 	var maxCorrect int
 	var correctToInclude int
-	
+
 	switch questionType {
 	case enums.QuestionTypeSingle:
 		// Single choice questions must have exactly 1 correct answer
@@ -189,7 +189,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 		if maxCorrect < 1 {
 			maxCorrect = 1
 		}
-		
+
 		// Random number of correct answers between 1 and maxCorrect
 		correctToInclude = 1
 		if len(correctAnswers) > 1 && maxCorrect > 1 {
@@ -202,7 +202,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 		if maxCorrect == 0 {
 			maxCorrect = 1 // Always at least 1 correct answer
 		}
-		
+
 		correctToInclude = 1
 		if len(correctAnswers) > 1 && maxCorrect > 1 {
 			r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -315,8 +315,9 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	timeSpent := int(time.Since(attempt.StartedAt).Minutes())
 
 	// Set answers and submission time
+	now := time.Now()
 	attempt.Answers = models.AttemptAnswers(answers)
-	attempt.SubmittedAt = time.Now()
+	attempt.SubmittedAt = &now
 	attempt.TimeSpent = timeSpent
 
 	// Save attempt with answers

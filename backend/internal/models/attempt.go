@@ -90,7 +90,7 @@ type EvaluationAttempt struct {
 	TotalPoints  int              `json:"total_points" gorm:"not null"`
 	Passed       bool             `json:"passed" gorm:"not null;default:false"`
 	StartedAt    time.Time        `json:"started_at" gorm:"not null"`
-	SubmittedAt  time.Time        `json:"submitted_at" gorm:"default:null"`
+	SubmittedAt  *time.Time       `json:"submitted_at" gorm:"default:null"`
 	TimeSpent    int              `json:"time_spent"` // en minutos
 
 	// Relaciones
