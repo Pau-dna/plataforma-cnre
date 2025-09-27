@@ -88,7 +88,7 @@
 			{#if hasIncompleteQuestions}
 				<Alert class="w-auto border-orange-200 bg-orange-50">
 					<AlertTriangle class="h-4 w-4 text-orange-600" />
-					<AlertDescription class="text-orange-800 font-medium">
+					<AlertDescription class="font-medium text-orange-800">
 						Faltan {evaluation.question_count - questions.length} preguntas
 					</AlertDescription>
 				</Alert>
