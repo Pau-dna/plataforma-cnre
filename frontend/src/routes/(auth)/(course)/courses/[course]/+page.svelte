@@ -10,8 +10,8 @@
 	<h1 class="text-h1">{data.course.title}</h1>
 	<p class="text-muted-foreground max-w-prose text-pretty">{data.course.description}</p>
 
-	<div class="grid grid-cols-12 gap-8">
-		<div class="col-span-8">
+	<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+		<div class="col-span-1 lg:col-span-8">
 			<!-- svelte-ignore a11y_media_has_caption -->
 			<video
 				class="aspect-video w-full rounded-lg"
@@ -20,7 +20,7 @@
 			></video>
 		</div>
 
-		<div class="col-span-4 flex flex-col gap-y-2">
+		<div class="col-span-1 lg:col-span-4 flex flex-col gap-y-2">
 			<h2 class="text-h2">Módulos</h2>
 
 			{#each data.modules as modulo}
