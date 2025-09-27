@@ -1,8 +1,10 @@
 <script lang="ts">
 	import VideoPlayer from '$lib/components/course/VideoPlayer.svelte';
 	import TextWithLinks from '$lib/components/ui/TextWithLinks.svelte';
+	import ProgressToggle from '$lib/components/course/ProgressToggle.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { ChevronRight } from '@lucide/svelte';
+	import { goto, invalidateAll } from '$app/navigation';
 	import type { PageProps } from './$types';
 	import type { Module, ModuleContent } from '$lib/types/models/course';
 
@@ -12,6 +14,16 @@
 	const modules = data.modules;
 	const courseId = data.courseId;
 	const moduleId = data.moduleId;
+
+	// Reactive state for completion status
+	let isCompleted = $state(data.isCompleted);
+
+	// Handle progress change
+	function handleProgressChange(contentId: number, completed: boolean) {
+		isCompleted = completed;
+		// Invalidate to refresh course progress data
+		invalidateAll();
+	}
 
 	// Navigation logic to find next content
 	function getNextContent(): { url: string; label: string } | null {
@@ -62,12 +74,44 @@
 	}
 
 	const nextContentInfo = getNextContent();
+
+	// Auto-advance when content is marked complete (optional)
+	function handleCompleteAndNext() {
+		if (nextContentInfo && isCompleted) {
+			goto(nextContentInfo.url);
+		}
+	}
 </script>
 
 <div class="flex flex-col gap-y-8">
-	<div class="flex flex-col gap-y-2">
-		<h1 class="text-3xl font-bold">{content.title}</h1>
-		<p class="text-muted-foreground">{content.description}</p>
+	<div class="flex flex-col gap-y-4">
+		<div class="flex items-start justify-between">
+			<div class="flex flex-col gap-y-2">
+				<h1 class="text-3xl font-bold">{content.title}</h1>
+				<p class="text-muted-foreground">{content.description}</p>
+			</div>
+			
+			<!-- Progress Toggle -->
+			<div class="flex-shrink-0">
+				<ProgressToggle
+					userId={data.userId}
+					courseId={data.courseId}
+					moduleId={data.moduleId}
+					contentId={content.id}
+					{isCompleted}
+					accessToken={data.accessToken}
+					onProgressChange={handleProgressChange}
+				/>
+			</div>
+		</div>
+
+		<!-- Completion Status Badge -->
+		{#if isCompleted}
+			<div class="inline-flex w-fit items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-sm">
+				<div class="h-2 w-2 rounded-full bg-green-600"></div>
+				<span class="font-medium text-green-800">Completado</span>
+			</div>
+		{/if}
 	</div>
 
 	{#if content?.media_url}
@@ -82,17 +126,39 @@
 		</div>
 	{/if}
 
-	<!-- Next Content Button -->
-	{#if nextContentInfo}
-		<div class="border-border mt-8 flex justify-end border-t pt-8">
+	<!-- Action Buttons -->
+	<div class="border-border mt-8 flex justify-between border-t pt-8">
+		<div class="flex gap-3">
+			{#if !isCompleted}
+				<ProgressToggle
+					userId={data.userId}
+					courseId={data.courseId}
+					moduleId={data.moduleId}
+					contentId={content.id}
+					{isCompleted}
+					accessToken={data.accessToken}
+					onProgressChange={handleProgressChange}
+				/>
+			{/if}
+		</div>
+
+		{#if nextContentInfo}
 			<Button
 				data-sveltekit-reload
 				href={nextContentInfo.url}
 				class="bg-primary hover:bg-primary/90 flex items-center gap-2"
+				onclick={isCompleted ? undefined : handleCompleteAndNext}
 			>
 				<span>{nextContentInfo.label}</span>
 				<ChevronRight class="h-4 w-4" />
 			</Button>
-		</div>
-	{/if}
+		{:else if isCompleted}
+			<Button
+				href="/courses/{courseId}"
+				class="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+			>
+				<span>Volver al curso</span>
+			</Button>
+		{/if}
+	</div>
 </div>
