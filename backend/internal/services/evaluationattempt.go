@@ -293,7 +293,7 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	}
 
 	// Check if already submitted
-	if !attempt.SubmittedAt.IsZero() {
+	if attempt.SubmittedAt != nil && !attempt.SubmittedAt.IsZero() {
 		return nil, fmt.Errorf("attempt already submitted")
 	}
 
@@ -404,7 +404,7 @@ func (s *evaluationAttemptService) CanUserAttempt(userID, evaluationID uint) (bo
 	// Count completed attempts (submitted)
 	completedAttempts := 0
 	for _, attempt := range attempts {
-		if !attempt.SubmittedAt.IsZero() {
+		if attempt.SubmittedAt != nil && !attempt.SubmittedAt.IsZero() {
 			completedAttempts++
 		}
 	}
@@ -415,7 +415,7 @@ func (s *evaluationAttemptService) CanUserAttempt(userID, evaluationID uint) (bo
 
 	// Check if there's an ongoing attempt
 	for _, attempt := range attempts {
-		if attempt.SubmittedAt.IsZero() {
+		if attempt.SubmittedAt == nil {
 			return false, "attempt already in progress", nil
 		}
 	}
