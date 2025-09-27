@@ -11,8 +11,8 @@ export const load = (async ({ params }) => {
 			evaluation: null,
 			attempts: [],
 			courseId: parseInt(params.course),
-			moduleId: parseInt(params.module_id),
-			evaluationId: parseInt(params.evaluation_id),
+			moduleId: parseInt(params.module),
+			evaluationId: parseInt(params.evaluation),
 			userId: null
 		};
 	}
@@ -21,15 +21,15 @@ export const load = (async ({ params }) => {
 	const evaluationController = new EvaluationController();
 
 	// Get evaluation first, then attempts if user is authenticated
-	const evaluation = await evaluationController.getEvaluation(parseInt(params.evaluation_id));
+	const evaluation = await evaluationController.getEvaluation(parseInt(params.evaluation));
 
 	// For now, we'll load attempts in the component where we have access to authStore
 	return {
 		evaluation,
 		attempts: [], // Will be loaded in component
 		courseId: parseInt(params.course),
-		moduleId: parseInt(params.module_id),
-		evaluationId: parseInt(params.evaluation_id),
+		moduleId: parseInt(params.module),
+		evaluationId: parseInt(params.evaluation),
 		userId: null // Will be set in component
 	};
 }) satisfies PageLoad;
