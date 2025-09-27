@@ -43,7 +43,7 @@ const (
 func loadEnv() error {
 	// Load .env file if it exists
 	if err := godotenv.Load(); err != nil {
-		log.Println("Error loading .env file, proceeding with system environment variables")
+		log.Println("Error al cargar el archivo .env, continuando con las variables de entorno del sistema")
 	}
 
 	// Define required environment variables
@@ -83,7 +83,7 @@ func loadEnv() error {
 
 	// If there are missing variables, return an error listing them
 	if len(missingEnvVars) > 0 {
-		return fmt.Errorf("missing required environment variables: %v", missingEnvVars)
+		return fmt.Errorf("faltan variables de entorno requeridas: %v", missingEnvVars)
 	}
 
 	return nil

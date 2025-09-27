@@ -65,7 +65,7 @@ type RedisConfig struct {
 func LoadConfig() AppConfig {
 	err := loadEnv()
 	if err != nil {
-		panic("Error loading environment variables: " + err.Error())
+		panic("Error al cargar las variables de entorno: " + err.Error())
 	}
 
 	return AppConfig{

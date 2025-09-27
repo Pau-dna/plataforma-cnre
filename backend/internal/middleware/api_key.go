@@ -12,13 +12,13 @@ func ApiKeyMiddleware(apiKey string) gin.HandlerFunc {
 
 		if apiKeyHeader == "" {
 			ctx.Abort()
-			responses.ErrorUnauthorized(ctx, "authorization header is missing")
+			responses.ErrorUnauthorized(ctx, "falta el header de autorización")
 			return
 		}
 
 		if apiKeyHeader != apiKey {
 			ctx.Abort()
-			responses.ErrorUnauthorized(ctx, "invalid API key")
+			responses.ErrorUnauthorized(ctx, "clave de API inválida")
 			return
 		}
 

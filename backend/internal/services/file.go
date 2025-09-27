@@ -149,7 +149,7 @@ func (s *fileService) UploadFromMultipart(file *multipart.FileHeader) (*models.F
 func (s *fileService) GetFile(id uint) (*models.File, error) {
 	file, err := s.store.Files.GetByID(id)
 	if err != nil {
-		return nil, fmt.Errorf("file not found: %w", err)
+		return nil, fmt.Errorf("archivo no encontrado: %w", err)
 	}
 
 	return file, nil
@@ -158,7 +158,7 @@ func (s *fileService) GetFile(id uint) (*models.File, error) {
 func (s *fileService) DeleteFile(id uint) error {
 	file, err := s.store.Files.GetByID(id)
 	if err != nil {
-		return fmt.Errorf("file not found: %w", err)
+		return fmt.Errorf("archivo no encontrado: %w", err)
 	}
 
 	if err := s.storageService.Delete(file.Path); err != nil {
@@ -176,7 +176,7 @@ func (s *fileService) DeleteFile(id uint) error {
 func (s *fileService) GetPresignedURL(fileID uint, expiryMins int) (*dto.PresignedURL, error) {
 	file, err := s.store.Files.GetByID(fileID)
 	if err != nil {
-		return nil, fmt.Errorf("file not found: %w", err)
+		return nil, fmt.Errorf("archivo no encontrado: %w", err)
 	}
 
 	expiry := time.Duration(expiryMins) * time.Minute
@@ -285,7 +285,7 @@ func (s *fileService) DownloadFile(fileID uint) (*models.File, *storage.FileDown
 
 	file, err := s.store.Files.GetByID(fileID)
 	if err != nil {
-		return nil, nil, fmt.Errorf("file not found: %w", err)
+		return nil, nil, fmt.Errorf("archivo no encontrado: %w", err)
 	}
 
 	if file.Path == "" {
