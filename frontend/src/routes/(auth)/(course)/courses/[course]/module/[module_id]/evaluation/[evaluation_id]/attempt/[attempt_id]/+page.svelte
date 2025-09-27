@@ -21,6 +21,7 @@
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { validateAnswers, calculateRemainingTime, isAttemptActive } from '$lib/utils/examHelpers';
+	import { browser } from '$app/environment';
 
 	let { data }: PageProps = $props();
 
@@ -48,61 +49,68 @@
 
 	// Initialize timer and check attempt validity
 	onMount(() => {
-		// Check online status
-		isOnline = navigator.onLine;
-		window.addEventListener('online', () => (isOnline = true));
-		window.addEventListener('offline', () => (isOnline = false));
+		if (browser) {
+			// Check online status
+			isOnline = navigator.onLine;
+			window.addEventListener('online', () => (isOnline = true));
+			window.addEventListener('offline', () => (isOnline = false));
 
-		// Check if attempt is already submitted
-		if (data.attempt.submitted_at) {
-			toast.error('Este intento ya ha sido enviado');
-			goto(
-				`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`
-			);
-			return;
-		}
-
-		// Initialize timer if evaluation has time limit
-		if (data.attempt.evaluation?.time_limit) {
-			timeLeft = calculateRemainingTime(data.attempt, data.attempt.evaluation.time_limit);
-
-			if (timeLeft <= 0) {
-				toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
-				submitExam();
+			// Check if attempt is already submitted
+			if (data.attempt.submitted_at) {
+				console.log(data.attempt.submitted_at);
+				
+				toast.error('Este intento ya ha sido enviado');
+				goto(
+					`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`
+				);
 				return;
 			}
 
-			timer = setInterval(() => {
-				timeLeft--;
+			// Initialize timer if evaluation has time limit
+			if (data.attempt.evaluation?.time_limit) {
+				timeLeft = calculateRemainingTime(data.attempt, data.attempt.evaluation.time_limit);
+				console.log(timeLeft);
+				
 				if (timeLeft <= 0) {
 					toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
 					submitExam();
+					return;
 				}
-			}, 1000);
-		}
 
-		// Auto-save functionality (every 30 seconds)
-		autoSaveTimer = setInterval(() => {
-			if (answers.size > 0 && isOnline && !submitting) {
-				saveProgress();
+				timer = setInterval(() => {
+					timeLeft--;
+					if (timeLeft <= 0) {
+						toast.warning('¡Tiempo agotado! El examen se enviará automáticamente.');
+						submitExam();
+					}
+				}, 1000);
 			}
-		}, 30000);
 
-		// Load any existing answers (if continuing an attempt)
-		if (data.attempt.answers && data.attempt.answers.length > 0) {
-			const existingAnswers = new Map();
-			data.attempt.answers.forEach((answer) => {
-				existingAnswers.set(answer.attempt_question_id, answer.selected_option_ids);
-			});
-			answers = existingAnswers;
+			// Auto-save functionality (every 30 seconds)
+			autoSaveTimer = setInterval(() => {
+				if (answers.size > 0 && isOnline && !submitting) {
+					saveProgress();
+				}
+			}, 30000);
+
+			// Load any existing answers (if continuing an attempt)
+			if (data.attempt.answers && data.attempt.answers.length > 0) {
+				const existingAnswers = new Map();
+				data.attempt.answers.forEach((answer) => {
+					existingAnswers.set(answer.attempt_question_id, answer.selected_option_ids);
+				});
+				answers = existingAnswers;
+			}
 		}
 	});
 
 	onDestroy(() => {
 		if (timer) clearInterval(timer);
 		if (autoSaveTimer) clearInterval(autoSaveTimer);
-		window.removeEventListener('online', () => (isOnline = true));
-		window.removeEventListener('offline', () => (isOnline = false));
+		if (browser) {
+			window.removeEventListener('online', () => (isOnline = true));
+			window.removeEventListener('offline', () => (isOnline = false));
+		}
 	});
 
 	function formatTime(seconds: number): string {
@@ -237,10 +245,14 @@
 			}
 		};
 
-		window.addEventListener('beforeunload', handleBeforeUnload);
+		if (browser) {
+			window.addEventListener('beforeunload', handleBeforeUnload);
+		}
 
 		return () => {
-			window.removeEventListener('beforeunload', handleBeforeUnload);
+			if (browser) {
+				window.removeEventListener('beforeunload', handleBeforeUnload);
+			}
 		};
 	});
 </script>

@@ -53,7 +53,7 @@ func (h *EvaluationAttemptHandler) StartAttempt(c *gin.Context) {
 			responses.ErrorConflict(c, err.Error())
 			return
 		}
-		responses.ErrorInternalServerWithMessage(c, "Failed to start attempt")
+		responses.ErrorInternalServerWithMessage(c, "Failed to start attempt:"+err.Error())
 		return
 	}
 
