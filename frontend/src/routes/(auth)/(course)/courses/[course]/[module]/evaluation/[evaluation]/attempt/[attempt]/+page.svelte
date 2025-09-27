@@ -22,10 +22,14 @@
 	import { goto } from '$app/navigation';
 	import { validateAnswers, calculateRemainingTime, isAttemptActive } from '$lib/utils/examHelpers';
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 
 	let { data }: PageProps = $props();
 
 	const evaluationAttemptController = new EvaluationAttemptController();
+
+	const attempt = data.attempt;
+	const questions = $derived(attempt.questions.toSorted((a, b) => a.id - b.id));
 
 	let currentQuestionIndex = $state(0);
 	let answers = $state<Map<number, number[]>>(new Map());
@@ -37,10 +41,10 @@
 	let autoSaveTimer: any;
 	let lastSaved = $state<Date | null>(null);
 
-	const currentQuestion = $derived(data.attempt.questions[currentQuestionIndex]);
-	const progress = $derived(((currentQuestionIndex + 1) / data.attempt.questions.length) * 100);
+	const currentQuestion = $derived(questions[currentQuestionIndex]);
+	const progress = $derived(Number((((currentQuestionIndex + 1) / questions.length) * 100).toFixed(2)));
 	const answeredCount = $derived(answers.size);
-	const allAnswered = $derived(answers.size === data.attempt.questions.length);
+	const allAnswered = $derived(answers.size === questions.length);
 
 	// Check if attempt is still valid
 	const attemptIsActive = $derived(
@@ -61,7 +65,7 @@
 
 				toast.error('Este intento ya ha sido enviado');
 				goto(
-					`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`
+					`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}/attempt/${page.params.attempt}/results`
 				);
 				return;
 			}
@@ -141,7 +145,7 @@
 	}
 
 	function goToQuestion(index: number) {
-		if (index >= 0 && index < data.attempt.questions.length) {
+		if (index >= 0 && index < questions.length) {
 			currentQuestionIndex = index;
 		}
 	}
@@ -168,7 +172,7 @@
 		if (submitting || !attemptIsActive) return;
 
 		// Validate answers before submitting
-		const validation = validateAnswers(data.attempt.questions, answers);
+		const validation = validateAnswers(questions, answers);
 		if (!validation.isValid) {
 			toast.error(`Error en las respuestas: ${validation.errors.join(', ')}`);
 			return;
@@ -192,7 +196,7 @@
 			);
 
 			// Add empty answers for unanswered questions
-			data.attempt.questions.forEach((question) => {
+			questions.forEach((question) => {
 				if (!answers.has(question.id)) {
 					submissionAnswers.push({
 						attempt_question_id: question.id,
@@ -203,7 +207,7 @@
 				}
 			});
 
-			const result = await evaluationAttemptController.submitAttempt(data.attemptId, {
+			const result = await evaluationAttemptController.submitAttempt(page.params.attempt, {
 				answers: submissionAnswers
 			});
 
@@ -211,7 +215,7 @@
 
 			// Redirect to results page
 			goto(
-				`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${data.attemptId}/results`
+				`/courses/${page.params.course}/module/${page.params.module}/evaluation/${page.params.evaluation}/attempt/${page.params.attempt}/results`
 			);
 		} catch (error) {
 			console.error('Error submitting exam:', error);
@@ -223,7 +227,7 @@
 	}
 
 	function confirmSubmit() {
-		const validation = validateAnswers(data.attempt.questions, answers);
+		const validation = validateAnswers(questions, answers);
 
 		if (validation.warnings.length > 0) {
 			showConfirmSubmit = true;
@@ -263,7 +267,7 @@
 		<div>
 			<h1 class="text-2xl font-bold">{data.attempt.evaluation?.title}</h1>
 			<p class="text-muted-foreground">
-				Pregunta {currentQuestionIndex + 1} de {data.attempt.questions.length}
+				Pregunta {currentQuestionIndex + 1} de {questions.length}
 			</p>
 		</div>
 
@@ -298,7 +302,7 @@
 			<span class="text-muted-foreground text-sm">Progreso del examen</span>
 			<div class="flex items-center gap-4">
 				<span class="text-muted-foreground text-sm"
-					>{answeredCount}/{data.attempt.questions.length} respondidas</span
+					>{answeredCount}/{questions.length} respondidas</span
 				>
 				{#if lastSaved}
 					<span class="text-xs text-green-600">
@@ -318,7 +322,7 @@
 	<!-- Question navigation -->
 	<div class="mb-6">
 		<div class="flex flex-wrap gap-2">
-			{#each data.attempt.questions as question, index}
+			{#each questions as question, index}
 				<button
 					onclick={() => goToQuestion(index)}
 					class="h-10 w-10 rounded-lg border-2 text-sm font-medium transition-colors
@@ -418,7 +422,7 @@
 		</Button>
 
 		<div class="flex gap-2">
-			{#if currentQuestionIndex === data.attempt.questions.length - 1}
+			{#if currentQuestionIndex === questions.length - 1}
 				<Button
 					onclick={confirmSubmit}
 					disabled={submitting || !isOnline}
@@ -435,7 +439,7 @@
 			{:else}
 				<Button
 					onclick={nextQuestion}
-					disabled={currentQuestionIndex === data.attempt.questions.length - 1}
+					disabled={currentQuestionIndex === questions.length - 1}
 				>
 					Siguiente
 					<ChevronRight class="ml-2 h-4 w-4" />
@@ -462,7 +466,7 @@
 						<span class="text-sm font-medium text-orange-800">Preguntas sin responder</span>
 					</div>
 					<p class="mt-1 text-sm text-orange-700">
-						Tienes {data.attempt.questions.length - answeredCount} preguntas sin responder. ¿Estás seguro
+						Tienes {questions.length - answeredCount} preguntas sin responder. ¿Estás seguro
 						de que quieres enviar el examen?
 					</p>
 				</div>
