@@ -211,6 +211,7 @@
 			{#each contents as content, index (content.id)}
 				<ContentCard
 					{content}
+					courseId={courseId}
 					actDate={content.updated_at}
 					onupdate={handleContentUpdate}
 					ondelete={handleContentDelete}
