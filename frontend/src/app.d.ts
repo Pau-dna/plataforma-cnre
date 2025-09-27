@@ -7,7 +7,7 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user: T | null;
+			user: User | null;
 			accessToken: string | null;
 			refreshToken: string | null;
 		}
