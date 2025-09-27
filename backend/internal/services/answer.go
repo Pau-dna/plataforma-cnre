@@ -33,11 +33,11 @@ func (s *answerService) CreateAnswer(answer *models.Answer) (*models.Answer, err
 	// Verify question exists
 	_, err := s.store.Questions.Get(answer.QuestionID)
 	if err != nil {
-		return nil, fmt.Errorf("question not found: %w", err)
+		return nil, fmt.Errorf("pregunta no encontrada: %w", err)
 	}
 
 	if err := s.store.Answers.Create(answer); err != nil {
-		return nil, fmt.Errorf("failed to create answer: %w", err)
+		return nil, fmt.Errorf("error al crear la respuesta: %w", err)
 	}
 	return answer, nil
 }
@@ -45,7 +45,7 @@ func (s *answerService) CreateAnswer(answer *models.Answer) (*models.Answer, err
 func (s *answerService) GetAnswer(id uint) (*models.Answer, error) {
 	answer, err := s.store.Answers.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("answer not found: %w", err)
+		return nil, fmt.Errorf("respuesta no encontrada: %w", err)
 	}
 	return answer, nil
 }
@@ -53,7 +53,7 @@ func (s *answerService) GetAnswer(id uint) (*models.Answer, error) {
 func (s *answerService) UpdateAnswer(id uint, answerData *models.Answer) (*models.Answer, error) {
 	existingAnswer, err := s.store.Answers.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("answer not found: %w", err)
+		return nil, fmt.Errorf("respuesta no encontrada: %w", err)
 	}
 
 	// Update fields
@@ -62,7 +62,7 @@ func (s *answerService) UpdateAnswer(id uint, answerData *models.Answer) (*model
 	existingAnswer.Order = answerData.Order
 
 	if err := s.store.Answers.Update(existingAnswer); err != nil {
-		return nil, fmt.Errorf("failed to update answer: %w", err)
+		return nil, fmt.Errorf("error al actualizar la respuesta: %w", err)
 	}
 
 	return existingAnswer, nil
@@ -75,7 +75,7 @@ func (s *answerService) UpdateAnswerPatch(answerID uint, data map[string]interfa
 
 	var answer dto.UpdateAnswerRequest
 	if err := utils.MapToStructStrict(data, &answer); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.Answers.Patch(answerID, data); err != nil {
@@ -84,7 +84,7 @@ func (s *answerService) UpdateAnswerPatch(answerID uint, data map[string]interfa
 
 	updated, err := s.store.Answers.Get(answerID)
 	if err != nil {
-		return nil, errors.New("answer not found")
+		return nil, errors.New("respuesta no encontrada")
 	}
 
 	return updated, nil
@@ -111,7 +111,7 @@ func (s *answerService) ValidateAnswers(questionID uint, selectedAnswerIDs []uin
 	// Get question to determine points
 	question, err := s.store.Questions.Get(questionID)
 	if err != nil {
-		return false, 0, fmt.Errorf("question not found: %w", err)
+		return false, 0, fmt.Errorf("pregunta no encontrada: %w", err)
 	}
 
 	// Get all answers for the question

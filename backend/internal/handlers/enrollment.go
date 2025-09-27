@@ -47,12 +47,12 @@ func (h *EnrollmentHandler) CreateEnrollment(c *gin.Context) {
 
 	enrollment, err := h.enrollmentService.CreateEnrollment(enrollmentData.UserID, enrollmentData.CourseID)
 	if err != nil {
-		h.logger.Errorf("Failed to create enrollment: %v", err)
+		h.logger.Errorf("Error al crear la inscripción: %v", err)
 		if err.Error() == "user is already enrolled in this course" {
 			responses.ErrorConflict(c, err.Error())
 			return
 		}
-		responses.ErrorInternalServerWithMessage(c, "Failed to create enrollment")
+		responses.ErrorInternalServerWithMessage(c, "Error al crear la inscripción")
 		return
 	}
 
@@ -72,14 +72,14 @@ func (h *EnrollmentHandler) GetEnrollment(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid enrollment ID")
+		responses.ErrorBadRequest(c, "ID de inscripción inválido")
 		return
 	}
 
 	enrollment, err := h.enrollmentService.GetEnrollment(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get enrollment: %v", err)
-		responses.ErrorNotFound(c, "Enrollment")
+		h.logger.Errorf("Error al obtener la inscripción: %v", err)
+		responses.ErrorNotFound(c, "Inscripción")
 		return
 	}
 
@@ -140,14 +140,14 @@ func (h *EnrollmentHandler) DeleteEnrollment(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid enrollment ID")
+		responses.ErrorBadRequest(c, "ID de inscripción inválido")
 		return
 	}
 
 	err = h.enrollmentService.DeleteEnrollment(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to delete enrollment: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to delete enrollment")
+		h.logger.Errorf("Error al eliminar la inscripción: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar la inscripción")
 		return
 	}
 
@@ -167,14 +167,14 @@ func (h *EnrollmentHandler) GetUserEnrollments(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid user ID")
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	enrollments, err := h.enrollmentService.GetUserEnrollments(uint(userID))
 	if err != nil {
 		h.logger.Errorf("Failed to get user enrollments: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to get enrollments")
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener la inscripcións")
 		return
 	}
 
@@ -194,14 +194,14 @@ func (h *EnrollmentHandler) GetCourseEnrollments(c *gin.Context) {
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
 	enrollments, err := h.enrollmentService.GetCourseEnrollments(uint(courseID))
 	if err != nil {
-		h.logger.Errorf("Failed to get course enrollments: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to get enrollments")
+		h.logger.Errorf("Error al obtener el curso enrollments: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener la inscripcións")
 		return
 	}
 
@@ -223,21 +223,21 @@ func (h *EnrollmentHandler) GetUserCourseEnrollment(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid user ID")
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	courseIDStr := c.Param("courseId")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
 	enrollment, err := h.enrollmentService.GetUserCourseEnrollment(uint(userID), uint(courseID))
 	if err != nil {
 		h.logger.Errorf("Failed to get user course enrollment: %v", err)
-		responses.ErrorNotFound(c, "Enrollment")
+		responses.ErrorNotFound(c, "Inscripción")
 		return
 	}
 
@@ -258,14 +258,14 @@ func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid user ID")
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
@@ -273,7 +273,7 @@ func (h *EnrollmentHandler) CompleteEnrollment(c *gin.Context) {
 	if err != nil {
 		h.logger.Errorf("Failed to complete enrollment: %v", err)
 		if err.Error() == "enrollment not found" {
-			responses.ErrorNotFound(c, "Enrollment")
+			responses.ErrorNotFound(c, "Inscripción")
 			return
 		}
 		responses.ErrorInternalServerWithMessage(c, "Failed to complete enrollment")
@@ -298,14 +298,14 @@ func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid user ID")
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
@@ -320,9 +320,9 @@ func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 
 	err = h.enrollmentService.UpdateProgress(uint(userID), uint(courseID), progressData.Progress)
 	if err != nil {
-		h.logger.Errorf("Failed to update enrollment progress: %v", err)
+		h.logger.Errorf("Error al actualizar la inscripción progress: %v", err)
 		if err.Error() == "enrollment not found" {
-			responses.ErrorNotFound(c, "Enrollment")
+			responses.ErrorNotFound(c, "Inscripción")
 			return
 		}
 		responses.ErrorInternalServerWithMessage(c, "Failed to update progress")

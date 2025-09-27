@@ -42,8 +42,8 @@ func (h *CourseHandler) CreateCourse(c *gin.Context) {
 
 	createdCourse, err := h.courseService.CreateCourse(&course)
 	if err != nil {
-		h.logger.Errorf("Failed to create course: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to create course")
+		h.logger.Errorf("Error al crear el curso: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al crear el curso")
 		return
 	}
 
@@ -63,14 +63,14 @@ func (h *CourseHandler) GetCourse(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
 	course, err := h.courseService.GetCourse(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get course: %v", err)
-		responses.ErrorNotFound(c, "Course")
+		h.logger.Errorf("Error al obtener el curso: %v", err)
+		responses.ErrorNotFound(c, "Curso")
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *CourseHandler) UpdateCourse(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
@@ -105,8 +105,8 @@ func (h *CourseHandler) UpdateCourse(c *gin.Context) {
 
 	updatedCourse, err := h.courseService.UpdateCourse(uint(id), &course)
 	if err != nil {
-		h.logger.Errorf("Failed to update course: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to update course")
+		h.logger.Errorf("Error al actualizar el curso: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al actualizar el curso")
 		return
 	}
 
@@ -167,14 +167,14 @@ func (h *CourseHandler) DeleteCourse(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
 	err = h.courseService.DeleteCourse(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to delete course: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to delete course")
+		h.logger.Errorf("Error al eliminar el curso: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar el curso")
 		return
 	}
 
@@ -191,8 +191,8 @@ func (h *CourseHandler) DeleteCourse(c *gin.Context) {
 func (h *CourseHandler) GetAllCourses(c *gin.Context) {
 	courses, err := h.courseService.GetAllCourses()
 	if err != nil {
-		h.logger.Errorf("Failed to get courses: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to get courses")
+		h.logger.Errorf("Error al obtener el cursos: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener el cursos")
 		return
 	}
 
@@ -212,14 +212,14 @@ func (h *CourseHandler) GetCourseWithModules(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
 	course, err := h.courseService.GetCourseWithModules(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get course with modules: %v", err)
-		responses.ErrorNotFound(c, "Course")
+		h.logger.Errorf("Error al obtener el curso with modules: %v", err)
+		responses.ErrorNotFound(c, "Curso")
 		return
 	}
 

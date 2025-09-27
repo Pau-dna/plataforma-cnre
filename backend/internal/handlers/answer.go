@@ -50,7 +50,7 @@ func (h *AnswerHandler) CreateAnswer(c *gin.Context) {
 	createdAnswer, err := h.answerService.CreateAnswer(answer)
 	if err != nil {
 		h.logger.Errorf("Failed to create answer: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to create answer")
+		responses.ErrorInternalServerWithMessage(c, "Error al crear la respuesta")
 		return
 	}
 
@@ -70,14 +70,14 @@ func (h *AnswerHandler) GetAnswer(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid answer ID")
+		responses.ErrorBadRequest(c, "ID de respuesta inválido")
 		return
 	}
 
 	answer, err := h.answerService.GetAnswer(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get answer: %v", err)
-		responses.ErrorNotFound(c, "Answer")
+		responses.ErrorNotFound(c, "Respuesta")
 		return
 	}
 
@@ -99,7 +99,7 @@ func (h *AnswerHandler) UpdateAnswer(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid answer ID")
+		responses.ErrorBadRequest(c, "ID de respuesta inválido")
 		return
 	}
 
@@ -118,7 +118,7 @@ func (h *AnswerHandler) UpdateAnswer(c *gin.Context) {
 	updatedAnswer, err := h.answerService.UpdateAnswer(uint(id), answer)
 	if err != nil {
 		h.logger.Errorf("Failed to update answer: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to update answer")
+		responses.ErrorInternalServerWithMessage(c, "Error al actualizar la respuesta")
 		return
 	}
 
@@ -141,19 +141,19 @@ func (h *AnswerHandler) UpdateAnswer(c *gin.Context) {
 func (h *AnswerHandler) UpdateAnswerPatch(c *gin.Context) {
 	answerID := c.Param("id")
 	if answerID == "" {
-		responses.ErrorBadRequest(c, "Answer ID is required")
+		responses.ErrorBadRequest(c, "El ID de respuesta es requerido")
 		return
 	}
 
 	answerIDInt, err := strconv.Atoi(answerID)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid Answer ID: "+err.Error())
+		responses.ErrorBadRequest(c, "ID de respuesta inválido: "+err.Error())
 		return
 	}
 
 	var payload map[string]interface{}
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+		responses.ErrorBadRequest(c, "Datos de la petición inválidos: "+err.Error())
 		return
 	}
 
@@ -178,14 +178,14 @@ func (h *AnswerHandler) DeleteAnswer(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid answer ID")
+		responses.ErrorBadRequest(c, "ID de respuesta inválido")
 		return
 	}
 
 	err = h.answerService.DeleteAnswer(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to delete answer: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to delete answer")
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar la respuesta")
 		return
 	}
 
@@ -205,14 +205,14 @@ func (h *AnswerHandler) GetAnswersByQuestion(c *gin.Context) {
 	questionIDStr := c.Param("id")
 	questionID, err := strconv.ParseUint(questionIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid question ID")
+		responses.ErrorBadRequest(c, "ID de pregunta inválido")
 		return
 	}
 
 	answers, err := h.answerService.GetAnswersByQuestion(uint(questionID))
 	if err != nil {
 		h.logger.Errorf("Failed to get answers by question: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to get answers")
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener las respuestas")
 		return
 	}
 

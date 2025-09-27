@@ -42,8 +42,8 @@ func (h *EvaluationHandler) CreateEvaluation(c *gin.Context) {
 
 	createdEvaluation, err := h.evaluationService.CreateEvaluation(&evaluation)
 	if err != nil {
-		h.logger.Errorf("Failed to create evaluation: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to create evaluation")
+		h.logger.Errorf("Error al crear la evaluación: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al crear la evaluación")
 		return
 	}
 
@@ -63,14 +63,14 @@ func (h *EvaluationHandler) GetEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid evaluation ID")
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	evaluation, err := h.evaluationService.GetEvaluation(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get evaluation: %v", err)
-		responses.ErrorNotFound(c, "Evaluation")
+		h.logger.Errorf("Error al obtener la evaluación: %v", err)
+		responses.ErrorNotFound(c, "Evaluación")
 		return
 	}
 
@@ -92,7 +92,7 @@ func (h *EvaluationHandler) UpdateEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid evaluation ID")
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
@@ -104,8 +104,8 @@ func (h *EvaluationHandler) UpdateEvaluation(c *gin.Context) {
 
 	updatedEvaluation, err := h.evaluationService.UpdateEvaluation(uint(id), &evaluation)
 	if err != nil {
-		h.logger.Errorf("Failed to update evaluation: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to update evaluation")
+		h.logger.Errorf("Error al actualizar la evaluación: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al actualizar la evaluación")
 		return
 	}
 
@@ -165,14 +165,14 @@ func (h *EvaluationHandler) DeleteEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid evaluation ID")
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	err = h.evaluationService.DeleteEvaluation(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to delete evaluation: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to delete evaluation")
+		h.logger.Errorf("Error al eliminar la evaluación: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar la evaluación")
 		return
 	}
 
@@ -192,14 +192,14 @@ func (h *EvaluationHandler) GetEvaluationsByModule(c *gin.Context) {
 	moduleIDStr := c.Param("id")
 	moduleID, err := strconv.ParseUint(moduleIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid module ID")
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
 		return
 	}
 
 	evaluations, err := h.evaluationService.GetEvaluationsByModule(uint(moduleID))
 	if err != nil {
-		h.logger.Errorf("Failed to get evaluations by module: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to get evaluations")
+		h.logger.Errorf("Error al obtener la evaluacións by module: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener la evaluacións")
 		return
 	}
 

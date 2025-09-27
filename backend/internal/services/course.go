@@ -32,7 +32,7 @@ func NewCourseService(service *Service) CourseService {
 
 func (s *courseService) CreateCourse(course *models.Course) (*models.Course, error) {
 	if err := s.store.Courses.Create(course); err != nil {
-		return nil, fmt.Errorf("failed to create course: %w", err)
+		return nil, fmt.Errorf("error al crear el curso: %w", err)
 	}
 	return course, nil
 }
@@ -40,7 +40,7 @@ func (s *courseService) CreateCourse(course *models.Course) (*models.Course, err
 func (s *courseService) GetCourse(id uint) (*models.Course, error) {
 	course, err := s.store.Courses.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("course not found: %w", err)
+		return nil, fmt.Errorf("curso no encontrado: %w", err)
 	}
 	return course, nil
 }
@@ -48,7 +48,7 @@ func (s *courseService) GetCourse(id uint) (*models.Course, error) {
 func (s *courseService) UpdateCourse(id uint, courseData *models.Course) (*models.Course, error) {
 	existingCourse, err := s.store.Courses.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("course not found: %w", err)
+		return nil, fmt.Errorf("curso no encontrado: %w", err)
 	}
 
 	// Update fields
@@ -58,7 +58,7 @@ func (s *courseService) UpdateCourse(id uint, courseData *models.Course) (*model
 	existingCourse.ImageURL = courseData.ImageURL
 
 	if err := s.store.Courses.Update(existingCourse); err != nil {
-		return nil, fmt.Errorf("failed to update course: %w", err)
+		return nil, fmt.Errorf("error al actualizar el curso: %w", err)
 	}
 
 	return existingCourse, nil
@@ -71,7 +71,7 @@ func (s *courseService) UpdateCoursePatch(courseID uint, data map[string]interfa
 
 	var course dto.UpdateCourseRequest
 	if err := utils.MapToStructStrict(data, &course); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.Courses.Patch(courseID, data); err != nil {
@@ -80,7 +80,7 @@ func (s *courseService) UpdateCoursePatch(courseID uint, data map[string]interfa
 
 	updated, err := s.store.Courses.Get(courseID)
 	if err != nil {
-		return nil, errors.New("course not found")
+		return nil, errors.New("curso no encontrado")
 	}
 
 	return updated, nil
@@ -105,7 +105,7 @@ func (s *courseService) GetCourseWithModules(id uint) (*models.Course, error) {
 	// This would require a repository method to preload modules
 	course, err := s.store.Courses.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("course not found: %w", err)
+		return nil, fmt.Errorf("curso no encontrado: %w", err)
 	}
 
 	// For now, return the course - would need to implement preloading in repository

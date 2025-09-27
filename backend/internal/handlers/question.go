@@ -50,8 +50,8 @@ func (h *QuestionHandler) CreateQuestion(c *gin.Context) {
 
 	createdQuestion, err := h.questionService.CreateQuestion(question)
 	if err != nil {
-		h.logger.Errorf("Failed to create question: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to create question")
+		h.logger.Errorf("Error al crear la pregunta: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al crear la pregunta")
 		return
 	}
 
@@ -71,14 +71,14 @@ func (h *QuestionHandler) GetQuestion(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid question ID")
+		responses.ErrorBadRequest(c, "ID de pregunta inválido")
 		return
 	}
 
 	question, err := h.questionService.GetQuestion(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get question: %v", err)
-		responses.ErrorNotFound(c, "Question")
+		h.logger.Errorf("Error al obtener la pregunta: %v", err)
+		responses.ErrorNotFound(c, "Pregunta")
 		return
 	}
 
@@ -100,7 +100,7 @@ func (h *QuestionHandler) UpdateQuestion(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid question ID")
+		responses.ErrorBadRequest(c, "ID de pregunta inválido")
 		return
 	}
 
@@ -119,8 +119,8 @@ func (h *QuestionHandler) UpdateQuestion(c *gin.Context) {
 
 	updatedQuestion, err := h.questionService.UpdateQuestion(uint(id), question)
 	if err != nil {
-		h.logger.Errorf("Failed to update question: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to update question")
+		h.logger.Errorf("Error al actualizar la pregunta: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al actualizar la pregunta")
 		return
 	}
 
@@ -180,14 +180,14 @@ func (h *QuestionHandler) DeleteQuestion(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid question ID")
+		responses.ErrorBadRequest(c, "ID de pregunta inválido")
 		return
 	}
 
 	err = h.questionService.DeleteQuestion(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to delete question: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to delete question")
+		h.logger.Errorf("Error al eliminar la pregunta: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar la pregunta")
 		return
 	}
 
@@ -207,14 +207,14 @@ func (h *QuestionHandler) GetQuestionsByEvaluation(c *gin.Context) {
 	evaluationIDStr := c.Param("id")
 	evaluationID, err := strconv.ParseUint(evaluationIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid evaluation ID")
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	questions, err := h.questionService.GetQuestionsByEvaluation(uint(evaluationID))
 	if err != nil {
-		h.logger.Errorf("Failed to get questions by evaluation: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to get questions")
+		h.logger.Errorf("Error al obtener la preguntas by evaluation: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener la preguntas")
 		return
 	}
 
@@ -234,14 +234,14 @@ func (h *QuestionHandler) GetQuestionWithAnswers(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid question ID")
+		responses.ErrorBadRequest(c, "ID de pregunta inválido")
 		return
 	}
 
 	question, err := h.questionService.GetQuestionWithAnswers(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get question with answers: %v", err)
-		responses.ErrorNotFound(c, "Question")
+		h.logger.Errorf("Error al obtener la pregunta with answers: %v", err)
+		responses.ErrorNotFound(c, "Pregunta")
 		return
 	}
 

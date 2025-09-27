@@ -38,13 +38,13 @@ func (s *evaluationAttemptService) StartAttempt(userID, evaluationID uint) (*mod
 	// Verify user exists
 	_, err := s.store.Users.GetByID(userID)
 	if err != nil {
-		return nil, fmt.Errorf("user not found: %w", err)
+		return nil, fmt.Errorf("usuario no encontrado: %w", err)
 	}
 
 	// Verify evaluation exists and get configuration
 	evaluation, err := s.store.Evaluations.Get(evaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("evaluation not found: %w", err)
+		return nil, fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	// Check if user can attempt this evaluation
@@ -300,7 +300,7 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	// Get evaluation to check time limit
 	evaluation, err := s.store.Evaluations.Get(attempt.EvaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("evaluation not found: %w", err)
+		return nil, fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	// Check time limit if set
@@ -349,7 +349,7 @@ func (s *evaluationAttemptService) UpdateEvaluationAttemptPatch(attemptID uint, 
 
 	var attempt dto.UpdateEvaluationAttemptRequest
 	if err := utils.MapToStructStrict(data, &attempt); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.EvaluationAttempts.Patch(attemptID, data); err != nil {
@@ -358,7 +358,7 @@ func (s *evaluationAttemptService) UpdateEvaluationAttemptPatch(attemptID uint, 
 
 	updated, err := s.store.EvaluationAttempts.Get(attemptID)
 	if err != nil {
-		return nil, errors.New("attempt not found")
+		return nil, errors.New("intento no encontrado")
 	}
 
 	return updated, nil
@@ -387,7 +387,7 @@ func (s *evaluationAttemptService) CanUserAttempt(userID, evaluationID uint) (bo
 	// Get evaluation to check max attempts
 	evaluation, err := s.store.Evaluations.Get(evaluationID)
 	if err != nil {
-		return false, "", fmt.Errorf("evaluation not found: %w", err)
+		return false, "", fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	// Get user's previous attempts
@@ -433,7 +433,7 @@ func (s *evaluationAttemptService) ScoreAttempt(attemptID uint) (*models.Evaluat
 	// Get evaluation
 	evaluation, err := s.store.Evaluations.Get(attempt.EvaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("evaluation not found: %w", err)
+		return nil, fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	totalScore := 0

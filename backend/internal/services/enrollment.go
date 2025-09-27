@@ -37,13 +37,13 @@ func (s *enrollmentService) CreateEnrollment(userID, courseID uint) (*models.Enr
 	// Verify user exists
 	_, err := s.store.Users.GetByID(userID)
 	if err != nil {
-		return nil, fmt.Errorf("user not found: %w", err)
+		return nil, fmt.Errorf("usuario no encontrado: %w", err)
 	}
 
 	// Verify course exists
 	_, err = s.store.Courses.Get(courseID)
 	if err != nil {
-		return nil, fmt.Errorf("course not found: %w", err)
+		return nil, fmt.Errorf("curso no encontrado: %w", err)
 	}
 
 	// Check if enrollment already exists
@@ -60,7 +60,7 @@ func (s *enrollmentService) CreateEnrollment(userID, courseID uint) (*models.Enr
 	}
 
 	if err := s.store.Enrollments.Create(enrollment); err != nil {
-		return nil, fmt.Errorf("failed to create enrollment: %w", err)
+		return nil, fmt.Errorf("error al crear la inscripción: %w", err)
 	}
 
 	// Increment student count for the course
@@ -75,7 +75,7 @@ func (s *enrollmentService) CreateEnrollment(userID, courseID uint) (*models.Enr
 func (s *enrollmentService) GetEnrollment(id uint) (*models.Enrollment, error) {
 	enrollment, err := s.store.Enrollments.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("enrollment not found: %w", err)
+		return nil, fmt.Errorf("inscripción no encontrada: %w", err)
 	}
 	return enrollment, nil
 }
@@ -83,7 +83,7 @@ func (s *enrollmentService) GetEnrollment(id uint) (*models.Enrollment, error) {
 func (s *enrollmentService) UpdateEnrollment(id uint, enrollmentData *models.Enrollment) (*models.Enrollment, error) {
 	existingEnrollment, err := s.store.Enrollments.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("enrollment not found: %w", err)
+		return nil, fmt.Errorf("inscripción no encontrada: %w", err)
 	}
 
 	// Update fields
@@ -91,7 +91,7 @@ func (s *enrollmentService) UpdateEnrollment(id uint, enrollmentData *models.Enr
 	existingEnrollment.CompletedAt = enrollmentData.CompletedAt
 
 	if err := s.store.Enrollments.Update(existingEnrollment); err != nil {
-		return nil, fmt.Errorf("failed to update enrollment: %w", err)
+		return nil, fmt.Errorf("error al actualizar la inscripción: %w", err)
 	}
 
 	return existingEnrollment, nil
@@ -99,12 +99,12 @@ func (s *enrollmentService) UpdateEnrollment(id uint, enrollmentData *models.Enr
 
 func (s *enrollmentService) UpdateEnrollmentPatch(enrollmentID uint, data map[string]interface{}) (*models.Enrollment, error) {
 	if enrollmentID == 0 {
-		return nil, errors.New("enrollment ID cannot be zero")
+		return nil, errors.New("el ID de inscripción no puede ser cero")
 	}
 
 	var enrollment dto.UpdateEnrollmentRequest
 	if err := utils.MapToStructStrict(data, &enrollment); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.Enrollments.Patch(enrollmentID, data); err != nil {
@@ -113,7 +113,7 @@ func (s *enrollmentService) UpdateEnrollmentPatch(enrollmentID uint, data map[st
 
 	updated, err := s.store.Enrollments.Get(enrollmentID)
 	if err != nil {
-		return nil, errors.New("enrollment not found")
+		return nil, errors.New("inscripción no encontrada")
 	}
 
 	return updated, nil
@@ -123,7 +123,7 @@ func (s *enrollmentService) DeleteEnrollment(id uint) error {
 	// Get the enrollment to get the course ID before deleting
 	enrollment, err := s.store.Enrollments.Get(id)
 	if err != nil {
-		return fmt.Errorf("failed to get enrollment: %w", err)
+		return fmt.Errorf("error al obtener la inscripción: %w", err)
 	}
 
 	courseID := enrollment.CourseID
@@ -174,7 +174,7 @@ func (s *enrollmentService) GetUserCourseEnrollment(userID, courseID uint) (*mod
 func (s *enrollmentService) CompleteEnrollment(userID, courseID uint) error {
 	enrollment, err := s.GetUserCourseEnrollment(userID, courseID)
 	if err != nil {
-		return fmt.Errorf("enrollment not found: %w", err)
+		return fmt.Errorf("inscripción no encontrada: %w", err)
 	}
 
 	now := time.Now()
@@ -191,7 +191,7 @@ func (s *enrollmentService) CompleteEnrollment(userID, courseID uint) error {
 func (s *enrollmentService) UpdateProgress(userID, courseID uint, progress float64) error {
 	enrollment, err := s.GetUserCourseEnrollment(userID, courseID)
 	if err != nil {
-		return fmt.Errorf("enrollment not found: %w", err)
+		return fmt.Errorf("inscripción no encontrada: %w", err)
 	}
 
 	// Validate progress value
