@@ -184,14 +184,14 @@ func (h *EvaluationAttemptHandler) GetUserAttempts(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid user ID")
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	evaluationIDStr := c.Param("evaluationId")
 	evaluationID, err := strconv.ParseUint(evaluationIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid evaluation ID")
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
@@ -218,14 +218,14 @@ func (h *EvaluationAttemptHandler) CanUserAttempt(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid user ID")
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	evaluationIDStr := c.Param("evaluationId")
 	evaluationID, err := strconv.ParseUint(evaluationIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid evaluation ID")
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 

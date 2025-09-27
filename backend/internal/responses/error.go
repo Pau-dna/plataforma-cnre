@@ -17,11 +17,11 @@ func ErrorBindJson(c *gin.Context, err error) {
 }
 
 func ErrorNotFound(c *gin.Context, model string) {
-	NewErrorResponse(c, http.StatusNotFound, model+" not found", errNotFound, nil)
+	NewErrorResponse(c, http.StatusNotFound, model+" no encontrado", errNotFound, nil)
 }
 
 func ErrorInternalServer(c *gin.Context) {
-	NewErrorResponse(c, http.StatusInternalServerError, "internal server error", errInternalServer, nil)
+	NewErrorResponse(c, http.StatusInternalServerError, "error interno del servidor", errInternalServer, nil)
 }
 
 func ErrorInternalServerWithMessage(c *gin.Context, message string) {

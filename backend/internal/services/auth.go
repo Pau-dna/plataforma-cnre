@@ -106,7 +106,7 @@ func (s *authService) GetUser(userID uint) (*models.User, error) {
 	}
 
 	if user == nil {
-		return nil, errors.New("user not found")
+		return nil, errors.New("usuario no encontrado")
 	}
 
 	return user, nil

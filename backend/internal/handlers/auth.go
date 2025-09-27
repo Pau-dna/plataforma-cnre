@@ -34,7 +34,7 @@ func NewAuthHandler(handler *Handler, authService services.AuthService) *AuthHan
 func (h *AuthHandler) Login(c *gin.Context) {
 	var payload dto.LoginUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		responses.ErrorBadRequest(c, "Invalid request payload")
+		responses.ErrorBadRequest(c, "Datos de la petición inválidos")
 		return
 	}
 
@@ -61,7 +61,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 func (h *AuthHandler) Register(c *gin.Context) {
 	var payload dto.RegisterUser
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		responses.ErrorBadRequest(c, "Invalid request payload")
+		responses.ErrorBadRequest(c, "Datos de la petición inválidos")
 		return
 	}
 
@@ -86,7 +86,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 func (h *AuthHandler) GetUserInfo(c *gin.Context) {
 	userID, exists := c.Get("userID")
 	if !exists {
-		responses.ErrorUnauthorized(c, "User not authenticated")
+		responses.ErrorUnauthorized(c, "Usuario no autenticado")
 		return
 	}
 
@@ -111,7 +111,7 @@ func (h *AuthHandler) GetUserInfo(c *gin.Context) {
 func (h *AuthHandler) GoogleLogin(c *gin.Context) {
 	var payload dto.GoogleLogin
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		responses.ErrorBadRequest(c, "Invalid request payload")
+		responses.ErrorBadRequest(c, "Datos de la petición inválidos")
 		return
 	}
 

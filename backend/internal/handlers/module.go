@@ -42,8 +42,8 @@ func (h *ModuleHandler) CreateModule(c *gin.Context) {
 
 	createdModule, err := h.moduleService.CreateModule(&module)
 	if err != nil {
-		h.logger.Errorf("Failed to create module: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to create module")
+		h.logger.Errorf("Error al crear el módulo: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al crear el módulo")
 		return
 	}
 
@@ -63,14 +63,14 @@ func (h *ModuleHandler) GetModule(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid module ID")
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
 		return
 	}
 
 	module, err := h.moduleService.GetModule(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get module: %v", err)
-		responses.ErrorNotFound(c, "Module")
+		h.logger.Errorf("Error al obtener el módulo: %v", err)
+		responses.ErrorNotFound(c, "Módulo")
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *ModuleHandler) UpdateModule(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid module ID")
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
 		return
 	}
 
@@ -105,8 +105,8 @@ func (h *ModuleHandler) UpdateModule(c *gin.Context) {
 
 	updatedModule, err := h.moduleService.UpdateModule(uint(id), &module)
 	if err != nil {
-		h.logger.Errorf("Failed to update module: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to update module")
+		h.logger.Errorf("Error al actualizar el módulo: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al actualizar el módulo")
 		return
 	}
 
@@ -167,14 +167,14 @@ func (h *ModuleHandler) DeleteModule(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid module ID")
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
 		return
 	}
 
 	err = h.moduleService.DeleteModule(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to delete module: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to delete module")
+		h.logger.Errorf("Error al eliminar el módulo: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar el módulo")
 		return
 	}
 
@@ -194,14 +194,14 @@ func (h *ModuleHandler) GetModulesByCourse(c *gin.Context) {
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
 	modules, err := h.moduleService.GetModulesByCourse(uint(courseID))
 	if err != nil {
-		h.logger.Errorf("Failed to get modules by course: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "Failed to get modules")
+		h.logger.Errorf("Error al obtener el módulos by course: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener el módulos")
 		return
 	}
 
@@ -221,14 +221,14 @@ func (h *ModuleHandler) GetModuleWithContent(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid module ID")
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
 		return
 	}
 
 	module, err := h.moduleService.GetModuleWithContent(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get module with content: %v", err)
-		responses.ErrorNotFound(c, "Module")
+		h.logger.Errorf("Error al obtener el módulo with content: %v", err)
+		responses.ErrorNotFound(c, "Módulo")
 		return
 	}
 
@@ -249,7 +249,7 @@ func (h *ModuleHandler) ReorderModules(c *gin.Context) {
 	courseIDStr := c.Param("id")
 	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid course ID")
+		responses.ErrorBadRequest(c, "ID de curso inválido")
 		return
 	}
 
