@@ -99,14 +99,16 @@
 				}
 			}, 30000);
 
+			/*
 			// Load any existing answers (if continuing an attempt)
 			if (data.attempt.answers && data.attempt.answers.length > 0) {
-				const existingAnswers = new Map();
+				const existingAnswers = {}
 				data.attempt.answers.forEach((answer) => {
-					existingAnswers.set(answer.attempt_question_id, answer.selected_option_ids);
+					existingAnswers[answer.attempt_question_id] = answer.selected_option_ids;
 				});
 				answers = existingAnswers;
 			}
+				*/
 		}
 	});
 
@@ -187,9 +189,9 @@
 		submitting = true;
 		try {
 			// Convert answers to the required format
-			const submissionAnswers = Array.from(answers.entries()).map(
+			const submissionAnswers = Object.entries(answers).map(
 				([questionId, selectedOptionIds]) => ({
-					attempt_question_id: questionId,
+					attempt_question_id: Number(questionId),
 					selected_option_ids: selectedOptionIds,
 					is_correct: false, // This will be calculated by the backend
 					points: 0 // This will be calculated by the backend
@@ -198,7 +200,7 @@
 
 			// Add empty answers for unanswered questions
 			questions.forEach((question) => {
-				if (!answers.has(question.id)) {
+				if (answers[question.id.toString()] == undefined) {
 					submissionAnswers.push({
 						attempt_question_id: question.id,
 						selected_option_ids: [],
@@ -208,7 +210,7 @@
 				}
 			});
 
-			const result = await evaluationAttemptController.submitAttempt(page.params.attempt, {
+			const result = await evaluationAttemptController.submitAttempt(Number(page.params.attempt), {
 				answers: submissionAnswers
 			});
 

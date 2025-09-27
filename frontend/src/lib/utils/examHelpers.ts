@@ -71,7 +71,7 @@ export function getAttemptStatusInfo(attempt: EvaluationAttempt) {
 // Helper function to validate answers before submission
 export function validateAnswers(
 	questions: any[],
-	answers: Map<number, number[]>
+	answers: Record<string, number[]>
 ): {
 	isValid: boolean;
 	errors: string[];
@@ -81,7 +81,7 @@ export function validateAnswers(
 	const warnings: string[] = [];
 
 	// Check for unanswered questions
-	const unansweredCount = questions.length - answers.size;
+	const unansweredCount = questions.length - Object.values(answers).filter((a) => a.length > 0).length;
 	if (unansweredCount > 0) {
 		warnings.push(
 			`Tienes ${unansweredCount} pregunta${unansweredCount > 1 ? 's' : ''} sin responder`
@@ -89,8 +89,8 @@ export function validateAnswers(
 	}
 
 	// Validate individual answers
-	for (const [questionId, selectedOptions] of answers.entries()) {
-		const question = questions.find((q) => q.id === questionId);
+	for (const [questionId, selectedOptions] of Object.entries(answers)) {
+		const question = questions.find((q) => q.id === Number(questionId));
 		if (!question) {
 			errors.push(`Pregunta con ID ${questionId} no encontrada`);
 			continue;
