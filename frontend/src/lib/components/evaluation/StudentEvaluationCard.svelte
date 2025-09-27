@@ -9,6 +9,7 @@
 	import { EvaluationAttemptController } from '$lib/controllers/evaluationAttempt';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
 
 	type Props = {
 		evaluation: Evaluation;
@@ -41,6 +42,8 @@
 		}
 	});
 
+	const getEvaluationUrl = () => `/courses/${courseId}/${evaluation.module_id}/evaluation/${evaluation.id}`;
+
 	async function startAttempt() {
 		if (!authStore.user || !canAttempt) return;
 
@@ -60,7 +63,7 @@
 			toast.success('Examen iniciado exitosamente');
 
 			// Navigate to the exam taking page
-			window.location.href = `/courses/${courseId}/module/${evaluation.module_id}/evaluation/${evaluation.id}/attempt/${attempt.id}`;
+			await goto(`${getEvaluationUrl()}/attempt/${attempt.id}`);
 		} catch (error: any) {
 			console.error('Error starting attempt:', error);
 
@@ -77,10 +80,6 @@
 		} finally {
 			loading = false;
 		}
-	}
-
-	function viewAttempts() {
-		window.location.href = `/courses/${courseId}/module/${evaluation.module_id}/evaluation/${evaluation.id}/attempts`;
 	}
 
 	function formatDuration(minutes: number): string {
@@ -182,7 +181,7 @@
 		{/if}
 
 		{#if userAttempts.length > 0}
-			<Button variant="outline" onclick={viewAttempts}>Ver Intentos</Button>
+			<Button variant="outline" href="{getEvaluationUrl()}/attempts" data-sveltekit-reload>Ver Intentos</Button>
 		{/if}
 	</Card.Footer>
 </Card.Root>
