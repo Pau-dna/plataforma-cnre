@@ -10,29 +10,17 @@
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import type { EvaluationAttempt } from '$lib';
+	import { page } from '$app/state';
 
 	let { data }: PageProps = $props();
 
+	const evaluationUrl = $derived(`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}`)
+
 	const evaluationAttemptController = new EvaluationAttemptController();
 	let loading = $state(false);
-	let attempts = $state<any[]>([]);
-	let userId = $state<number | null>(null);
-
-	onMount(async () => {
-		if (!authStore.user) return;
-
-		userId = authStore.user.id;
-		try {
-			const userAttempts = await evaluationAttemptController.getUserAttempts(
-				authStore.user.id,
-				data.evaluationId
-			);
-			attempts = userAttempts;
-		} catch (error) {
-			console.error('Error loading attempts:', error);
-			toast.error('Error cargando intentos');
-		}
-	});
+	let attempts = $state<EvaluationAttempt[]>(data.attempts || []);
+	let userId = $state<number>(data.userId);
 
 	// Sort attempts by date (newest first)
 	const sortedAttempts = $derived(
@@ -61,8 +49,8 @@
 			});
 
 			toast.success('Nuevo intento iniciado');
-			goto(
-				`/courses/${data.courseId}/module/${data.moduleId}/evaluation/${data.evaluationId}/attempt/${attempt.id}`
+			await goto(
+				`${evaluationUrl}/attempt/${attempt.id}`
 			);
 		} catch (error) {
 			console.error('Error starting attempt:', error);
@@ -99,12 +87,13 @@
 		if (!attempt.submitted_at) return 'En progreso';
 		return attempt.passed ? 'Aprobado' : 'No aprobado';
 	}
+
 </script>
 
 <div class="mx-auto max-w-4xl p-6">
 	<!-- Header -->
 	<div class="mb-6 space-y-4">
-		<Back href="/courses/{data.courseId}/module/{data.moduleId}" />
+		<Back href="/courses/{data.courseId}/{data.moduleId}" />
 		<div class="flex items-center justify-between">
 			<div>
 				<h1 class="mb-2 text-2xl font-bold">{data.evaluation.title}</h1>
@@ -218,7 +207,7 @@
 				</Card.Content>
 			</Card.Root>
 		{:else}
-			{#each sortedAttempts as attempt, index}
+			{#each sortedAttempts as attempt, index (attempt.id)}
 				<Card.Root class="transition-shadow hover:shadow-md">
 					<Card.Header>
 						<div class="flex items-center justify-between">
@@ -276,16 +265,6 @@
 										</div>
 									</div>
 								</div>
-
-								<div class="flex items-center gap-2">
-									<Clock class="text-muted-foreground h-4 w-4" />
-									<div>
-										<div class="font-medium">Tiempo utilizado</div>
-										<div class="text-muted-foreground">
-											{formatDuration(attempt.time_spent)}
-										</div>
-									</div>
-								</div>
 							{:else}
 								<div class="flex items-center gap-2">
 									<X class="h-4 w-4 text-yellow-600" />
@@ -302,16 +281,18 @@
 						{#if attempt.submitted_at}
 							<Button
 								variant="outline"
-								href="/courses/{data.courseId}/module/{data.moduleId}/evaluation/{data.evaluationId}/attempt/{attempt.id}/results"
+								href="{evaluationUrl}/attempt/{attempt.id}/results"
 								class="flex-1"
+								data-sveltekit-reload
 							>
 								<Eye class="mr-2 h-4 w-4" />
 								Ver Resultados
 							</Button>
 						{:else}
 							<Button
-								href="/courses/{data.courseId}/module/{data.moduleId}/evaluation/{data.evaluationId}/attempt/{attempt.id}"
+								href="{evaluationUrl}/attempt/{attempt.id}"
 								class="flex-1"
+								data-sveltekit-reload
 							>
 								Continuar Intento
 							</Button>
