@@ -11,7 +11,8 @@
 
 	<div class="grid grid-cols-12 gap-8">
 		<div class="col-span-8">
-			<div class="aspect-[16/6] w-full rounded-lg bg-indigo-50"></div>
+			<!-- svelte-ignore a11y_media_has_caption -->
+			<video class="aspect-video w-full rounded-lg" src="https://cnre-storage.imlargo.dev/WhatsApp%20Video%202025-09-22%20at%2010.26.20%20AM.mp4" controls></video>
 		</div>
 
 		<div class="col-span-4 flex flex-col gap-y-2">
