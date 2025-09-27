@@ -5,6 +5,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Back from '$lib/components/kit/Back.svelte';
 	import QuestionCard from '$lib/components/evaluation/QuestionCard.svelte';
+	import { Alert, AlertDescription } from '$lib/components/ui/alert';
 
 	let { data }: PageProps = $props();
 
@@ -85,12 +86,12 @@
 		<div class="flex items-center justify-between">
 			<h3 class="text-xl font-semibold">Preguntas de la Evaluación</h3>
 			{#if hasIncompleteQuestions}
-				<div class="flex items-center gap-2 rounded-md bg-orange-50 border border-orange-200 px-3 py-2 text-orange-800">
-					<AlertTriangle class="h-4 w-4" />
-					<span class="text-sm font-medium">
+				<Alert class="w-auto border-orange-200 bg-orange-50">
+					<AlertTriangle class="h-4 w-4 text-orange-600" />
+					<AlertDescription class="text-orange-800 font-medium">
 						Faltan {evaluation.question_count - questions.length} preguntas
-					</span>
-				</div>
+					</AlertDescription>
+				</Alert>
 			{/if}
 		</div>
 
