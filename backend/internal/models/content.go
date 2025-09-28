@@ -14,8 +14,8 @@ type Content struct {
 	ModuleID    uint              `json:"module_id" gorm:"not null;index;index:idx_contents_module_order,priority:1"`
 
 	// Relaciones
-	Module       *Module         `json:"module" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
-	UserProgress []*UserProgress `json:"user_progress" gorm:"foreignKey:ContentID;constraint:OnDelete:CASCADE"`
+	Module       *Module         `json:"module" gorm:"foreignKey:ModuleID"`
+	UserProgress []*UserProgress `json:"user_progress" gorm:"foreignKey:ContentID"`
 }
 
 func (Content) TableName() string {
