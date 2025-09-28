@@ -72,7 +72,7 @@ func (app *Application) Mount() {
 	answerService := services.NewAnswerService(serviceContainer)
 	enrollmentService := services.NewEnrollmentService(serviceContainer)
 	evaluationAttemptService := services.NewEvaluationAttemptService(serviceContainer, answerService)
-	// userProgressService := services.NewUserProgressService(serviceContainer, enrollmentService)
+	userProgressService := services.NewUserProgressService(serviceContainer, enrollmentService)
 
 	// Handlers
 	handlerContainer := handlers.NewHandler(app.Logger)
@@ -89,6 +89,7 @@ func (app *Application) Mount() {
 	answerHandler := handlers.NewAnswerHandler(handlerContainer, answerService)
 	enrollmentHandler := handlers.NewEnrollmentHandler(handlerContainer, enrollmentService)
 	evaluationAttemptHandler := handlers.NewEvaluationAttemptHandler(handlerContainer, evaluationAttemptService)
+	userProgressHandler := handlers.NewUserProgressHandler(handlerContainer, userProgressService)
 
 	// Middlewares
 	apiKeyMiddleware := middleware.ApiKeyMiddleware(app.Config.Auth.ApiKey)
@@ -193,6 +194,17 @@ func (app *Application) Mount() {
 	v1.GET("/users/:userId/courses/:courseId/enrollment", enrollmentHandler.GetUserCourseEnrollment)
 	v1.POST("/users/:userId/courses/:id/complete", enrollmentHandler.CompleteEnrollment)
 	v1.PUT("/users/:userId/courses/:id/progress", enrollmentHandler.UpdateProgress)
+
+	// User Progress
+	v1.POST("/user-progress/complete", userProgressHandler.MarkContentComplete)
+	v1.POST("/user-progress/incomplete", userProgressHandler.MarkContentIncomplete)
+	v1.GET("/users/:userId/courses/:courseId/progress", userProgressHandler.GetUserCourseProgress)
+	v1.GET("/users/:userId/modules/:moduleId/progress", userProgressHandler.GetUserModuleProgress)
+	v1.GET("/users/:userId/courses/:courseId/progress-percentage", userProgressHandler.CalculateCourseProgress)
+	v1.GET("/users/:userId/modules/:moduleId/progress-percentage", userProgressHandler.CalculateModuleProgress)
+	v1.GET("/users/:userId/content/:contentId/progress", userProgressHandler.GetUserContentProgress)
+	v1.GET("/users/:userId/evaluations/:evaluationId/passed", userProgressHandler.CheckEvaluationPassed)
+	v1.PATCH("/user-progress/:id", userProgressHandler.UpdateUserProgressPatch)
 
 	// Evaluation Attempts
 	v1.POST("/evaluation-attempts/start", evaluationAttemptHandler.StartAttempt)

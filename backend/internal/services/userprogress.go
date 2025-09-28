@@ -19,6 +19,7 @@ type UserProgressService interface {
 	CalculateCourseProgress(userID, courseID uint) (float64, error)
 	CalculateModuleProgress(userID, moduleID uint) (float64, error)
 	GetUserProgressForContent(userID, contentID uint) (*models.UserProgress, error)
+	HasUserPassedEvaluation(userID, evaluationID uint) (bool, error)
 }
 
 type userProgressService struct {
@@ -182,16 +183,59 @@ func (s *userProgressService) CalculateModuleProgress(userID, moduleID uint) (fl
 	}
 
 	// Count total items in module
-	totalItems := len(contents) + len(evaluations)
+	moduleContents := []*models.Content{}
+	moduleEvaluations := []*models.Evaluation{}
+	
+	for _, content := range contents {
+		if content.ModuleID == moduleID {
+			moduleContents = append(moduleContents, content)
+		}
+	}
+	for _, evaluation := range evaluations {
+		if evaluation.ModuleID == moduleID {
+			moduleEvaluations = append(moduleEvaluations, evaluation)
+		}
+	}
 
+	totalItems := len(moduleContents) + len(moduleEvaluations)
 	if totalItems == 0 {
 		return 100.0, nil // No content means 100% complete
 	}
 
-	// Use optimized count query instead of loading all records
-	completedItems, err := s.store.UserProgresss.CountCompletedByUserAndModule(userID, moduleID)
+	// Count completed items
+	completedItems := 0
+
+	// Check completed content (user progress records)
+	userProgress, err := s.GetUserModuleProgress(userID, moduleID)
 	if err != nil {
-		return 0, fmt.Errorf("error al contar los elementos completados: %w", err)
+		return 0, err
+	}
+
+	// Create a map to quickly lookup completed content
+	completedContentMap := make(map[uint]bool)
+	for _, progress := range userProgress {
+		if !progress.CompletedAt.IsZero() {
+			completedContentMap[progress.ContentID] = true
+		}
+	}
+
+	// Count completed content items
+	for _, content := range moduleContents {
+		if completedContentMap[content.ID] {
+			completedItems++
+		}
+	}
+
+	// Count passed evaluations (not just completed ones)
+	for _, evaluation := range moduleEvaluations {
+		hasPassed, err := s.HasUserPassedEvaluation(userID, evaluation.ID)
+		if err != nil {
+			s.logger.Warnf("Failed to check if user %d passed evaluation %d: %v", userID, evaluation.ID, err)
+			continue
+		}
+		if hasPassed {
+			completedItems++
+		}
 	}
 
 	return float64(completedItems) / float64(totalItems) * 100.0, nil
@@ -224,4 +268,29 @@ func (s *userProgressService) updateCourseProgress(userID, courseID uint) error 
 	}
 
 	return nil
+}
+
+func (s *userProgressService) HasUserPassedEvaluation(userID, evaluationID uint) (bool, error) {
+	// Get all attempts for this user and evaluation
+	attempts, err := s.store.EvaluationAttempts.GetAll()
+	if err != nil {
+		return false, fmt.Errorf("failed to get evaluation attempts: %w", err)
+	}
+
+	// Filter attempts for the specific user and evaluation
+	var userAttempts []*models.EvaluationAttempt
+	for _, attempt := range attempts {
+		if attempt.UserID == userID && attempt.EvaluationID == evaluationID {
+			userAttempts = append(userAttempts, attempt)
+		}
+	}
+
+	// Check if any attempt was passed
+	for _, attempt := range userAttempts {
+		if attempt.Passed && attempt.SubmittedAt != nil && !attempt.SubmittedAt.IsZero() {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

@@ -91,4 +91,18 @@ export class UserProgressController extends BaseController {
 		const completedCount = completionChecks.filter(Boolean).length;
 		return (completedCount / contentIds.length) * 100;
 	}
+
+	/**
+	 * Helper method to check if user has passed an evaluation
+	 */
+	async hasUserPassedEvaluation(userId: number, evaluationId: number): Promise<boolean> {
+		try {
+			const result = await this.get<{ has_passed: boolean }>(
+				`/api/v1/users/${userId}/evaluations/${evaluationId}/passed`
+			);
+			return result.has_passed;
+		} catch (error) {
+			return false;
+		}
+	}
 }
