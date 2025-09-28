@@ -60,7 +60,7 @@
 {/snippet}
 
 {#snippet nestedItem(item: NavItem)}
-	<Collapsible.Root open={item.collapsed} class="group/collapsible">
+	<Collapsible.Root open={true} class="group/collapsible">
 		{#snippet child({ props })}
 			<Sidebar.MenuItem {...props}>
 				<Collapsible.Trigger>

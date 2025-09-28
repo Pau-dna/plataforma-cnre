@@ -54,7 +54,6 @@
 	-->
 	<Sidebar.Content>
 		<NavGroup title="Curso" items={data.main} />
-		<NavGroup title="Informacion" items={data.info} />
 	</Sidebar.Content>
 	<Sidebar.Rail />
 </Sidebar.Root>
