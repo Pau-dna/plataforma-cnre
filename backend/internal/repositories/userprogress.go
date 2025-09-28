@@ -20,6 +20,7 @@ type UserProgressRepository interface {
 	CountCompletedByUserAndModule(userID, moduleID uint) (int64, error)
 	BatchCreate(progressItems []*models.UserProgress) error
 	GetCourseProgressSummary(userID, courseID uint) (*dto.CourseProgressSummary, error)
+	GetModuleProgressSummary(userID, moduleID uint) (*dto.ModuleProgressSummary, error)
 }
 
 type userprogressRepository struct {
@@ -263,6 +264,176 @@ func (r *userprogressRepository) GetCourseProgressSummary(userID, courseID uint)
 		TotalPercentage: overallProgress,
 		IsCompleted:     overallProgress >= 100.0,
 		ModulesProgress: modulesProgress,
+	}
+
+	return summary, nil
+}
+
+func (r *userprogressRepository) GetModuleProgressSummary(userID, moduleID uint) (*dto.ModuleProgressSummary, error) {
+	// Internal struct to capture raw SQL results
+	type ModuleContentData struct {
+		ModuleID      uint     `db:"module_id"`
+		ModuleTitle   string   `db:"module_title"`
+		CourseID      uint     `db:"course_id"`
+		CourseTitle   string   `db:"course_title"`
+		ItemID        uint     `db:"item_id"`
+		ItemTitle     string   `db:"item_title"`
+		ItemType      string   `db:"item_type"`
+		ItemOrder     int      `db:"item_order"`
+		IsCompleted   bool     `db:"is_completed"`
+		CompletedAt   *string  `db:"completed_at"`
+		Score         *int     `db:"score"`
+	}
+
+	var contentData []ModuleContentData
+	
+	// Complex query that gets all content items and their progress for a module
+	query := `
+	WITH module_info AS (
+		-- Get module and course basic info
+		SELECT m.id as module_id, m.title as module_title, m.course_id, c.title as course_title
+		FROM modules m
+		INNER JOIN courses c ON c.id = m.course_id
+		WHERE m.id = ?
+	),
+	content_items AS (
+		-- Get all content items for the module
+		SELECT 
+			mi.module_id,
+			mi.module_title,
+			mi.course_id,
+			mi.course_title,
+			c.id as item_id,
+			c.title as item_title,
+			'content' as item_type,
+			c."order" as item_order,
+			CASE 
+				WHEN up.completed_at IS NOT NULL THEN true 
+				ELSE false 
+			END as is_completed,
+			CASE 
+				WHEN up.completed_at IS NOT NULL THEN up.completed_at::text 
+				ELSE NULL 
+			END as completed_at,
+			up.score
+		FROM module_info mi
+		INNER JOIN contents c ON c.module_id = mi.module_id
+		LEFT JOIN user_progress up ON up.content_id = c.id AND up.user_id = ?
+	),
+	evaluation_items AS (
+		-- Get all evaluation items for the module
+		SELECT 
+			mi.module_id,
+			mi.module_title,
+			mi.course_id,
+			mi.course_title,
+			e.id as item_id,
+			e.title as item_title,
+			'evaluation' as item_type,
+			e."order" as item_order,
+			CASE 
+				WHEN ea.passed = true AND ea.submitted_at IS NOT NULL THEN true 
+				ELSE false 
+			END as is_completed,
+			CASE 
+				WHEN ea.passed = true AND ea.submitted_at IS NOT NULL THEN ea.submitted_at::text 
+				ELSE NULL 
+			END as completed_at,
+			CASE 
+				WHEN ea.passed = true THEN ea.score 
+				ELSE NULL 
+			END as score
+		FROM module_info mi
+		INNER JOIN evaluations e ON e.module_id = mi.module_id
+		LEFT JOIN (
+			-- Get the best attempt for each evaluation
+			SELECT 
+				ea1.evaluation_id,
+				ea1.user_id,
+				ea1.passed,
+				ea1.submitted_at,
+				ea1.score,
+				ROW_NUMBER() OVER (
+					PARTITION BY ea1.evaluation_id, ea1.user_id 
+					ORDER BY ea1.passed DESC, ea1.score DESC, ea1.submitted_at DESC
+				) as rn
+			FROM evaluation_attempts ea1
+			WHERE ea1.user_id = ?
+		) ea ON ea.evaluation_id = e.id AND ea.user_id = ? AND ea.rn = 1
+	)
+	-- Combine content and evaluation items
+	SELECT * FROM content_items
+	UNION ALL
+	SELECT * FROM evaluation_items
+	ORDER BY item_order ASC, item_type ASC
+	`
+
+	if err := r.db.Raw(query, moduleID, userID, userID, userID).Scan(&contentData).Error; err != nil {
+		return nil, err
+	}
+
+	if len(contentData) == 0 {
+		// Module not found or has no content - get module info directly
+		var module models.Module
+		if err := r.db.Preload("Course").First(&module, moduleID).Error; err != nil {
+			return nil, err
+		}
+		
+		return &dto.ModuleProgressSummary{
+			ModuleID:        module.ID,
+			ModuleTitle:     module.Title,
+			CourseID:        module.CourseID,
+			CourseTitle:     module.Course.Title,
+			TotalPercentage: 100.0,
+			IsCompleted:     true,
+			ContentItems:    []dto.ContentItemDetail{},
+		}, nil
+	}
+
+	// Process the results to build the response
+	var contentItems []dto.ContentItemDetail
+	completedItems := 0
+	totalItems := len(contentData)
+
+	// Get module info from first row
+	moduleID = contentData[0].ModuleID
+	moduleTitle := contentData[0].ModuleTitle
+	courseID := contentData[0].CourseID
+	courseTitle := contentData[0].CourseTitle
+
+	for _, data := range contentData {
+		if data.IsCompleted {
+			completedItems++
+		}
+
+		contentItems = append(contentItems, dto.ContentItemDetail{
+			ItemID:      data.ItemID,
+			ItemTitle:   data.ItemTitle,
+			ItemType:    data.ItemType,
+			IsCompleted: data.IsCompleted,
+			CompletedAt: data.CompletedAt,
+			Score:       data.Score,
+			Order:       data.ItemOrder,
+		})
+	}
+
+	// Calculate overall module progress
+	var modulePercentage float64
+	if totalItems > 0 {
+		modulePercentage = float64(completedItems) / float64(totalItems) * 100.0
+	} else {
+		modulePercentage = 100.0
+	}
+
+	// Create comprehensive response
+	summary := &dto.ModuleProgressSummary{
+		ModuleID:        moduleID,
+		ModuleTitle:     moduleTitle,
+		CourseID:        courseID,
+		CourseTitle:     courseTitle,
+		TotalPercentage: modulePercentage,
+		IsCompleted:     modulePercentage >= 100.0,
+		ContentItems:    contentItems,
 	}
 
 	return summary, nil
