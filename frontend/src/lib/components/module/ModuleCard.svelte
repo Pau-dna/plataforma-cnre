@@ -59,6 +59,8 @@
 			});
 		}
 	}
+
+	const formattedDate = actDate ? new Date(actDate).toLocaleDateString('es-ES') : 'N/A';
 </script>
 
 <Card.Root>
@@ -118,7 +120,7 @@
 				<span class="text-sm leading-none">Gestionar Contenidos</span>
 			</Button>
 		</div>
-		<span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
+		<span class="text-muted-foreground text-sm leading-none">Actualizado el {formattedDate}</span>
 	</Card.Content>
 </Card.Root>
 
