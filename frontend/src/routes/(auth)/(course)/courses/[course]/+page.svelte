@@ -2,6 +2,8 @@
 	import { CheckCircle, Circle } from '@lucide/svelte';
 	import ProgressBar from '$lib/components/course/ProgressBar.svelte';
 	import CourseCompletion from '$lib/components/course/CourseCompletion.svelte';
+	import EvaluationStatus from '$lib/components/course/EvaluationStatus.svelte';
+	import CompletionRequirements from '$lib/components/course/CompletionRequirements.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -53,18 +55,29 @@
 							></div>
 						</div>
 
-						<!-- Content List -->
-						{#if modulo.contents && modulo.contents.length > 0}
-							<div class="mt-2 space-y-1">
-								{#each modulo.contents as content}
+						<!-- Content and Evaluation List -->
+						{#if (modulo.contents && modulo.contents.length > 0) || (modulo.evaluations && modulo.evaluations.length > 0)}
+							<div class="mt-2 space-y-2">
+								<!-- Content items -->
+								{#each modulo.contents || [] as content}
 									<div class="flex items-center gap-2 text-xs">
 										{#if content.isCompleted}
 											<CheckCircle class="size-3 text-green-500" />
-											<span class="text-green-700">{content.title}</span>
+											<span class="text-green-700">📄 {content.title}</span>
 										{:else}
 											<Circle class="size-3 text-gray-300" />
-											<span class="text-gray-500">{content.title}</span>
+											<span class="text-gray-500">📄 {content.title}</span>
 										{/if}
+									</div>
+								{/each}
+
+								<!-- Evaluation items -->
+								{#each modulo.evaluations || [] as evaluation}
+									<div class="ml-1">
+										<EvaluationStatus 
+											{evaluation} 
+											size="sm"
+										/>
 									</div>
 								{/each}
 							</div>
@@ -86,10 +99,13 @@
 						<CheckCircle class="h-5 w-5 text-green-600" />
 						<div>
 							<p class="text-sm font-medium text-green-800">¡Curso completado!</p>
-							<p class="text-xs text-green-600">Has terminado todos los módulos de este curso</p>
+							<p class="text-xs text-green-600">Has visto todo el contenido y aprobado todas las evaluaciones</p>
 						</div>
 					</div>
 				</div>
+			{:else}
+				<!-- Show completion requirements -->
+				<CompletionRequirements modules={data.modules} />
 			{/if}
 		</div>
 	</div>

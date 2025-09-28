@@ -253,6 +253,39 @@ func (h *UserProgressHandler) GetUserContentProgress(c *gin.Context) {
 	responses.Ok(c, progress)
 }
 
+// @Summary Check if user has passed evaluation
+// @Description Check if a user has passed a specific evaluation
+// @Tags user-progress
+// @Produce json
+// @Param userId path int true "User ID"
+// @Param evaluationId path int true "Evaluation ID"
+// @Success 200 {object} map[string]interface{} "Pass status"
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/users/{userId}/evaluations/{evaluationId}/passed [get]
+func (h *UserProgressHandler) CheckEvaluationPassed(c *gin.Context) {
+	userID, err := strconv.ParseUint(c.Param("userId"), 10, 32)
+	if err != nil {
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
+		return
+	}
+
+	evaluationID, err := strconv.ParseUint(c.Param("evaluationId"), 10, 32)
+	if err != nil {
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
+		return
+	}
+
+	hasPassed, err := h.userProgressService.HasUserPassedEvaluation(uint(userID), uint(evaluationID))
+	if err != nil {
+		h.logger.Errorf("Error al verificar si el usuario pasó la evaluación: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "No se pudo verificar el estado de la evaluación")
+		return
+	}
+
+	responses.Ok(c, gin.H{"has_passed": hasPassed})
+}
+
 // @Summary Update user progress
 // @Description Partially update a user progress record
 // @Tags user-progress

@@ -39,10 +39,23 @@ export const load = (async ({ params, locals }) => {
 					})
 				);
 
+				// Get evaluation pass status
+				const evaluationsWithStatus = await Promise.all(
+					(module.evaluations || []).map(async (evaluation) => {
+						try {
+							const hasPassed = await progressController.hasUserPassedEvaluation(userId, evaluation.id);
+							return { ...evaluation, hasPassed };
+						} catch {
+							return { ...evaluation, hasPassed: false };
+						}
+					})
+				);
+
 				return {
 					...module,
 					progressPercentage: Math.round(moduleProgressPercentage),
 					contents: contentsWithProgress,
+					evaluations: evaluationsWithStatus,
 					progressRecords: moduleProgress
 				};
 			} catch {
@@ -50,6 +63,7 @@ export const load = (async ({ params, locals }) => {
 					...module,
 					progressPercentage: 0,
 					contents: (module.contents || []).map(content => ({ ...content, isCompleted: false })),
+					evaluations: (module.evaluations || []).map(evaluation => ({ ...evaluation, hasPassed: false })),
 					progressRecords: []
 				};
 			}
