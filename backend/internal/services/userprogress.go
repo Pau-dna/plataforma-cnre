@@ -20,6 +20,7 @@ type UserProgressService interface {
 	CalculateModuleProgress(userID, moduleID uint) (float64, error)
 	GetUserProgressForContent(userID, contentID uint) (*models.UserProgress, error)
 	HasUserPassedEvaluation(userID, evaluationID uint) (bool, error)
+	GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error)
 }
 
 type userProgressService struct {
@@ -293,4 +294,52 @@ func (s *userProgressService) HasUserPassedEvaluation(userID, evaluationID uint)
 	}
 
 	return false, nil
+}
+
+func (s *userProgressService) GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error) {
+	// Get course information
+	course, err := s.store.Courses.Get(courseID)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el curso: %w", err)
+	}
+
+	// Get all modules for the course
+	modules, err := s.store.Modules.GetByCourseID(courseID)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener los módulos: %w", err)
+	}
+
+	// Calculate overall course progress
+	overallProgress, err := s.CalculateCourseProgress(userID, courseID)
+	if err != nil {
+		return nil, fmt.Errorf("error al calcular progreso del curso: %w", err)
+	}
+
+	// Prepare module progress details
+	var modulesProgress []dto.ModuleProgressDetail
+	for _, module := range modules {
+		moduleProgress, err := s.CalculateModuleProgress(userID, module.ID)
+		if err != nil {
+			s.logger.Warnf("Failed to calculate progress for module %d: %v", module.ID, err)
+			moduleProgress = 0
+		}
+
+		modulesProgress = append(modulesProgress, dto.ModuleProgressDetail{
+			ModuleID:    module.ID,
+			ModuleTitle: module.Title,
+			Percentage:  moduleProgress,
+			IsCompleted: moduleProgress >= 100.0,
+		})
+	}
+
+	// Create comprehensive response
+	summary := &dto.CourseProgressSummary{
+		CourseID:        course.ID,
+		CourseTitle:     course.Title,
+		TotalPercentage: overallProgress,
+		IsCompleted:     overallProgress >= 100.0,
+		ModulesProgress: modulesProgress,
+	}
+
+	return summary, nil
 }

@@ -123,3 +123,19 @@ export interface ReorderItemDTO {
 	id: number;
 	order: number;
 }
+
+// Course Progress DTOs
+export interface ModuleProgressDetailDTO {
+	module_id: number;
+	module_title: string;
+	percentage: number;
+	is_completed: boolean;
+}
+
+export interface CourseProgressSummaryDTO {
+	course_id: number;
+	course_title: string;
+	total_percentage: number;
+	is_completed: boolean;
+	modules_progress: ModuleProgressDetailDTO[];
+}

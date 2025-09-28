@@ -1,5 +1,5 @@
 import { BaseController } from './base';
-import type { UserProgress } from '$lib/types';
+import type { UserProgress, CourseProgressSummaryDTO } from '$lib/types';
 
 export class UserProgressController extends BaseController {
 	/**
@@ -104,5 +104,13 @@ export class UserProgressController extends BaseController {
 		} catch (error) {
 			return false;
 		}
+	}
+
+	/**
+	 * Get comprehensive course progress summary
+	 * Returns overall course progress and detailed progress for each module
+	 */
+	async getComprehensiveCourseProgress(userId: number, courseId: number): Promise<CourseProgressSummaryDTO> {
+		return this.get<CourseProgressSummaryDTO>(`/api/v1/users/${userId}/courses/${courseId}/progress-summary`);
 	}
 }
