@@ -10,7 +10,7 @@ type UpdateEvaluationRequest struct {
 	Type               *enums.ContentType `json:"type,omitempty"`
 	QuestionCount      *int               `json:"question_count,omitempty"`
 	AnswerOptionsCount *int               `json:"answer_options_count,omitempty"`
-	PassingScore       *float64           `json:"passing_score,omitempty"`
+	PassingScore       *int               `json:"passing_score,omitempty"`
 	MaxAttempts        *int               `json:"max_attempts,omitempty"`
 	TimeLimit          *int               `json:"time_limit,omitempty"`
 }
