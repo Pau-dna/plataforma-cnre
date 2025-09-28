@@ -14,7 +14,7 @@
 	bind:this={ref}
 	data-slot="breadcrumb"
 	class={className}
-	aria-label="breadcrumb"
+	aria-label="navegación de ruta"
 	{...restProps}
 >
 	{@render children?.()}

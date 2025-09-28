@@ -13,7 +13,7 @@ func NewRateLimiterMiddleware(rl ratelimiter.RateLimiter) gin.HandlerFunc {
 		ip := ctx.ClientIP()
 		allow, retryAfter := rl.Allow(ip)
 		if !allow {
-			message := "Rate limit exceeded. Try again in " + fmt.Sprintf("%.2f", retryAfter)
+			message := "Límite de solicitudes excedido. Intenta de nuevo en " + fmt.Sprintf("%.2f", retryAfter) + " segundos"
 			responses.ErrorTooManyRequests(ctx, message)
 			ctx.Abort()
 			return

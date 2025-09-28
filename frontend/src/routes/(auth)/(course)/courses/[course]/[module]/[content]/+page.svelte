@@ -7,6 +7,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import type { PageProps } from './$types';
 	import type { Module, ModuleContent } from '$lib/types/models/course';
+	import { UserProgressController } from '$lib';
 
 	let { data }: PageProps = $props();
 
@@ -73,12 +74,19 @@
 		return null; // No more content
 	}
 
-	const nextContentInfo = getNextContent();
+	const nextContentInfo = $derived(getNextContent());
 
-	// Auto-advance when content is marked complete (optional)
-	function handleCompleteAndNext() {
-		if (nextContentInfo && isCompleted) {
-			goto(nextContentInfo.url);
+	async function handleCompleteAndNext() {
+		// Mark as completed
+		const progressController = new UserProgressController();
+		progressController.markContentComplete(data.userId, courseId, moduleId, content.id).then(() => {
+			isCompleted = true;
+		}).catch((error) => {
+			console.error('Error marking content as complete:', error);
+		});
+
+		if (nextContentInfo) {
+			await goto(nextContentInfo.url);
 		}
 	}
 </script>
@@ -89,19 +97,6 @@
 			<div class="flex flex-col gap-y-2">
 				<h1 class="text-3xl font-bold">{content.title}</h1>
 				<p class="text-muted-foreground">{content.description}</p>
-			</div>
-
-			<!-- Progress Toggle -->
-			<div class="flex-shrink-0">
-				<ProgressToggle
-					userId={data.userId}
-					courseId={data.courseId}
-					moduleId={data.moduleId}
-					contentId={content.id}
-					{isCompleted}
-					accessToken={data.accessToken}
-					onProgressChange={handleProgressChange}
-				/>
 			</div>
 		</div>
 

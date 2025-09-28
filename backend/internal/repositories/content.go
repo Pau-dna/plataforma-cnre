@@ -6,6 +6,13 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// ContentProgressResult represents the result of content progress query
+type ContentProgressResult struct {
+	ID        uint   `json:"id"`
+	Title     string `json:"title"`
+	Completed bool   `json:"completed"`
+}
+
 type ContentRepository interface {
 	Get(id uint) (*models.Content, error)
 	Create(content *models.Content) error
@@ -14,6 +21,7 @@ type ContentRepository interface {
 	Delete(id uint) error
 	GetAll() ([]*models.Content, error)
 	GetByModuleID(moduleID uint) ([]*models.Content, error)
+	GetContentProgressByModule(userID, moduleID uint) ([]*ContentProgressResult, error)
 }
 
 type contentRepository struct {
@@ -88,4 +96,33 @@ func (r *contentRepository) GetByModuleID(moduleID uint) ([]*models.Content, err
 		return nil, err
 	}
 	return contents, nil
+}
+
+// GetContentProgressByModule gets all contents in a module with their completion status for a user
+func (r *contentRepository) GetContentProgressByModule(userID, moduleID uint) ([]*ContentProgressResult, error) {
+	var results []*ContentProgressResult
+
+	query := `
+		SELECT 
+			c.id,
+			c.title,
+			CASE 
+				WHEN up.completed_at IS NOT NULL THEN true 
+				ELSE false 
+			END as completed
+		FROM contents c
+		LEFT JOIN user_progress up ON (
+			c.id = up.content_id 
+			AND up.user_id = ? 
+			AND up.completed_at IS NOT NULL
+		)
+		WHERE c.module_id = ?
+		ORDER BY c."order" ASC
+	`
+
+	if err := r.db.Raw(query, userID, moduleID).Scan(&results).Error; err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

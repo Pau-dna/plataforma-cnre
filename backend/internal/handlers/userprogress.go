@@ -353,3 +353,36 @@ func (h *UserProgressHandler) GetComprehensiveCourseProgress(c *gin.Context) {
 
 	responses.Ok(c, progressSummary)
 }
+
+// @Summary Get module content progress
+// @Description Get all contents in a module with their completion status for a user
+// @Tags user-progress
+// @Produce json
+// @Param userId path int true "User ID"
+// @Param moduleId path int true "Module ID"
+// @Success 200 {array} dto.ContentProgressResponse
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/users/{userId}/modules/{moduleId}/content-progress [get]
+func (h *UserProgressHandler) GetModuleContentProgress(c *gin.Context) {
+	userID, err := strconv.ParseUint(c.Param("userId"), 10, 32)
+	if err != nil {
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
+		return
+	}
+
+	moduleID, err := strconv.ParseUint(c.Param("moduleId"), 10, 32)
+	if err != nil {
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
+		return
+	}
+
+	contentProgress, err := h.userProgressService.GetModuleContentProgress(uint(userID), uint(moduleID))
+	if err != nil {
+		h.logger.Errorf("Error al obtener progreso de contenidos del módulo: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "No se pudo obtener el progreso de contenidos del módulo")
+		return
+	}
+
+	responses.Ok(c, contentProgress)
+}

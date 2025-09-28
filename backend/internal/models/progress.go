@@ -8,10 +8,10 @@ type UserProgress struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 
-	UserID      uint      `json:"user_id" gorm:"not null;index;index:idx_user_progress_user_course,priority:1;index:idx_user_progress_user_module,priority:1;index:idx_user_progress_user_content,priority:1"`
-	CourseID    uint      `json:"course_id" gorm:"not null;index;index:idx_user_progress_user_course,priority:2"`
-	ModuleID    uint      `json:"module_id" gorm:"not null;index;index:idx_user_progress_user_module,priority:2"`
-	ContentID   uint      `json:"content_id" gorm:"not null;index;index:idx_user_progress_user_content,priority:2"` // puede ser Content o Evaluation
+	UserID      uint      `json:"user_id" gorm:"not null;index;index:idx_user_content"`
+	CourseID    uint      `json:"course_id" gorm:"not null;index"`
+	ModuleID    uint      `json:"module_id" gorm:"not null;index"`
+	ContentID   uint      `json:"content_id" gorm:"not null;index;index:idx_user_content"`
 	CompletedAt time.Time `json:"completed_at"`
 	Score       int       `json:"score"`
 	Attempts    int       `json:"attempts" gorm:"not null;default:0"`

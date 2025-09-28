@@ -7,6 +7,7 @@ import (
 
 type EnrollmentRepository interface {
 	Get(id uint) (*models.Enrollment, error)
+	GetWithPreloads(id uint) (*models.Enrollment, error)
 	Create(enrollment *models.Enrollment) error
 	Update(enrollment *models.Enrollment) error
 	Patch(id uint, data map[string]interface{}) error
@@ -33,7 +34,15 @@ func (r *enrollmentRepository) Create(enrollment *models.Enrollment) error {
 
 func (r *enrollmentRepository) Get(id uint) (*models.Enrollment, error) {
 	var enrollment models.Enrollment
-	if err := r.db.First(&enrollment, id).Error; err != nil {
+	if err := r.db.Preload("User").Preload("Course").First(&enrollment, id).Error; err != nil {
+		return nil, err
+	}
+	return &enrollment, nil
+}
+
+func (r *enrollmentRepository) GetWithPreloads(id uint) (*models.Enrollment, error) {
+	var enrollment models.Enrollment
+	if err := r.db.Preload("Course").Preload("User").First(&enrollment, id).Error; err != nil {
 		return nil, err
 	}
 	return &enrollment, nil
@@ -41,7 +50,7 @@ func (r *enrollmentRepository) Get(id uint) (*models.Enrollment, error) {
 
 func (r *enrollmentRepository) GetUserEnrollment(userID uint, courseID uint) (*models.Enrollment, error) {
 	var enrollment models.Enrollment
-	if err := r.db.Preload("Course").Where(&models.Enrollment{UserID: userID, CourseID: courseID}).First(&enrollment).Error; err != nil {
+	if err := r.db.Preload("User").Preload("Course").Where(&models.Enrollment{UserID: userID, CourseID: courseID}).First(&enrollment).Error; err != nil {
 		return nil, err
 	}
 	return &enrollment, nil
@@ -63,7 +72,7 @@ func (r *enrollmentRepository) Delete(id uint) error {
 
 func (r *enrollmentRepository) GetAll() ([]*models.Enrollment, error) {
 	var enrollments []*models.Enrollment
-	if err := r.db.Preload("Course").Find(&enrollments).Error; err != nil {
+	if err := r.db.Preload("User").Preload("Course").Find(&enrollments).Error; err != nil {
 		return nil, err
 	}
 	return enrollments, nil
@@ -71,7 +80,7 @@ func (r *enrollmentRepository) GetAll() ([]*models.Enrollment, error) {
 
 func (r *enrollmentRepository) GetByUserID(userID uint) ([]*models.Enrollment, error) {
 	var enrollments []*models.Enrollment
-	if err := r.db.Preload("Course").Where("user_id = ?", userID).Find(&enrollments).Error; err != nil {
+	if err := r.db.Preload("User").Preload("Course").Where("user_id = ?", userID).Find(&enrollments).Error; err != nil {
 		return nil, err
 	}
 	return enrollments, nil
@@ -79,7 +88,7 @@ func (r *enrollmentRepository) GetByUserID(userID uint) ([]*models.Enrollment, e
 
 func (r *enrollmentRepository) GetByCourseID(courseID uint) ([]*models.Enrollment, error) {
 	var enrollments []*models.Enrollment
-	if err := r.db.Preload("Course").Where("course_id = ?", courseID).Find(&enrollments).Error; err != nil {
+	if err := r.db.Preload("User").Preload("Course").Where("course_id = ?", courseID).Find(&enrollments).Error; err != nil {
 		return nil, err
 	}
 	return enrollments, nil

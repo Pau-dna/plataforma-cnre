@@ -43,7 +43,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		const response = await resolve(event);
 		return response;
 	} catch (error) {
-		console.error('Error fetching user data:', error);
+		console.error('Error al obtener datos del usuario:', error);
 		authCookiesManager.logout(event.cookies);
 
 		// Only add redirect parameter if it's not the home page, or if home page has search parameters

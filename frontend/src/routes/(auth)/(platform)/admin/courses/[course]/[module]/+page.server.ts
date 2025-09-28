@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			courseId
 		};
 	} catch (err) {
-		console.error('Error loading module contents:', err);
+		console.error('Error al cargar el contenido del módulo:', err);
 		throw error(404, 'Module not found');
 	}
 };

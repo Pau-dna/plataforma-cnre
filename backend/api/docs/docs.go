@@ -820,7 +820,7 @@ const docTemplate = `{
         },
         "/api/v1/courses/{id}/enrollments": {
             "get": {
-                "description": "Get all enrollments for a specific course",
+                "description": "Get all enrollments for a specific course with preloaded user and course data",
                 "produces": [
                     "application/json"
                 ],
@@ -839,7 +839,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "List of enrollments with preloaded user and course data",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -953,7 +953,7 @@ const docTemplate = `{
         },
         "/api/v1/enrollments/{id}": {
             "get": {
-                "description": "Get an enrollment by its ID",
+                "description": "Get an enrollment by its ID with preloaded user and course data",
                 "produces": [
                     "application/json"
                 ],
@@ -972,7 +972,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Enrollment with preloaded user and course data",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment"
                         }
@@ -3140,7 +3140,7 @@ const docTemplate = `{
         },
         "/api/v1/users/{userId}/courses/{courseId}/enrollment": {
             "get": {
-                "description": "Get enrollment for a specific user and course",
+                "description": "Get enrollment for a specific user and course with preloaded user and course data",
                 "produces": [
                     "application/json"
                 ],
@@ -3166,7 +3166,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Enrollment with preloaded user and course data",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment"
                         }
@@ -3414,7 +3414,7 @@ const docTemplate = `{
         },
         "/api/v1/users/{userId}/enrollments": {
             "get": {
-                "description": "Get all enrollments for a specific user",
+                "description": "Get all enrollments for a specific user with preloaded user and course data",
                 "produces": [
                     "application/json"
                 ],
@@ -3433,7 +3433,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "List of enrollments with preloaded user and course data",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -3784,13 +3784,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Petición incorrecta",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Error interno del servidor",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
                         }
@@ -3821,7 +3821,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "No autorizado",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
                         }
@@ -4811,7 +4811,6 @@ const docTemplate = `{
                     "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Content"
                 },
                 "content_id": {
-                    "description": "puede ser Content o Evaluation",
                     "type": "integer"
                 },
                 "course": {

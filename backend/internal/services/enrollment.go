@@ -13,6 +13,7 @@ import (
 type EnrollmentService interface {
 	CreateEnrollment(userID, courseID uint) (*models.Enrollment, error)
 	GetEnrollment(id uint) (*models.Enrollment, error)
+	GetEnrollmentWithPreloads(id uint) (*models.Enrollment, error)
 	UpdateEnrollment(id uint, enrollment *models.Enrollment) (*models.Enrollment, error)
 	UpdateEnrollmentPatch(id uint, data map[string]interface{}) (*models.Enrollment, error)
 	DeleteEnrollment(id uint) error
@@ -74,6 +75,14 @@ func (s *enrollmentService) CreateEnrollment(userID, courseID uint) (*models.Enr
 
 func (s *enrollmentService) GetEnrollment(id uint) (*models.Enrollment, error) {
 	enrollment, err := s.store.Enrollments.Get(id)
+	if err != nil {
+		return nil, fmt.Errorf("inscripción no encontrada: %w", err)
+	}
+	return enrollment, nil
+}
+
+func (s *enrollmentService) GetEnrollmentWithPreloads(id uint) (*models.Enrollment, error) {
+	enrollment, err := s.store.Enrollments.GetWithPreloads(id)
 	if err != nil {
 		return nil, fmt.Errorf("inscripción no encontrada: %w", err)
 	}
