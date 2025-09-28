@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			moduleId
 		};
 	} catch (err) {
-		console.error('Error loading module:', err);
+		console.error('Error al cargar el módulo:', err);
 		throw error(404, 'Module not found');
 	}
 };

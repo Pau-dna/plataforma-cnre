@@ -79,7 +79,7 @@
 			toast.success('Evaluación creada exitosamente');
 			goto(`/admin/courses/${courseId}/${moduleId}`);
 		} catch (error) {
-			console.error('Error creating evaluation:', error);
+			console.error('Error al crear la evaluación:', error);
 			toast.error('Error al crear la evaluación', {
 				description: error instanceof Error ? error.message : String(error)
 			});

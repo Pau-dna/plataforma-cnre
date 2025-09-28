@@ -26,7 +26,7 @@
 	<!-- svelte-ignore element_invalid_self_closing_tag -->
 	<iframe
 		src={embedUrl}
-		title="YouTube video player"
+		title="Reproductor de video de YouTube"
 		class={`h-full w-full ${isLoading ? 'hidden' : 'block'}`}
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 		allowfullscreen

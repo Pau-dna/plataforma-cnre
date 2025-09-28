@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			contentId
 		};
 	} catch (error) {
-		console.error('Error loading content for edit:', error);
+		console.error('Error al cargar el contenido para editar:', error);
 		throw error;
 	}
 };
