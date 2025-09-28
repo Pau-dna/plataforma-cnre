@@ -103,7 +103,7 @@ func (s *evaluationService) DeleteEvaluation(id uint) error {
 }
 
 func (s *evaluationService) GetEvaluationsByModule(moduleID uint) ([]*models.Evaluation, error) {
-	// Use the new repository method to filter by module ID at database level
+	// Use the optimized repository method to filter by module ID at database level
 	evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get evaluations: %w", err)
