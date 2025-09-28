@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/imlargo/go-api-template/internal/models"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -47,9 +48,20 @@ func (r *evaluationRepository) Patch(id uint, data map[string]interface{}) error
 }
 
 func (r *evaluationRepository) Delete(id uint) error {
-	var evaluation models.Evaluation
-	evaluation.ID = id
-	return r.db.Delete(&evaluation).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Delete all questions for this evaluation (answers will be deleted in cascade)
+		if err := tx.Where(&models.Question{EvaluationID: id}).Delete(&models.Question{}).Error; err != nil {
+			return err
+		}
+
+		// Delete all evaluation attempts for this evaluation
+		if err := tx.Where(&models.EvaluationAttempt{EvaluationID: id}).Delete(&models.EvaluationAttempt{}).Error; err != nil {
+			return err
+		}
+
+		// Finally delete the evaluation itself
+		return tx.Delete(&models.Evaluation{}, id).Error
+	})
 }
 
 func (r *evaluationRepository) GetAll() ([]*models.Evaluation, error) {
