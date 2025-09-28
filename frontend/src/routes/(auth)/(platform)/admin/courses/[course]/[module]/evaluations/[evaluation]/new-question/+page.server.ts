@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			moduleId
 		};
 	} catch (err) {
-		console.error('Error loading evaluation:', err);
+		console.error('Error al cargar evaluación:', err);
 		throw error(404, 'Evaluation not found');
 	}
 };

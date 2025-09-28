@@ -50,7 +50,7 @@
 			toast.success('Contenido eliminado con éxito.');
 			ondelete?.(content);
 		} catch (error) {
-			console.error('Error deleting content:', error);
+			console.error('Error al eliminar contenido:', error);
 			toast.error('Error al eliminar el contenido.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
