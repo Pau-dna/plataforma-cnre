@@ -105,4 +105,20 @@ export class UserProgressController extends BaseController {
 			return false;
 		}
 	}
+
+	/**
+	 * Get content progress for all contents in a module
+	 */
+	async getModuleContentProgress(userId: number, moduleId: number): Promise<ModuleContentProgress[]> {
+		return this.get<ModuleContentProgress[]>(
+			`/api/v1/users/${userId}/modules/${moduleId}/content-progress`
+		);
+	}
+}
+
+// Type definitions
+export interface ModuleContentProgress {
+	id: number;
+	title: string;
+	completed: boolean;
 }
