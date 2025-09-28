@@ -4811,7 +4811,6 @@ const docTemplate = `{
                     "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Content"
                 },
                 "content_id": {
-                    "description": "puede ser Content o Evaluation",
                     "type": "integer"
                 },
                 "course": {
