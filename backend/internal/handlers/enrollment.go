@@ -86,6 +86,33 @@ func (h *EnrollmentHandler) GetEnrollment(c *gin.Context) {
 	responses.Ok(c, enrollment)
 }
 
+// @Summary Get enrollment with details by ID
+// @Description Get an enrollment by its ID with preloaded course and user data
+// @Tags enrollments
+// @Produce json
+// @Param id path int true "Enrollment ID"
+// @Success 200 {object} models.Enrollment
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Router /api/v1/enrollments/{id}/details [get]
+func (h *EnrollmentHandler) GetEnrollmentWithDetails(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		responses.ErrorBadRequest(c, "ID de inscripción inválido")
+		return
+	}
+
+	enrollment, err := h.enrollmentService.GetEnrollmentWithPreloads(uint(id))
+	if err != nil {
+		h.logger.Errorf("Error al obtener la inscripción con detalles: %v", err)
+		responses.ErrorNotFound(c, "Inscripción")
+		return
+	}
+
+	responses.Ok(c, enrollment)
+}
+
 // @Summary		Update enrollment
 // @Router			/api/v1/enrollments/{id} [patch]
 // @Description	Update an enrollment by ID

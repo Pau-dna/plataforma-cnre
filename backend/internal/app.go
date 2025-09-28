@@ -187,6 +187,7 @@ func (app *Application) Mount() {
 	// Enrollments
 	v1.POST("/enrollments", enrollmentHandler.CreateEnrollment)
 	v1.GET("/enrollments/:id", enrollmentHandler.GetEnrollment)
+	v1.GET("/enrollments/:id/details", enrollmentHandler.GetEnrollmentWithDetails)
 	v1.PATCH("/enrollments/:id", enrollmentHandler.UpdateEnrollmentPatch)
 	v1.DELETE("/enrollments/:id", enrollmentHandler.DeleteEnrollment)
 	v1.GET("/users/:userId/enrollments", enrollmentHandler.GetUserEnrollments)

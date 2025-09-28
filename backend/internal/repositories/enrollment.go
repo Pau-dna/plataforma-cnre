@@ -7,6 +7,7 @@ import (
 
 type EnrollmentRepository interface {
 	Get(id uint) (*models.Enrollment, error)
+	GetWithPreloads(id uint) (*models.Enrollment, error)
 	Create(enrollment *models.Enrollment) error
 	Update(enrollment *models.Enrollment) error
 	Patch(id uint, data map[string]interface{}) error
@@ -34,6 +35,14 @@ func (r *enrollmentRepository) Create(enrollment *models.Enrollment) error {
 func (r *enrollmentRepository) Get(id uint) (*models.Enrollment, error) {
 	var enrollment models.Enrollment
 	if err := r.db.First(&enrollment, id).Error; err != nil {
+		return nil, err
+	}
+	return &enrollment, nil
+}
+
+func (r *enrollmentRepository) GetWithPreloads(id uint) (*models.Enrollment, error) {
+	var enrollment models.Enrollment
+	if err := r.db.Preload("Course").Preload("User").First(&enrollment, id).Error; err != nil {
 		return nil, err
 	}
 	return &enrollment, nil
