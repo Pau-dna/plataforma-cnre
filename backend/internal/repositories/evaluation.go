@@ -49,33 +49,18 @@ func (r *evaluationRepository) Patch(id uint, data map[string]interface{}) error
 
 func (r *evaluationRepository) Delete(id uint) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
-		// Get all questions for this evaluation to delete their answers first
-		var questions []*models.Question
-		if err := tx.Where("evaluation_id = ?", id).Find(&questions).Error; err != nil {
+		// Delete all questions for this evaluation (answers will be deleted in cascade)
+		if err := tx.Where(&models.Question{EvaluationID: id}).Delete(&models.Question{}).Error; err != nil {
 			return err
 		}
-		
-		// Delete answers for each question
-		for _, question := range questions {
-			if err := tx.Where("question_id = ?", question.ID).Delete(&models.Answer{}).Error; err != nil {
-				return err
-			}
-		}
-		
-		// Delete all questions for this evaluation
-		if err := tx.Where("evaluation_id = ?", id).Delete(&models.Question{}).Error; err != nil {
-			return err
-		}
-		
+
 		// Delete all evaluation attempts for this evaluation
-		if err := tx.Where("evaluation_id = ?", id).Delete(&models.EvaluationAttempt{}).Error; err != nil {
+		if err := tx.Where(&models.EvaluationAttempt{EvaluationID: id}).Delete(&models.EvaluationAttempt{}).Error; err != nil {
 			return err
 		}
-		
+
 		// Finally delete the evaluation itself
-		var evaluation models.Evaluation
-		evaluation.ID = id
-		return tx.Delete(&evaluation).Error
+		return tx.Delete(&models.Evaluation{}, id).Error
 	})
 }
 
