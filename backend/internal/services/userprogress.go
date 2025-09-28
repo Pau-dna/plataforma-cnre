@@ -303,34 +303,119 @@ func (s *userProgressService) GetComprehensiveCourseProgress(userID, courseID ui
 		return nil, fmt.Errorf("error al obtener el curso: %w", err)
 	}
 
-	// Get all modules for the course
+	// Get all modules for the course in a single query
 	modules, err := s.store.Modules.GetByCourseID(courseID)
 	if err != nil {
 		return nil, fmt.Errorf("error al obtener los módulos: %w", err)
 	}
 
-	// Calculate overall course progress
-	overallProgress, err := s.CalculateCourseProgress(userID, courseID)
-	if err != nil {
-		return nil, fmt.Errorf("error al calcular progreso del curso: %w", err)
+	if len(modules) == 0 {
+		// No modules means course is 100% complete
+		return &dto.CourseProgressSummary{
+			CourseID:        course.ID,
+			CourseTitle:     course.Title,
+			TotalPercentage: 100.0,
+			IsCompleted:     true,
+			ModulesProgress: []dto.ModuleProgressDetail{},
+		}, nil
 	}
 
-	// Prepare module progress details
+	// Extract module IDs for batch queries
+	moduleIDs := make([]uint, len(modules))
+	moduleMap := make(map[uint]*models.Module)
+	for i, module := range modules {
+		moduleIDs[i] = module.ID
+		moduleMap[module.ID] = module
+	}
+
+	// Batch fetch all contents and evaluations for all modules
+	allContents, err := s.batchGetContentsByModuleIDs(moduleIDs)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener los contenidos: %w", err)
+	}
+
+	allEvaluations, err := s.batchGetEvaluationsByModuleIDs(moduleIDs)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener las evaluaciones: %w", err)
+	}
+
+	// Batch fetch all user progress for the course
+	allUserProgress, err := s.GetUserProgress(userID, courseID)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener progreso del usuario: %w", err)
+	}
+
+	// Batch fetch all evaluation attempts for the user
+	allAttempts, err := s.batchGetUserEvaluationAttempts(userID, moduleIDs)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener intentos de evaluación: %w", err)
+	}
+
+	// Create lookup maps for efficient processing
+	contentsByModule := s.groupContentsByModule(allContents)
+	evaluationsByModule := s.groupEvaluationsByModule(allEvaluations)
+	progressByContent := s.groupProgressByContent(allUserProgress)
+	attemptsByEvaluation := s.groupAttemptsByEvaluation(allAttempts)
+
+	// Calculate progress for all modules efficiently
 	var modulesProgress []dto.ModuleProgressDetail
+	completedModules := 0
+
 	for _, module := range modules {
-		moduleProgress, err := s.CalculateModuleProgress(userID, module.ID)
-		if err != nil {
-			s.logger.Warnf("Failed to calculate progress for module %d: %v", module.ID, err)
-			moduleProgress = 0
+		moduleContents := contentsByModule[module.ID]
+		moduleEvaluations := evaluationsByModule[module.ID]
+
+		totalItems := len(moduleContents) + len(moduleEvaluations)
+		if totalItems == 0 {
+			// No content means 100% complete
+			modulesProgress = append(modulesProgress, dto.ModuleProgressDetail{
+				ModuleID:    module.ID,
+				ModuleTitle: module.Title,
+				Percentage:  100.0,
+				IsCompleted: true,
+			})
+			completedModules++
+			continue
 		}
+
+		completedItems := 0
+
+		// Count completed content items
+		for _, content := range moduleContents {
+			if progress, exists := progressByContent[content.ID]; exists && !progress.CompletedAt.IsZero() {
+				completedItems++
+			}
+		}
+
+		// Count passed evaluations
+		for _, evaluation := range moduleEvaluations {
+			if attempts, exists := attemptsByEvaluation[evaluation.ID]; exists {
+				for _, attempt := range attempts {
+					if attempt.Passed && attempt.SubmittedAt != nil && !attempt.SubmittedAt.IsZero() {
+						completedItems++
+						break // Only count once per evaluation
+					}
+				}
+			}
+		}
+
+		modulePercentage := float64(completedItems) / float64(totalItems) * 100.0
+		isCompleted := modulePercentage >= 100.0
 
 		modulesProgress = append(modulesProgress, dto.ModuleProgressDetail{
 			ModuleID:    module.ID,
 			ModuleTitle: module.Title,
-			Percentage:  moduleProgress,
-			IsCompleted: moduleProgress >= 100.0,
+			Percentage:  modulePercentage,
+			IsCompleted: isCompleted,
 		})
+
+		if isCompleted {
+			completedModules++
+		}
 	}
+
+	// Calculate overall course progress
+	overallProgress := float64(completedModules) / float64(len(modules)) * 100.0
 
 	// Create comprehensive response
 	summary := &dto.CourseProgressSummary{
@@ -342,4 +427,96 @@ func (s *userProgressService) GetComprehensiveCourseProgress(userID, courseID ui
 	}
 
 	return summary, nil
+}
+
+// Helper methods for optimized batch processing
+
+func (s *userProgressService) batchGetContentsByModuleIDs(moduleIDs []uint) ([]*models.Content, error) {
+	// This assumes the repository has a method to batch fetch contents by module IDs
+	// If not available, we'll need to make individual queries but cache results
+	var allContents []*models.Content
+	for _, moduleID := range moduleIDs {
+		contents, err := s.store.Contents.GetByModuleID(moduleID)
+		if err != nil {
+			continue // Skip modules with errors, don't fail the entire request
+		}
+		allContents = append(allContents, contents...)
+	}
+	return allContents, nil
+}
+
+func (s *userProgressService) batchGetEvaluationsByModuleIDs(moduleIDs []uint) ([]*models.Evaluation, error) {
+	var allEvaluations []*models.Evaluation
+	for _, moduleID := range moduleIDs {
+		evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
+		if err != nil {
+			continue // Skip modules with errors
+		}
+		allEvaluations = append(allEvaluations, evaluations...)
+	}
+	return allEvaluations, nil
+}
+
+func (s *userProgressService) batchGetUserEvaluationAttempts(userID uint, moduleIDs []uint) ([]*models.EvaluationAttempt, error) {
+	// Get all attempts for this user
+	allAttempts, err := s.store.EvaluationAttempts.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter attempts for the specific user and evaluations in the course modules
+	// First, get all evaluation IDs for the modules
+	evaluationIDs := make(map[uint]bool)
+	for _, moduleID := range moduleIDs {
+		evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
+		if err != nil {
+			continue
+		}
+		for _, eval := range evaluations {
+			evaluationIDs[eval.ID] = true
+		}
+	}
+
+	var userAttempts []*models.EvaluationAttempt
+	for _, attempt := range allAttempts {
+		if attempt.UserID == userID && evaluationIDs[attempt.EvaluationID] {
+			userAttempts = append(userAttempts, attempt)
+		}
+	}
+	return userAttempts, nil
+}
+
+func (s *userProgressService) groupContentsByModule(contents []*models.Content) map[uint][]*models.Content {
+	contentsByModule := make(map[uint][]*models.Content)
+	for _, content := range contents {
+		contentsByModule[content.ModuleID] = append(contentsByModule[content.ModuleID], content)
+	}
+	return contentsByModule
+}
+
+func (s *userProgressService) groupEvaluationsByModule(evaluations []*models.Evaluation) map[uint][]*models.Evaluation {
+	evaluationsByModule := make(map[uint][]*models.Evaluation)
+	for _, evaluation := range evaluations {
+		evaluationsByModule[evaluation.ModuleID] = append(evaluationsByModule[evaluation.ModuleID], evaluation)
+	}
+	return evaluationsByModule
+}
+
+func (s *userProgressService) groupProgressByContent(progressRecords []*models.UserProgress) map[uint]*models.UserProgress {
+	progressByContent := make(map[uint]*models.UserProgress)
+	for _, progress := range progressRecords {
+		// Keep the most recent progress record for each content
+		if existing, exists := progressByContent[progress.ContentID]; !exists || progress.UpdatedAt.After(existing.UpdatedAt) {
+			progressByContent[progress.ContentID] = progress
+		}
+	}
+	return progressByContent
+}
+
+func (s *userProgressService) groupAttemptsByEvaluation(attempts []*models.EvaluationAttempt) map[uint][]*models.EvaluationAttempt {
+	attemptsByEvaluation := make(map[uint][]*models.EvaluationAttempt)
+	for _, attempt := range attempts {
+		attemptsByEvaluation[attempt.EvaluationID] = append(attemptsByEvaluation[attempt.EvaluationID], attempt)
+	}
+	return attemptsByEvaluation
 }
