@@ -60,11 +60,11 @@ func (h *EnrollmentHandler) CreateEnrollment(c *gin.Context) {
 }
 
 // @Summary Get enrollment by ID
-// @Description Get an enrollment by its ID
+// @Description Get an enrollment by its ID with preloaded user and course data
 // @Tags enrollments
 // @Produce json
 // @Param id path int true "Enrollment ID"
-// @Success 200 {object} models.Enrollment
+// @Success 200 {object} models.Enrollment "Enrollment with preloaded user and course data"
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Router /api/v1/enrollments/{id} [get]
@@ -155,11 +155,11 @@ func (h *EnrollmentHandler) DeleteEnrollment(c *gin.Context) {
 }
 
 // @Summary Get user enrollments
-// @Description Get all enrollments for a specific user
+// @Description Get all enrollments for a specific user with preloaded user and course data
 // @Tags enrollments
 // @Produce json
 // @Param userId path int true "User ID"
-// @Success 200 {array} models.Enrollment
+// @Success 200 {array} models.Enrollment "List of enrollments with preloaded user and course data"
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/users/{userId}/enrollments [get]
@@ -182,11 +182,11 @@ func (h *EnrollmentHandler) GetUserEnrollments(c *gin.Context) {
 }
 
 // @Summary Get course enrollments
-// @Description Get all enrollments for a specific course
+// @Description Get all enrollments for a specific course with preloaded user and course data
 // @Tags enrollments
 // @Produce json
 // @Param id path int true "Course ID"
-// @Success 200 {array} models.Enrollment
+// @Success 200 {array} models.Enrollment "List of enrollments with preloaded user and course data"
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/courses/{id}/enrollments [get]
@@ -209,12 +209,12 @@ func (h *EnrollmentHandler) GetCourseEnrollments(c *gin.Context) {
 }
 
 // @Summary Get user course enrollment
-// @Description Get enrollment for a specific user and course
+// @Description Get enrollment for a specific user and course with preloaded user and course data
 // @Tags enrollments
 // @Produce json
 // @Param userId path int true "User ID"
 // @Param courseId path int true "Course ID"
-// @Success 200 {object} models.Enrollment
+// @Success 200 {object} models.Enrollment "Enrollment with preloaded user and course data"
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
