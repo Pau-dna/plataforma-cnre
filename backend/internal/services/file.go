@@ -58,7 +58,7 @@ func (s *fileService) UploadFromUrl(url string) (*models.File, error) {
 func (s *fileService) UploadFromReader(file *storage.File) (*models.File, error) {
 
 	if file.Size > s.maxFileSize {
-		return nil, fmt.Errorf("file size exceeds limit of 1GB")
+		return nil, fmt.Errorf("el tamaño del archivo excede el límite de 1GB")
 	}
 
 	fileID := uuid.New()
@@ -99,7 +99,7 @@ func (s *fileService) UploadFromReader(file *storage.File) (*models.File, error)
 
 func (s *fileService) UploadFromMultipart(file *multipart.FileHeader) (*models.File, error) {
 	if file.Size > s.maxFileSize {
-		return nil, fmt.Errorf("file size exceeds limit of 1GB")
+		return nil, fmt.Errorf("el tamaño del archivo excede el límite de 1GB")
 	}
 
 	src, err := file.Open()
@@ -228,7 +228,7 @@ func (s *fileService) createFileFromUrl(urlStr string) (*storage.File, error) {
 
 	// Check Content-Length before reading to prevent downloading huge files
 	if resp.ContentLength > 0 && resp.ContentLength > s.maxFileSize {
-		return nil, fmt.Errorf("file size %d exceeds limit of %d bytes", resp.ContentLength, s.maxFileSize)
+		return nil, fmt.Errorf("el tamaño del archivo %d excede el límite de %d bytes", resp.ContentLength, s.maxFileSize)
 	}
 
 	// Use LimitReader to prevent memory exhaustion even if Content-Length is not set
@@ -241,7 +241,7 @@ func (s *fileService) createFileFromUrl(urlStr string) (*storage.File, error) {
 
 	// Check if we hit the limit (meaning file is too large)
 	if int64(len(data)) > s.maxFileSize {
-		return nil, fmt.Errorf("file size exceeds limit of %d bytes", s.maxFileSize)
+		return nil, fmt.Errorf("el tamaño del archivo excede el límite de %d bytes", s.maxFileSize)
 	}
 
 	contentType := resp.Header.Get("Content-Type")

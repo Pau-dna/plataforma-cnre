@@ -43,7 +43,7 @@ func (aq *AttemptQuestions) Scan(value interface{}) error {
 
 	bytes, ok := value.([]byte)
 	if !ok {
-		return errors.New("cannot scan non-[]byte into AttemptQuestions")
+		return errors.New("no se puede escanear datos que no sean []byte en AttemptQuestions")
 	}
 
 	return json.Unmarshal(bytes, aq)
@@ -73,7 +73,7 @@ func (a *AttemptAnswers) Scan(value interface{}) error {
 
 	bytes, ok := value.([]byte)
 	if !ok {
-		return errors.New("cannot scan non-[]byte into AttemptAnswers")
+		return errors.New("no se puede escanear datos que no sean []byte en AttemptAnswers")
 	}
 
 	return json.Unmarshal(bytes, a)

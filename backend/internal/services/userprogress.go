@@ -37,7 +37,7 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 	// Verify user is enrolled in the course
 	_, err := s.enrollmentService.GetUserCourseEnrollment(userID, courseID)
 	if err != nil {
-		return nil, fmt.Errorf("user not enrolled in course: %w", err)
+		return nil, fmt.Errorf("el usuario no está inscrito en el curso: %w", err)
 	}
 
 	// Check if progress already exists
@@ -48,7 +48,7 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 		existing.Attempts++
 
 		if err := s.store.UserProgresss.Update(existing); err != nil {
-			return nil, fmt.Errorf("failed to update progress: %w", err)
+			return nil, fmt.Errorf("error al actualizar el progreso: %w", err)
 		}
 
 		// Update course progress
@@ -68,7 +68,7 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 	}
 
 	if err := s.store.UserProgresss.Create(progress); err != nil {
-		return nil, fmt.Errorf("failed to create progress: %w", err)
+		return nil, fmt.Errorf("error al crear el progreso: %w", err)
 	}
 
 	// Update course progress
@@ -88,7 +88,7 @@ func (s *userProgressService) MarkContentIncomplete(userID, courseID, moduleID, 
 	existing.CompletedAt = time.Time{}
 
 	if err := s.store.UserProgresss.Update(existing); err != nil {
-		return fmt.Errorf("failed to update progress: %w", err)
+		return fmt.Errorf("error al actualizar el progreso: %w", err)
 	}
 
 	// Update course progress
@@ -123,7 +123,7 @@ func (s *userProgressService) GetUserProgress(userID, courseID uint) ([]*models.
 	// Use the new repository method to filter by user ID and course ID at database level
 	userProgress, err := s.store.UserProgresss.GetByUserAndCourse(userID, courseID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get progress: %w", err)
+		return nil, fmt.Errorf("error al obtener el progreso: %w", err)
 	}
 
 	return userProgress, nil
@@ -133,7 +133,7 @@ func (s *userProgressService) GetUserModuleProgress(userID, moduleID uint) ([]*m
 	// Use the new repository method to filter by user ID and module ID at database level
 	moduleProgress, err := s.store.UserProgresss.GetByUserAndModule(userID, moduleID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get progress: %w", err)
+		return nil, fmt.Errorf("error al obtener el progreso: %w", err)
 	}
 
 	return moduleProgress, nil
@@ -143,7 +143,7 @@ func (s *userProgressService) CalculateCourseProgress(userID, courseID uint) (fl
 	// Use optimized query to get modules for the specific course
 	courseModules, err := s.store.Modules.GetByCourseID(courseID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to get modules: %w", err)
+		return 0, fmt.Errorf("error al obtener los módulos: %w", err)
 	}
 
 	if len(courseModules) == 0 {
@@ -173,12 +173,12 @@ func (s *userProgressService) CalculateModuleProgress(userID, moduleID uint) (fl
 	// Use optimized queries to get content and evaluations for the specific module
 	contents, err := s.store.Contents.GetByModuleID(moduleID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to get contents: %w", err)
+		return 0, fmt.Errorf("error al obtener los contenidos: %w", err)
 	}
 
 	evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to get evaluations: %w", err)
+		return 0, fmt.Errorf("error al obtener las evaluaciones: %w", err)
 	}
 
 	// Count total items in module
@@ -191,7 +191,7 @@ func (s *userProgressService) CalculateModuleProgress(userID, moduleID uint) (fl
 	// Use optimized count query instead of loading all records
 	completedItems, err := s.store.UserProgresss.CountCompletedByUserAndModule(userID, moduleID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to count completed items: %w", err)
+		return 0, fmt.Errorf("error al contar los elementos completados: %w", err)
 	}
 
 	return float64(completedItems) / float64(totalItems) * 100.0, nil

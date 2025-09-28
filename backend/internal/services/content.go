@@ -76,7 +76,7 @@ func (s *contentService) UpdateContent(id uint, contentData *models.Content) (*m
 
 func (s *contentService) UpdateContentPatch(contentID uint, data map[string]interface{}) (*models.Content, error) {
 	if contentID == 0 {
-		return nil, errors.New("content ID cannot be zero")
+		return nil, errors.New("el ID del contenido no puede ser cero")
 	}
 
 	var content dto.UpdateContentRequest
@@ -98,7 +98,7 @@ func (s *contentService) UpdateContentPatch(contentID uint, data map[string]inte
 
 func (s *contentService) DeleteContent(id uint) error {
 	if err := s.store.Contents.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete content: %w", err)
+		return fmt.Errorf("error al eliminar el contenido: %w", err)
 	}
 	return nil
 }
@@ -107,7 +107,7 @@ func (s *contentService) GetContentsByModule(moduleID uint) ([]*models.Content, 
 	// Use the optimized repository method to filter by module ID at database level
 	contents, err := s.store.Contents.GetByModuleID(moduleID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get contents: %w", err)
+		return nil, fmt.Errorf("error al obtener los contenidos: %w", err)
 	}
 
 	return contents, nil
@@ -136,7 +136,7 @@ func (s *contentService) ReorderContent(moduleID uint, contentOrders []struct {
 
 		content.Order = order.Order
 		if err := s.store.Contents.Update(content); err != nil {
-			return fmt.Errorf("failed to update content order: %w", err)
+			return fmt.Errorf("error al actualizar el orden del contenido: %w", err)
 		}
 	}
 

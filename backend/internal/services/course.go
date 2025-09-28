@@ -88,7 +88,7 @@ func (s *courseService) UpdateCoursePatch(courseID uint, data map[string]interfa
 
 func (s *courseService) DeleteCourse(id uint) error {
 	if err := s.store.Courses.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete course: %w", err)
+		return fmt.Errorf("error al eliminar el curso: %w", err)
 	}
 	return nil
 }
@@ -96,7 +96,7 @@ func (s *courseService) DeleteCourse(id uint) error {
 func (s *courseService) GetAllCourses() ([]*models.Course, error) {
 	courses, err := s.store.Courses.GetAll()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get courses: %w", err)
+		return nil, fmt.Errorf("error al obtener los cursos: %w", err)
 	}
 	return courses, nil
 }
@@ -116,7 +116,7 @@ func (s *courseService) GetCoursesWithEnrollmentCount() ([]*models.Course, error
 	// This would require a more complex repository method to calculate enrollment counts
 	courses, err := s.store.Courses.GetAll()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get courses: %w", err)
+		return nil, fmt.Errorf("error al obtener los cursos: %w", err)
 	}
 	return courses, nil
 }

@@ -75,7 +75,7 @@ func (s *evaluationService) UpdateEvaluation(id uint, evaluationData *models.Eva
 
 func (s *evaluationService) UpdateEvaluationPatch(evaluationID uint, data map[string]interface{}) (*models.Evaluation, error) {
 	if evaluationID == 0 {
-		return nil, errors.New("evaluation ID cannot be zero")
+		return nil, errors.New("el ID de la evaluación no puede ser cero")
 	}
 
 	var evaluation dto.UpdateEvaluationRequest
@@ -97,7 +97,7 @@ func (s *evaluationService) UpdateEvaluationPatch(evaluationID uint, data map[st
 
 func (s *evaluationService) DeleteEvaluation(id uint) error {
 	if err := s.store.Evaluations.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete evaluation: %w", err)
+		return fmt.Errorf("error al eliminar la evaluación: %w", err)
 	}
 	return nil
 }
@@ -106,7 +106,7 @@ func (s *evaluationService) GetEvaluationsByModule(moduleID uint) ([]*models.Eva
 	// Use the optimized repository method to filter by module ID at database level
 	evaluations, err := s.store.Evaluations.GetByModuleID(moduleID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get evaluations: %w", err)
+		return nil, fmt.Errorf("error al obtener las evaluaciones: %w", err)
 	}
 
 	return evaluations, nil
