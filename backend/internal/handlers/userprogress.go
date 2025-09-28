@@ -246,7 +246,7 @@ func (h *UserProgressHandler) GetUserContentProgress(c *gin.Context) {
 	progress, err := h.userProgressService.GetUserProgressForContent(uint(userID), uint(contentID))
 	if err != nil {
 		h.logger.Errorf("Error al obtener progreso del contenido: %v", err)
-		responses.ErrorNotFound(c, "Progreso de contenido")
+		responses.ErrorInternalServerWithMessage(c, "No se pudo obtener el progreso del contenido")
 		return
 	}
 
