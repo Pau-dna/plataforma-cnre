@@ -4,7 +4,10 @@ import "time"
 
 // Enrollment - modelo de inscripción a curso
 type Enrollment struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	UserID      uint      `json:"user_id" gorm:"not null;index;uniqueIndex:idx_user_course,priority:1"`
 	CourseID    uint      `json:"course_id" gorm:"not null;index;uniqueIndex:idx_user_course,priority:2"`
 	EnrolledAt  time.Time `json:"enrolled_at" gorm:"not null"`

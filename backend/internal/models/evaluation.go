@@ -1,10 +1,17 @@
 package models
 
-import "github.com/imlargo/go-api-template/internal/enums"
+import (
+	"time"
+
+	"github.com/imlargo/go-api-template/internal/enums"
+)
 
 // Evaluation - modelo de evaluación (quizzes, exámenes)
 type Evaluation struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	Order              int               `json:"order" gorm:"not null;index:idx_evaluations_module_order,priority:2"`
 	Title              string            `json:"title" gorm:"not null"`
 	Description        string            `json:"description" gorm:"type:text"`

@@ -1,8 +1,13 @@
 package models
 
+import "time"
+
 // Answer - modelo de respuesta para las opciones de pregunta
 type Answer struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	Text       string `json:"text" gorm:"type:text;not null"`
 	IsCorrect  bool   `json:"is_correct" gorm:"column:is_correct;not null;default:false"`
 	Order      int    `json:"order" gorm:"not null;index:idx_answers_question_order,priority:2"`

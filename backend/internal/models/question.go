@@ -1,10 +1,17 @@
 package models
 
-import "github.com/imlargo/go-api-template/internal/enums"
+import (
+	"time"
+
+	"github.com/imlargo/go-api-template/internal/enums"
+)
 
 // Question - modelo de pregunta
 type Question struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	Text         string             `json:"text" gorm:"type:text;not null"`
 	Type         enums.QuestionType `json:"type" gorm:"not null"`
 	Explanation  string             `json:"explanation" gorm:"type:text"`

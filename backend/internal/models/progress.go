@@ -4,7 +4,10 @@ import "time"
 
 // UserProgress - modelo de progreso del usuario
 type UserProgress struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	UserID      uint      `json:"user_id" gorm:"not null;index;index:idx_user_progress_user_course,priority:1;index:idx_user_progress_user_module,priority:1;index:idx_user_progress_user_content,priority:1"`
 	CourseID    uint      `json:"course_id" gorm:"not null;index;index:idx_user_progress_user_course,priority:2"`
 	ModuleID    uint      `json:"module_id" gorm:"not null;index;index:idx_user_progress_user_module,priority:2"`

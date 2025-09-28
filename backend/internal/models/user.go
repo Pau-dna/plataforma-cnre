@@ -1,9 +1,15 @@
 package models
 
-import "github.com/imlargo/go-api-template/internal/enums"
+import (
+	"time"
+
+	"github.com/imlargo/go-api-template/internal/enums"
+)
 
 type User struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 
 	Email     string         `json:"email" gorm:"uniqueIndex;not null"`
 	Fullname  string         `json:"fullname" gorm:"not null"`

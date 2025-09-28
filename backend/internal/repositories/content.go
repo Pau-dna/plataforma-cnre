@@ -65,14 +65,12 @@ func (r *contentRepository) Patch(id uint, data map[string]interface{}) error {
 func (r *contentRepository) Delete(id uint) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		// Delete user progress for this content
-		if err := tx.Where("content_id = ?", id).Delete(&models.UserProgress{}).Error; err != nil {
+		if err := tx.Where(&models.UserProgress{ContentID: id}).Delete(&models.UserProgress{}).Error; err != nil {
 			return err
 		}
-		
+
 		// Delete the content itself
-		var content models.Content
-		content.ID = id
-		return tx.Delete(&content).Error
+		return tx.Delete(&models.Content{ID: id}).Error
 	})
 }
 
