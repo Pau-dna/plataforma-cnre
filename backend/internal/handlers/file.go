@@ -44,7 +44,7 @@ func (h *FileHandler) UploadFile(c *gin.Context) {
 
 	result, err := h.fileService.UploadFromMultipart(file)
 	if err != nil {
-		responses.ErrorInternalServerWithMessage(c, "Failed to upload file: "+err.Error())
+		responses.ErrorInternalServerWithMessage(c, "Error al subir el archivo: "+err.Error())
 		return
 	}
 
@@ -67,7 +67,7 @@ func (h *FileHandler) GetFile(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid file ID")
+		responses.ErrorBadRequest(c, "ID de archivo inválido")
 		return
 	}
 
@@ -94,12 +94,12 @@ func (h *FileHandler) DeleteFile(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid file ID"+err.Error())
+		responses.ErrorBadRequest(c, "ID de archivo inválido"+err.Error())
 		return
 	}
 
 	if err := h.fileService.DeleteFile(uint(id)); err != nil {
-		responses.ErrorInternalServerWithMessage(c, "Failed to delete file: "+err.Error())
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar el archivo: "+err.Error())
 		return
 	}
 
@@ -121,7 +121,7 @@ func (h *FileHandler) GetPresignedURL(c *gin.Context) {
 	fileIDstr := c.Param("id")
 	fileID, err := strconv.Atoi(fileIDstr)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid file ID: "+err.Error())
+		responses.ErrorBadRequest(c, "ID de archivo inválido: "+err.Error())
 		return
 	}
 
@@ -157,13 +157,13 @@ func (h *FileHandler) DownloadFile(c *gin.Context) {
 	fileIDStr := c.Param("id")
 	fileID, err := strconv.Atoi(fileIDStr)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid file ID: "+err.Error())
+		responses.ErrorBadRequest(c, "ID de archivo inválido: "+err.Error())
 		return
 	}
 
 	file, downloadData, err := h.fileService.DownloadFile(uint(fileID))
 	if err != nil {
-		responses.ErrorInternalServerWithMessage(c, "Failed to download file: "+err.Error())
+		responses.ErrorInternalServerWithMessage(c, "Error al descargar el archivo: "+err.Error())
 		return
 	}
 

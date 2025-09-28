@@ -104,7 +104,7 @@ func (s *userProgressService) UpdateUserProgressPatch(progressID uint, data map[
 
 	var progress dto.UpdateUserProgressRequest
 	if err := utils.MapToStructStrict(data, &progress); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.UserProgresss.Patch(progressID, data); err != nil {
@@ -113,7 +113,7 @@ func (s *userProgressService) UpdateUserProgressPatch(progressID uint, data map[
 
 	updated, err := s.store.UserProgresss.Get(progressID)
 	if err != nil {
-		return nil, errors.New("progress not found")
+		return nil, errors.New("progreso no encontrado")
 	}
 
 	return updated, nil

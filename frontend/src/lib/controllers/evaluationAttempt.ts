@@ -69,7 +69,7 @@ export class EvaluationAttemptController extends BaseController {
 		if (attempts.length === 0) return null;
 
 		// Sort by started_at descending and return the most recent
-		return attempts.sort(
+		return attempts.toSorted(
 			(a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
 		)[0];
 	}

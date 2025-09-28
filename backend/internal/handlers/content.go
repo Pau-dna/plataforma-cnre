@@ -37,14 +37,14 @@ func NewContentHandler(handler *Handler, contentService services.ContentService)
 func (h *ContentHandler) CreateContent(c *gin.Context) {
 	var content models.Content
 	if err := c.ShouldBindJSON(&content); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	createdContent, err := h.contentService.CreateContent(&content)
 	if err != nil {
 		h.logger.Errorf("Failed to create content: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create content"})
+		responses.ErrorInternalServerWithMessage(c, "Error al crear el contenido")
 		return
 	}
 
@@ -64,18 +64,18 @@ func (h *ContentHandler) GetContent(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid content ID"})
+		responses.ErrorBadRequest(c, "ID de contenido inválido")
 		return
 	}
 
 	content, err := h.contentService.GetContent(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get content: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Content not found"})
+		responses.ErrorNotFound(c, "Contenido")
 		return
 	}
 
-	c.JSON(http.StatusOK, content)
+	responses.Ok(c, content)
 }
 
 // @Summary Update content
@@ -93,24 +93,24 @@ func (h *ContentHandler) UpdateContent(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid content ID"})
+		responses.ErrorBadRequest(c, "ID de contenido inválido")
 		return
 	}
 
 	var content models.Content
 	if err := c.ShouldBindJSON(&content); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	updatedContent, err := h.contentService.UpdateContent(uint(id), &content)
 	if err != nil {
-		h.logger.Errorf("Failed to update content: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update content"})
+		h.logger.Errorf("Error al actualizar el contenido: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al actualizar el contenido")
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedContent)
+	responses.Ok(c, updatedContent)
 }
 
 // @SummaryUpdate content
@@ -135,13 +135,13 @@ func (h *ContentHandler) UpdateContentPatch(c *gin.Context) {
 
 	contentIDInt, err := strconv.Atoi(contentID)
 	if err != nil {
-		responses.ErrorBadRequest(c, "Invalid Content ID: "+err.Error())
+		responses.ErrorBadRequest(c, "ID de contenido inválido: "+err.Error())
 		return
 	}
 
 	var payload map[string]interface{}
 	if err := c.BindJSON(&payload); err != nil {
-		responses.ErrorBadRequest(c, "Invalid request payload: "+err.Error())
+		responses.ErrorBadRequest(c, "Datos de la petición inválidos: "+err.Error())
 		return
 	}
 
@@ -166,14 +166,14 @@ func (h *ContentHandler) DeleteContent(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid content ID"})
+		responses.ErrorBadRequest(c, "ID de contenido inválido")
 		return
 	}
 
 	err = h.contentService.DeleteContent(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to delete content: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete content"})
+		h.logger.Errorf("Error al eliminar el contenido: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar el contenido")
 		return
 	}
 
@@ -193,16 +193,16 @@ func (h *ContentHandler) GetContentsByModule(c *gin.Context) {
 	moduleIDStr := c.Param("id")
 	moduleID, err := strconv.ParseUint(moduleIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
 		return
 	}
 
 	contents, err := h.contentService.GetContentsByModule(uint(moduleID))
 	if err != nil {
-		h.logger.Errorf("Failed to get contents by module: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get contents"})
+		h.logger.Errorf("Error al obtener los contenidos by module: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener los contenidos")
 		return
 	}
 
-	c.JSON(http.StatusOK, contents)
+	responses.Ok(c, contents)
 }

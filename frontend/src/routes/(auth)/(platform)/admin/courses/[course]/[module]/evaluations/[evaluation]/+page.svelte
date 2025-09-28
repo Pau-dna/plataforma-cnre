@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import type { Question } from '$lib/types';
-	import { Plus, Settings } from '@lucide/svelte';
+	import { Plus, Settings, AlertTriangle } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Back from '$lib/components/kit/Back.svelte';
 	import QuestionCard from '$lib/components/evaluation/QuestionCard.svelte';
+	import { Alert, AlertDescription } from '$lib/components/ui/alert';
 
 	let { data }: PageProps = $props();
 
@@ -27,6 +28,9 @@
 	function handleQuestionAdd(newQuestion: Question) {
 		questions = [...questions, newQuestion];
 	}
+
+	// Check if evaluation has fewer questions than configured
+	const hasIncompleteQuestions = $derived(questions.length < evaluation.question_count);
 </script>
 
 <Back href="/admin/courses/{courseId}/{moduleId}" />
@@ -40,7 +44,12 @@
 				<p class="text-muted-foreground">{evaluation.description}</p>
 			{/if}
 			<div class="text-muted-foreground flex flex-wrap gap-2 text-sm">
-				<span>Preguntas: {evaluation.question_count}</span>
+				<span class="flex items-center gap-1">
+					Preguntas: {questions.length}/{evaluation.question_count}
+					{#if hasIncompleteQuestions}
+						<AlertTriangle class="h-4 w-4 text-orange-500" />
+					{/if}
+				</span>
 				<span>•</span>
 				<span>Opciones por pregunta: {evaluation.answer_options_count}</span>
 				<span>•</span>
@@ -74,7 +83,17 @@
 	</div>
 
 	<div class="flex flex-col gap-4">
-		<h3 class="text-xl font-semibold">Preguntas de la Evaluación</h3>
+		<div class="flex items-center justify-between">
+			<h3 class="text-xl font-semibold">Preguntas de la Evaluación</h3>
+			{#if hasIncompleteQuestions}
+				<Alert class="w-auto border-orange-200 bg-orange-50">
+					<AlertTriangle class="h-4 w-4 text-orange-600" />
+					<AlertDescription class="font-medium text-orange-800">
+						Faltan {evaluation.question_count - questions.length} preguntas
+					</AlertDescription>
+				</Alert>
+			{/if}
+		</div>
 
 		{#if questions.length > 0}
 			<div class="grid grid-cols-1 gap-4">

@@ -26,8 +26,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.bg {
-	}
-</style>

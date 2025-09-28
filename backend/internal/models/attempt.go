@@ -81,7 +81,10 @@ func (a *AttemptAnswers) Scan(value interface{}) error {
 
 // EvaluationAttempt - modelo de intento de evaluación
 type EvaluationAttempt struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	UserID       uint             `json:"user_id" gorm:"not null;index;index:idx_eval_attempts_user_eval,priority:1"`
 	EvaluationID uint             `json:"evaluation_id" gorm:"not null;index;index:idx_eval_attempts_user_eval,priority:2"`
 	Questions    AttemptQuestions `json:"questions" gorm:"type:json"` // Preguntas generadas para este intento
@@ -90,12 +93,12 @@ type EvaluationAttempt struct {
 	TotalPoints  int              `json:"total_points" gorm:"not null"`
 	Passed       bool             `json:"passed" gorm:"not null;default:false"`
 	StartedAt    time.Time        `json:"started_at" gorm:"not null"`
-	SubmittedAt  time.Time        `json:"submitted_at"`
+	SubmittedAt  *time.Time       `json:"submitted_at" gorm:"default:null"`
 	TimeSpent    int              `json:"time_spent"` // en minutos
 
 	// Relaciones
-	User       *User       `json:"user" gorm:"foreignKey:UserID"`
-	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
+	User       *User       `json:"user" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
 }
 
 func (EvaluationAttempt) TableName() string {

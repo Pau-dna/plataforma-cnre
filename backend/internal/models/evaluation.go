@@ -1,10 +1,17 @@
 package models
 
-import "github.com/imlargo/go-api-template/internal/enums"
+import (
+	"time"
+
+	"github.com/imlargo/go-api-template/internal/enums"
+)
 
 // Evaluation - modelo de evaluación (quizzes, exámenes)
 type Evaluation struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	Order              int               `json:"order" gorm:"not null;index:idx_evaluations_module_order,priority:2"`
 	Title              string            `json:"title" gorm:"not null"`
 	Description        string            `json:"description" gorm:"type:text"`
@@ -17,10 +24,9 @@ type Evaluation struct {
 	ModuleID           uint              `json:"module_id" gorm:"not null;index;index:idx_evaluations_module_order,priority:1"`
 
 	// Relaciones
-	Module             *Module              `json:"module" gorm:"foreignKey:ModuleID"`
-	Questions          []*Question          `json:"questions" gorm:"foreignKey:EvaluationID"`
-	EvaluationAttempts []*EvaluationAttempt `json:"evaluation_attempts" gorm:"foreignKey:EvaluationID"`
-	UserProgress       []*UserProgress      `json:"user_progress" gorm:"foreignKey:ContentID"`
+	Module             *Module              `json:"module" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
+	Questions          []*Question          `json:"questions"`
+	EvaluationAttempts []*EvaluationAttempt `json:"evaluation_attempts"`
 }
 
 func (Evaluation) TableName() string {

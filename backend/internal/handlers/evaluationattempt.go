@@ -41,7 +41,7 @@ func (h *EvaluationAttemptHandler) StartAttempt(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&attemptData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -50,10 +50,10 @@ func (h *EvaluationAttemptHandler) StartAttempt(c *gin.Context) {
 		h.logger.Errorf("Failed to start attempt: %v", err)
 		if err.Error() == "cannot start attempt: maximum attempts reached" ||
 			err.Error() == "cannot start attempt: attempt already in progress" {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			responses.ErrorConflict(c, err.Error())
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start attempt"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to start attempt:"+err.Error())
 		return
 	}
 
@@ -75,7 +75,7 @@ func (h *EvaluationAttemptHandler) SubmitAttempt(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid attempt ID"})
+		responses.ErrorBadRequest(c, "Invalid attempt ID")
 		return
 	}
 
@@ -84,7 +84,7 @@ func (h *EvaluationAttemptHandler) SubmitAttempt(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&submissionData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
@@ -92,14 +92,14 @@ func (h *EvaluationAttemptHandler) SubmitAttempt(c *gin.Context) {
 	if err != nil {
 		h.logger.Errorf("Failed to submit attempt: %v", err)
 		if err.Error() == "attempt already submitted" || err.Error() == "time limit exceeded" {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			responses.ErrorConflict(c, err.Error())
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to submit attempt"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to submit attempt")
 		return
 	}
 
-	c.JSON(http.StatusOK, attempt)
+	responses.Ok(c, attempt)
 }
 
 // @Summary Get evaluation attempt
@@ -115,18 +115,18 @@ func (h *EvaluationAttemptHandler) GetAttempt(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid attempt ID"})
+		responses.ErrorBadRequest(c, "Invalid attempt ID")
 		return
 	}
 
 	attempt, err := h.evaluationAttemptService.GetAttempt(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to get attempt: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Attempt not found"})
+		responses.ErrorNotFound(c, "Attempt")
 		return
 	}
 
-	c.JSON(http.StatusOK, attempt)
+	responses.Ok(c, attempt)
 }
 
 // @Summary		Update evaluation attempt
@@ -184,25 +184,25 @@ func (h *EvaluationAttemptHandler) GetUserAttempts(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	evaluationIDStr := c.Param("evaluationId")
 	evaluationID, err := strconv.ParseUint(evaluationIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	attempts, err := h.evaluationAttemptService.GetUserAttempts(uint(userID), uint(evaluationID))
 	if err != nil {
 		h.logger.Errorf("Failed to get user attempts: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get attempts"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to get attempts")
 		return
 	}
 
-	c.JSON(http.StatusOK, attempts)
+	responses.Ok(c, attempts)
 }
 
 // @Summary Check if user can attempt evaluation
@@ -218,21 +218,21 @@ func (h *EvaluationAttemptHandler) CanUserAttempt(c *gin.Context) {
 	userIDStr := c.Param("userId")
 	userID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
 		return
 	}
 
 	evaluationIDStr := c.Param("evaluationId")
 	evaluationID, err := strconv.ParseUint(evaluationIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	canAttempt, reason, err := h.evaluationAttemptService.CanUserAttempt(uint(userID), uint(evaluationID))
 	if err != nil {
 		h.logger.Errorf("Failed to check if user can attempt: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check attempt eligibility"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to check attempt eligibility")
 		return
 	}
 
@@ -255,16 +255,16 @@ func (h *EvaluationAttemptHandler) ScoreAttempt(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid attempt ID"})
+		responses.ErrorBadRequest(c, "Invalid attempt ID")
 		return
 	}
 
 	attempt, err := h.evaluationAttemptService.ScoreAttempt(uint(id))
 	if err != nil {
 		h.logger.Errorf("Failed to score attempt: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to score attempt"})
+		responses.ErrorInternalServerWithMessage(c, "Failed to score attempt")
 		return
 	}
 
-	c.JSON(http.StatusOK, attempt)
+	responses.Ok(c, attempt)
 }

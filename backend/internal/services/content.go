@@ -36,11 +36,11 @@ func (s *contentService) CreateContent(content *models.Content) (*models.Content
 	// Verify module exists
 	_, err := s.store.Modules.Get(content.ModuleID)
 	if err != nil {
-		return nil, fmt.Errorf("module not found: %w", err)
+		return nil, fmt.Errorf("módulo no encontrado: %w", err)
 	}
 
 	if err := s.store.Contents.Create(content); err != nil {
-		return nil, fmt.Errorf("failed to create content: %w", err)
+		return nil, fmt.Errorf("error al crear el contenido: %w", err)
 	}
 	return content, nil
 }
@@ -48,7 +48,7 @@ func (s *contentService) CreateContent(content *models.Content) (*models.Content
 func (s *contentService) GetContent(id uint) (*models.Content, error) {
 	content, err := s.store.Contents.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("content not found: %w", err)
+		return nil, fmt.Errorf("contenido no encontrado: %w", err)
 	}
 	return content, nil
 }
@@ -56,7 +56,7 @@ func (s *contentService) GetContent(id uint) (*models.Content, error) {
 func (s *contentService) UpdateContent(id uint, contentData *models.Content) (*models.Content, error) {
 	existingContent, err := s.store.Contents.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("content not found: %w", err)
+		return nil, fmt.Errorf("contenido no encontrado: %w", err)
 	}
 
 	// Update fields
@@ -68,7 +68,7 @@ func (s *contentService) UpdateContent(id uint, contentData *models.Content) (*m
 	existingContent.Type = contentData.Type
 
 	if err := s.store.Contents.Update(existingContent); err != nil {
-		return nil, fmt.Errorf("failed to update content: %w", err)
+		return nil, fmt.Errorf("error al actualizar el contenido: %w", err)
 	}
 
 	return existingContent, nil
@@ -81,7 +81,7 @@ func (s *contentService) UpdateContentPatch(contentID uint, data map[string]inte
 
 	var content dto.UpdateContentRequest
 	if err := utils.MapToStructStrict(data, &content); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.Contents.Patch(contentID, data); err != nil {
@@ -90,7 +90,7 @@ func (s *contentService) UpdateContentPatch(contentID uint, data map[string]inte
 
 	updated, err := s.store.Contents.Get(contentID)
 	if err != nil {
-		return nil, errors.New("content not found")
+		return nil, errors.New("contenido no encontrado")
 	}
 
 	return updated, nil
@@ -120,7 +120,7 @@ func (s *contentService) ReorderContent(moduleID uint, contentOrders []struct {
 	// Verify module exists
 	_, err := s.store.Modules.Get(moduleID)
 	if err != nil {
-		return fmt.Errorf("module not found: %w", err)
+		return fmt.Errorf("módulo no encontrado: %w", err)
 	}
 
 	// Update each content's order

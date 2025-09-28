@@ -36,14 +36,14 @@ func NewEvaluationHandler(handler *Handler, evaluationService services.Evaluatio
 func (h *EvaluationHandler) CreateEvaluation(c *gin.Context) {
 	var evaluation models.Evaluation
 	if err := c.ShouldBindJSON(&evaluation); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	createdEvaluation, err := h.evaluationService.CreateEvaluation(&evaluation)
 	if err != nil {
-		h.logger.Errorf("Failed to create evaluation: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create evaluation"})
+		h.logger.Errorf("Error al crear la evaluación: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al crear la evaluación")
 		return
 	}
 
@@ -63,18 +63,18 @@ func (h *EvaluationHandler) GetEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	evaluation, err := h.evaluationService.GetEvaluation(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to get evaluation: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"error": "Evaluation not found"})
+		h.logger.Errorf("Error al obtener la evaluación: %v", err)
+		responses.ErrorNotFound(c, "Evaluación")
 		return
 	}
 
-	c.JSON(http.StatusOK, evaluation)
+	responses.Ok(c, evaluation)
 }
 
 // @Summary Update evaluation
@@ -92,24 +92,24 @@ func (h *EvaluationHandler) UpdateEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	var evaluation models.Evaluation
 	if err := c.ShouldBindJSON(&evaluation); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		responses.ErrorBindJson(c, err)
 		return
 	}
 
 	updatedEvaluation, err := h.evaluationService.UpdateEvaluation(uint(id), &evaluation)
 	if err != nil {
-		h.logger.Errorf("Failed to update evaluation: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update evaluation"})
+		h.logger.Errorf("Error al actualizar la evaluación: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al actualizar la evaluación")
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedEvaluation)
+	responses.Ok(c, updatedEvaluation)
 }
 
 // @SummaryUpdate evaluation
@@ -165,14 +165,14 @@ func (h *EvaluationHandler) DeleteEvaluation(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid evaluation ID"})
+		responses.ErrorBadRequest(c, "ID de evaluación inválido")
 		return
 	}
 
 	err = h.evaluationService.DeleteEvaluation(uint(id))
 	if err != nil {
-		h.logger.Errorf("Failed to delete evaluation: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete evaluation"})
+		h.logger.Errorf("Error al eliminar la evaluación: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al eliminar la evaluación")
 		return
 	}
 
@@ -192,16 +192,16 @@ func (h *EvaluationHandler) GetEvaluationsByModule(c *gin.Context) {
 	moduleIDStr := c.Param("id")
 	moduleID, err := strconv.ParseUint(moduleIDStr, 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid module ID"})
+		responses.ErrorBadRequest(c, "ID de módulo inválido")
 		return
 	}
 
 	evaluations, err := h.evaluationService.GetEvaluationsByModule(uint(moduleID))
 	if err != nil {
-		h.logger.Errorf("Failed to get evaluations by module: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get evaluations"})
+		h.logger.Errorf("Error al obtener la evaluacións by module: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener la evaluacións")
 		return
 	}
 
-	c.JSON(http.StatusOK, evaluations)
+	responses.Ok(c, evaluations)
 }

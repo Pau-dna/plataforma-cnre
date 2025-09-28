@@ -37,11 +37,11 @@ func (s *moduleService) CreateModule(module *models.Module) (*models.Module, err
 	// Verify course exists
 	_, err := s.store.Courses.Get(module.CourseID)
 	if err != nil {
-		return nil, fmt.Errorf("course not found: %w", err)
+		return nil, fmt.Errorf("curso no encontrado: %w", err)
 	}
 
 	if err := s.store.Modules.Create(module); err != nil {
-		return nil, fmt.Errorf("failed to create module: %w", err)
+		return nil, fmt.Errorf("error al crear el módulo: %w", err)
 	}
 
 	// Increment module count for the course
@@ -56,7 +56,7 @@ func (s *moduleService) CreateModule(module *models.Module) (*models.Module, err
 func (s *moduleService) GetModule(id uint) (*models.Module, error) {
 	module, err := s.store.Modules.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("module not found: %w", err)
+		return nil, fmt.Errorf("módulo no encontrado: %w", err)
 	}
 	return module, nil
 }
@@ -64,7 +64,7 @@ func (s *moduleService) GetModule(id uint) (*models.Module, error) {
 func (s *moduleService) UpdateModule(id uint, moduleData *models.Module) (*models.Module, error) {
 	existingModule, err := s.store.Modules.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("module not found: %w", err)
+		return nil, fmt.Errorf("módulo no encontrado: %w", err)
 	}
 
 	// Update fields
@@ -73,7 +73,7 @@ func (s *moduleService) UpdateModule(id uint, moduleData *models.Module) (*model
 	existingModule.Order = moduleData.Order
 
 	if err := s.store.Modules.Update(existingModule); err != nil {
-		return nil, fmt.Errorf("failed to update module: %w", err)
+		return nil, fmt.Errorf("error al actualizar el módulo: %w", err)
 	}
 
 	return existingModule, nil
@@ -86,7 +86,7 @@ func (s *moduleService) UpdateModulePatch(moduleID uint, data map[string]interfa
 
 	var module dto.UpdateModuleRequest
 	if err := utils.MapToStructStrict(data, &module); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.Modules.Patch(moduleID, data); err != nil {
@@ -95,7 +95,7 @@ func (s *moduleService) UpdateModulePatch(moduleID uint, data map[string]interfa
 
 	updated, err := s.store.Modules.Get(moduleID)
 	if err != nil {
-		return nil, errors.New("module not found")
+		return nil, errors.New("módulo no encontrado")
 	}
 
 	return updated, nil
@@ -105,7 +105,7 @@ func (s *moduleService) DeleteModule(id uint) error {
 	// Get the module to get the course ID before deleting
 	module, err := s.store.Modules.Get(id)
 	if err != nil {
-		return fmt.Errorf("failed to get module: %w", err)
+		return fmt.Errorf("error al obtener el módulo: %w", err)
 	}
 
 	courseID := module.CourseID
@@ -137,7 +137,7 @@ func (s *moduleService) GetModuleWithContent(id uint) (*models.Module, error) {
 	// Use the new repository method to preload content
 	module, err := s.store.Modules.GetWithContent(id)
 	if err != nil {
-		return nil, fmt.Errorf("module not found: %w", err)
+		return nil, fmt.Errorf("módulo no encontrado: %w", err)
 	}
 
 	return module, nil
@@ -150,7 +150,7 @@ func (s *moduleService) ReorderModules(courseID uint, moduleOrders []struct {
 	// Verify course exists
 	_, err := s.store.Courses.Get(courseID)
 	if err != nil {
-		return fmt.Errorf("course not found: %w", err)
+		return fmt.Errorf("curso no encontrado: %w", err)
 	}
 
 	// Update each module's order

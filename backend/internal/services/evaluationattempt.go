@@ -38,13 +38,13 @@ func (s *evaluationAttemptService) StartAttempt(userID, evaluationID uint) (*mod
 	// Verify user exists
 	_, err := s.store.Users.GetByID(userID)
 	if err != nil {
-		return nil, fmt.Errorf("user not found: %w", err)
+		return nil, fmt.Errorf("usuario no encontrado: %w", err)
 	}
 
 	// Verify evaluation exists and get configuration
 	evaluation, err := s.store.Evaluations.Get(evaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("evaluation not found: %w", err)
+		return nil, fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	// Check if user can attempt this evaluation
@@ -177,7 +177,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 	// Calculate how many correct and incorrect answers to include based on question type
 	var maxCorrect int
 	var correctToInclude int
-	
+
 	switch questionType {
 	case enums.QuestionTypeSingle:
 		// Single choice questions must have exactly 1 correct answer
@@ -189,7 +189,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 		if maxCorrect < 1 {
 			maxCorrect = 1
 		}
-		
+
 		// Random number of correct answers between 1 and maxCorrect
 		correctToInclude = 1
 		if len(correctAnswers) > 1 && maxCorrect > 1 {
@@ -202,7 +202,7 @@ func (s *evaluationAttemptService) generateAnswerOptions(allAnswers []*models.An
 		if maxCorrect == 0 {
 			maxCorrect = 1 // Always at least 1 correct answer
 		}
-		
+
 		correctToInclude = 1
 		if len(correctAnswers) > 1 && maxCorrect > 1 {
 			r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -293,14 +293,14 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	}
 
 	// Check if already submitted
-	if !attempt.SubmittedAt.IsZero() {
+	if attempt.SubmittedAt != nil && !attempt.SubmittedAt.IsZero() {
 		return nil, fmt.Errorf("attempt already submitted")
 	}
 
 	// Get evaluation to check time limit
 	evaluation, err := s.store.Evaluations.Get(attempt.EvaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("evaluation not found: %w", err)
+		return nil, fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	// Check time limit if set
@@ -315,8 +315,9 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	timeSpent := int(time.Since(attempt.StartedAt).Minutes())
 
 	// Set answers and submission time
+	now := time.Now()
 	attempt.Answers = models.AttemptAnswers(answers)
-	attempt.SubmittedAt = time.Now()
+	attempt.SubmittedAt = &now
 	attempt.TimeSpent = timeSpent
 
 	// Perform scoring and saving in a single optimized operation
@@ -331,10 +332,10 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 }
 
 // scoreAttemptInline performs scoring directly on the attempt object without database round trips.
-// 
+//
 // Parameters:
 //   - attempt: Pointer to the EvaluationAttempt to be scored. Must be non-nil and have its Questions and Answers fields populated.
-//              This object will be mutated: its Score and Passed fields will be updated based on the evaluation.
+//     This object will be mutated: its Score and Passed fields will be updated based on the evaluation.
 //   - evaluation: Pointer to the Evaluation containing scoring rules (e.g., PassingScore). Must be non-nil.
 //
 // Side effects:
@@ -393,7 +394,7 @@ func (s *evaluationAttemptService) UpdateEvaluationAttemptPatch(attemptID uint, 
 
 	var attempt dto.UpdateEvaluationAttemptRequest
 	if err := utils.MapToStructStrict(data, &attempt); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.EvaluationAttempts.Patch(attemptID, data); err != nil {
@@ -402,7 +403,7 @@ func (s *evaluationAttemptService) UpdateEvaluationAttemptPatch(attemptID uint, 
 
 	updated, err := s.store.EvaluationAttempts.Get(attemptID)
 	if err != nil {
-		return nil, errors.New("attempt not found")
+		return nil, errors.New("intento no encontrado")
 	}
 
 	return updated, nil
@@ -425,13 +426,14 @@ func (s *evaluationAttemptService) CanUserAttempt(userID, evaluationID uint) (bo
 		return false, "", fmt.Errorf("evaluation not found: %w", err)
 	}
 
+	// Check if there's an ongoing attempt with optimized query
+	_, err = s.store.EvaluationAttempts.GetInProgressAttempt(userID, evaluationID)
+	if err == nil {
+		return false, "attempt already in progress", nil
+	}
+
 	// If no max attempts set, user can always attempt
 	if evaluation.MaxAttempts <= 0 {
-		// Still check for in-progress attempts
-		_, err := s.store.EvaluationAttempts.GetInProgressAttempt(userID, evaluationID)
-		if err == nil {
-			return false, "attempt already in progress", nil
-		}
 		return true, "", nil
 	}
 
@@ -443,12 +445,6 @@ func (s *evaluationAttemptService) CanUserAttempt(userID, evaluationID uint) (bo
 
 	if int(completedAttempts) >= evaluation.MaxAttempts {
 		return false, "maximum attempts reached", nil
-	}
-
-	// Check if there's an ongoing attempt with optimized query
-	_, err = s.store.EvaluationAttempts.GetInProgressAttempt(userID, evaluationID)
-	if err == nil {
-		return false, "attempt already in progress", nil
 	}
 
 	return true, "", nil
@@ -464,7 +460,7 @@ func (s *evaluationAttemptService) ScoreAttempt(attemptID uint) (*models.Evaluat
 	// Get evaluation
 	evaluation, err := s.store.Evaluations.Get(attempt.EvaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("evaluation not found: %w", err)
+		return nil, fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	totalScore := 0

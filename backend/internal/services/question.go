@@ -33,11 +33,11 @@ func (s *questionService) CreateQuestion(question *models.Question) (*models.Que
 	// Verify evaluation exists
 	_, err := s.store.Evaluations.Get(question.EvaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("evaluation not found: %w", err)
+		return nil, fmt.Errorf("evaluación no encontrada: %w", err)
 	}
 
 	if err := s.store.Questions.Create(question); err != nil {
-		return nil, fmt.Errorf("failed to create question: %w", err)
+		return nil, fmt.Errorf("error al crear la pregunta: %w", err)
 	}
 	return question, nil
 }
@@ -45,7 +45,7 @@ func (s *questionService) CreateQuestion(question *models.Question) (*models.Que
 func (s *questionService) GetQuestion(id uint) (*models.Question, error) {
 	question, err := s.store.Questions.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("question not found: %w", err)
+		return nil, fmt.Errorf("pregunta no encontrada: %w", err)
 	}
 	return question, nil
 }
@@ -53,7 +53,7 @@ func (s *questionService) GetQuestion(id uint) (*models.Question, error) {
 func (s *questionService) UpdateQuestion(id uint, questionData *models.Question) (*models.Question, error) {
 	existingQuestion, err := s.store.Questions.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("question not found: %w", err)
+		return nil, fmt.Errorf("pregunta no encontrada: %w", err)
 	}
 
 	// Update fields
@@ -63,7 +63,7 @@ func (s *questionService) UpdateQuestion(id uint, questionData *models.Question)
 	existingQuestion.Points = questionData.Points
 
 	if err := s.store.Questions.Update(existingQuestion); err != nil {
-		return nil, fmt.Errorf("failed to update question: %w", err)
+		return nil, fmt.Errorf("error al actualizar la pregunta: %w", err)
 	}
 
 	return existingQuestion, nil
@@ -76,7 +76,7 @@ func (s *questionService) UpdateQuestionPatch(questionID uint, data map[string]i
 
 	var question dto.UpdateQuestionRequest
 	if err := utils.MapToStructStrict(data, &question); err != nil {
-		return nil, errors.New("invalid data: " + err.Error())
+		return nil, errors.New("datos inválidos: " + err.Error())
 	}
 
 	if err := s.store.Questions.Patch(questionID, data); err != nil {
@@ -85,7 +85,7 @@ func (s *questionService) UpdateQuestionPatch(questionID uint, data map[string]i
 
 	updated, err := s.store.Questions.Get(questionID)
 	if err != nil {
-		return nil, errors.New("question not found")
+		return nil, errors.New("pregunta no encontrada")
 	}
 
 	return updated, nil
@@ -112,7 +112,7 @@ func (s *questionService) GetQuestionWithAnswers(id uint) (*models.Question, err
 	// Use the new repository method to preload answers
 	question, err := s.store.Questions.GetWithAnswers(id)
 	if err != nil {
-		return nil, fmt.Errorf("question not found: %w", err)
+		return nil, fmt.Errorf("pregunta no encontrada: %w", err)
 	}
 
 	return question, nil

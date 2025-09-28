@@ -8,6 +8,7 @@
 	import type { CreateContentDTO } from '$lib/types';
 	import { ContentType } from '$lib/types';
 	import { ContentController } from '$lib/controllers';
+	import { ApiError, getErrorMessage } from '$lib/utils/error';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
@@ -41,9 +42,22 @@
 			// Redirect back to the module contents page
 			goto(`/admin/courses/${data.courseId}/${data.moduleId}`);
 		} catch (error) {
-			toast.error('Error al crear el contenido.', {
-				description: error instanceof Error ? error.message : String(error)
-			});
+			const apiError = ApiError.from(error);
+
+			// Handle specific error types
+			if (apiError.isValidationError()) {
+				toast.error('Datos inválidos', {
+					description: apiError.message
+				});
+			} else if (apiError.isAuthError()) {
+				toast.error('Sin autorización', {
+					description: 'No tienes permisos para crear contenido.'
+				});
+			} else {
+				toast.error('Error al crear el contenido', {
+					description: apiError.getUserMessage()
+				});
+			}
 		} finally {
 			submitting = false;
 		}

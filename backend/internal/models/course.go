@@ -1,8 +1,13 @@
 package models
 
+import "time"
+
 // Course - modelo de curso
 type Course struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	Title            string `json:"title" gorm:"not null"`
 	Description      string `json:"description"`
 	ShortDescription string `json:"short_description"`
@@ -11,8 +16,8 @@ type Course struct {
 	ModuleCount      int    `json:"module_count"`
 
 	// Relaciones
-	Modules     []*Module     `json:"modules" gorm:"foreignKey:CourseID"`
-	Enrollments []*Enrollment `json:"enrollments" gorm:"foreignKey:CourseID"`
+	Modules     []*Module     `json:"modules" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
+	Enrollments []*Enrollment `json:"enrollments" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
 }
 
 func (Course) TableName() string {

@@ -4056,12 +4056,6 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
-                },
-                "user_progress": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.UserProgress"
-                    }
                 }
             }
         },
@@ -4386,13 +4380,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "message": {
                     "type": "string"
                 },
-                "status": {
-                    "type": "string"
+                "payload": {
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         },
