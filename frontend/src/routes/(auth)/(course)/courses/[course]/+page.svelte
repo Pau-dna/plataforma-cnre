@@ -6,8 +6,13 @@
 	import CompletionRequirements from '$lib/components/course/CompletionRequirements.svelte';
 	import type { PageProps } from './$types';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Badge } from '$lib/components/ui/badge';
 
 	let { data }: PageProps = $props();
+
+	const modulesProgress = $derived(
+		Object.fromEntries(data.progress.modules_progress.map((mod) => [mod.module_id.toString(), mod]))
+	);
 </script>
 
 <div class="flex flex-col gap-y-4 px-4 md:px-0">
@@ -28,10 +33,28 @@
 			<h2 class="text-h2">Módulos</h2>
 
 			{#each data.modules as modulo}
+				{@const progress = modulesProgress[modulo.id.toString()]}
 				<a href="/courses/{data.course.id}/{modulo.id}">
 					<Card.Root>
 						<Card.Header>
-							<Card.Title>{modulo.title}</Card.Title>
+							<div class="flex items-center gap-x-3">
+								<Card.Title>{modulo.title}</Card.Title>
+
+								{#if progress.is_completed}
+									<Badge
+										class="flex max-w-max items-center justify-center gap-2 bg-green-100 text-xs"
+									>
+										<div class="h-2 w-2 rounded-full bg-green-600"></div>
+										<span class="font-medium text-green-800">Completado</span>
+									</Badge>
+								{:else}
+									<Badge
+										class="flex max-w-max items-center justify-center gap-2 bg-amber-100 text-xs text-amber-800"
+									>
+										{progress.percentage.toFixed(2)}%
+									</Badge>
+								{/if}
+							</div>
 							<Card.Description class="line-clamp-1">{modulo.description}</Card.Description>
 						</Card.Header>
 					</Card.Root>
