@@ -20,7 +20,6 @@ type UserProgressRepository interface {
 	CountCompletedByUserAndModule(userID, moduleID uint) (int64, error)
 	BatchCreate(progressItems []*models.UserProgress) error
 	GetCourseProgressSummary(userID, courseID uint) (*dto.CourseProgressSummary, error)
-	GetModuleProgressSummary(userID, moduleID uint) (*dto.ModuleProgressSummary, error)
 }
 
 type userprogressRepository struct {
@@ -264,129 +263,6 @@ func (r *userprogressRepository) GetCourseProgressSummary(userID, courseID uint)
 		TotalPercentage: overallProgress,
 		IsCompleted:     overallProgress >= 100.0,
 		ModulesProgress: modulesProgress,
-	}
-
-	return summary, nil
-}
-
-func (r *userprogressRepository) GetModuleProgressSummary(userID, moduleID uint) (*dto.ModuleProgressSummary, error) {
-	// Internal struct to capture raw SQL results
-	type ModuleContentData struct {
-		ModuleID      uint     `db:"module_id"`
-		ModuleTitle   string   `db:"module_title"`
-		CourseID      uint     `db:"course_id"`
-		CourseTitle   string   `db:"course_title"`
-		ItemID        uint     `db:"item_id"`
-		ItemTitle     string   `db:"item_title"`
-		ItemType      string   `db:"item_type"`
-		ItemOrder     int      `db:"item_order"`
-		IsCompleted   bool     `db:"is_completed"`
-		CompletedAt   *string  `db:"completed_at"`
-		Score         *int     `db:"score"`
-	}
-
-	var contentData []ModuleContentData
-	
-	// Simplified query that gets only content items and their progress for a module (no evaluations)
-	query := `
-	WITH module_info AS (
-		-- Get module and course basic info
-		SELECT m.id as module_id, m.title as module_title, m.course_id, c.title as course_title
-		FROM modules m
-		INNER JOIN courses c ON c.id = m.course_id
-		WHERE m.id = ?
-	)
-	-- Get all content items for the module (excluding evaluations)
-	SELECT 
-		mi.module_id,
-		mi.module_title,
-		mi.course_id,
-		mi.course_title,
-		c.id as item_id,
-		c.title as item_title,
-		'content' as item_type,
-		c."order" as item_order,
-		CASE 
-			WHEN up.completed_at IS NOT NULL THEN true 
-			ELSE false 
-		END as is_completed,
-		CASE 
-			WHEN up.completed_at IS NOT NULL THEN up.completed_at::text 
-			ELSE NULL 
-		END as completed_at,
-		up.score
-	FROM module_info mi
-	INNER JOIN contents c ON c.module_id = mi.module_id
-	LEFT JOIN user_progress up ON up.content_id = c.id AND up.user_id = ?
-	ORDER BY c."order" ASC
-	`
-
-	if err := r.db.Raw(query, moduleID, userID).Scan(&contentData).Error; err != nil {
-		return nil, err
-	}
-
-	if len(contentData) == 0 {
-		// Module not found or has no content - get module info directly
-		var module models.Module
-		if err := r.db.Preload("Course").First(&module, moduleID).Error; err != nil {
-			return nil, err
-		}
-		
-		return &dto.ModuleProgressSummary{
-			ModuleID:        module.ID,
-			ModuleTitle:     module.Title,
-			CourseID:        module.CourseID,
-			CourseTitle:     module.Course.Title,
-			TotalPercentage: 100.0,
-			IsCompleted:     true,
-			ContentItems:    []dto.ContentItemDetail{},
-		}, nil
-	}
-
-	// Process the results to build the response
-	var contentItems []dto.ContentItemDetail
-	completedItems := 0
-	totalItems := len(contentData)
-
-	// Get module info from first row
-	moduleID = contentData[0].ModuleID
-	moduleTitle := contentData[0].ModuleTitle
-	courseID := contentData[0].CourseID
-	courseTitle := contentData[0].CourseTitle
-
-	for _, data := range contentData {
-		if data.IsCompleted {
-			completedItems++
-		}
-
-		contentItems = append(contentItems, dto.ContentItemDetail{
-			ItemID:      data.ItemID,
-			ItemTitle:   data.ItemTitle,
-			ItemType:    data.ItemType,
-			IsCompleted: data.IsCompleted,
-			CompletedAt: data.CompletedAt,
-			Score:       data.Score,
-			Order:       data.ItemOrder,
-		})
-	}
-
-	// Calculate overall module progress
-	var modulePercentage float64
-	if totalItems > 0 {
-		modulePercentage = float64(completedItems) / float64(totalItems) * 100.0
-	} else {
-		modulePercentage = 100.0
-	}
-
-	// Create comprehensive response
-	summary := &dto.ModuleProgressSummary{
-		ModuleID:        moduleID,
-		ModuleTitle:     moduleTitle,
-		CourseID:        courseID,
-		CourseTitle:     courseTitle,
-		TotalPercentage: modulePercentage,
-		IsCompleted:     modulePercentage >= 100.0,
-		ContentItems:    contentItems,
 	}
 
 	return summary, nil

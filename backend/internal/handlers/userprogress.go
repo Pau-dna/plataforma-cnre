@@ -353,36 +353,3 @@ func (h *UserProgressHandler) GetComprehensiveCourseProgress(c *gin.Context) {
 
 	responses.Ok(c, progressSummary)
 }
-
-// @Summary Get comprehensive user module progress
-// @Description Get comprehensive progress information for a user in a specific module, including detailed progress for each content item (excluding evaluations)
-// @Tags user-progress
-// @Produce json
-// @Param userId path int true "User ID"
-// @Param moduleId path int true "Module ID"
-// @Success 200 {object} dto.ModuleProgressSummary
-// @Failure 400 {object} map[string]interface{}
-// @Failure 500 {object} map[string]interface{}
-// @Router /api/v1/users/{userId}/modules/{moduleId}/progress-summary [get]
-func (h *UserProgressHandler) GetComprehensiveModuleProgress(c *gin.Context) {
-	userID, err := strconv.ParseUint(c.Param("userId"), 10, 32)
-	if err != nil {
-		responses.ErrorBadRequest(c, "ID de usuario inválido")
-		return
-	}
-
-	moduleID, err := strconv.ParseUint(c.Param("moduleId"), 10, 32)
-	if err != nil {
-		responses.ErrorBadRequest(c, "ID de módulo inválido")
-		return
-	}
-
-	progressSummary, err := h.userProgressService.GetComprehensiveModuleProgress(uint(userID), uint(moduleID))
-	if err != nil {
-		h.logger.Errorf("Error al obtener resumen de progreso del módulo: %v", err)
-		responses.ErrorInternalServerWithMessage(c, "No se pudo obtener el resumen de progreso del módulo")
-		return
-	}
-
-	responses.Ok(c, progressSummary)
-}

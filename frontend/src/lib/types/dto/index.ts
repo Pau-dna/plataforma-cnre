@@ -139,24 +139,3 @@ export interface CourseProgressSummaryDTO {
 	is_completed: boolean;
 	modules_progress: ModuleProgressDetailDTO[];
 }
-
-// Module Progress DTOs
-export interface ContentItemDetailDTO {
-	item_id: number;
-	item_title: string;
-	item_type: 'content' | 'evaluation';
-	is_completed: boolean;
-	completed_at?: string;
-	score?: number;
-	order: number;
-}
-
-export interface ModuleProgressSummaryDTO {
-	module_id: number;
-	module_title: string;
-	course_id: number;
-	course_title: string;
-	total_percentage: number;
-	is_completed: boolean;
-	content_items: ContentItemDetailDTO[];
-}
