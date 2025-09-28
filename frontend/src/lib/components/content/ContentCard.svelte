@@ -81,7 +81,10 @@
 						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
 						{#if courseId}
 							<DropdownMenu.Item>
-								<a href="/admin/courses/{courseId}/{content.module_id}/content/{content.id}/edit" class="flex w-full">
+								<a
+									href="/admin/courses/{courseId}/{content.module_id}/content/{content.id}/edit"
+									class="flex w-full"
+								>
 									Editar
 								</a>
 							</DropdownMenu.Item>

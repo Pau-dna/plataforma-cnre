@@ -51,7 +51,7 @@
 
 <Card class="group cursor-pointer transition-shadow hover:shadow-md">
 	<CardHeader class="pb-3">
-		<div class="flex items-start justify-between gap-4">
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 			<div class="flex min-w-0 flex-1 items-center gap-3">
 				<div class="bg-primary/10 text-primary flex-shrink-0 rounded-lg p-2">
 					{#if content.type === ContentType.CONTENT}
@@ -61,7 +61,7 @@
 					{/if}
 				</div>
 				<div class="min-w-0 flex-1">
-					<div class="mb-1 flex items-center gap-2">
+					<div class="mb-1 flex flex-wrap items-center gap-2">
 						<span class="text-muted-foreground text-sm font-medium">#{content.order}</span>
 						<Badge variant="outline" class="text-xs">
 							{getContentTypeLabel(content.type)}
@@ -86,29 +86,29 @@
 
 	<CardContent class="pt-0">
 		{#if content.type === ContentType.EVALUATION}
-			<div class="text-muted-foreground mb-4 flex flex-wrap gap-4 text-sm">
+			<div class="text-muted-foreground mb-4 flex flex-wrap gap-2 text-sm sm:gap-4">
 				{#if content.question_count}
 					<div class="flex items-center gap-1">
-						<Users class="h-4 w-4" />
-						<span>{content.question_count} preguntas</span>
+						<Users class="h-4 w-4 flex-shrink-0" />
+						<span class="whitespace-nowrap">{content.question_count} preguntas</span>
 					</div>
 				{/if}
 				{#if content.passing_score}
 					<div class="flex items-center gap-1">
-						<Target class="h-4 w-4" />
-						<span>{content.passing_score} pts mínimo</span>
+						<Target class="h-4 w-4 flex-shrink-0" />
+						<span class="whitespace-nowrap">{content.passing_score} pts mínimo</span>
 					</div>
 				{/if}
 				{#if content.time_limit}
 					<div class="flex items-center gap-1">
-						<Clock class="h-4 w-4" />
-						<span>{content.time_limit} min</span>
+						<Clock class="h-4 w-4 flex-shrink-0" />
+						<span class="whitespace-nowrap">{content.time_limit} min</span>
 					</div>
 				{/if}
 				{#if content.max_attempts}
 					<div class="flex items-center gap-1">
-						<CheckCircle class="h-4 w-4" />
-						<span>{content.max_attempts} intentos</span>
+						<CheckCircle class="h-4 w-4 flex-shrink-0" />
+						<span class="whitespace-nowrap">{content.max_attempts} intentos</span>
 					</div>
 				{/if}
 			</div>
@@ -130,12 +130,17 @@
 			<Button
 				variant="ghost"
 				size="sm"
-				class="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+				class="group-hover:bg-primary group-hover:text-primary-foreground whitespace-nowrap transition-colors"
 				href={content.type === ContentType.EVALUATION
 					? `/courses/${page.params.course}/${page.params.module}/${content.id}/start`
 					: `/courses/${page.params.course}/${page.params.module}/${content.id}`}
 			>
-				{content.type === ContentType.EVALUATION ? 'Iniciar Evaluación' : 'Ver Contenido'}
+				<span class="hidden sm:inline">
+					{content.type === ContentType.EVALUATION ? 'Iniciar Evaluación' : 'Ver Contenido'}
+				</span>
+				<span class="sm:hidden">
+					{content.type === ContentType.EVALUATION ? 'Iniciar' : 'Ver'}
+				</span>
 			</Button>
 		</div>
 	</CardContent>

@@ -6,7 +6,7 @@
 	let { data }: PageProps = $props();
 </script>
 
-<div class="flex flex-col gap-y-4">
+<div class="flex flex-col gap-y-4 px-4 md:px-0">
 	<h1 class="text-h1">{data.course.title}</h1>
 	<p class="text-muted-foreground max-w-prose text-pretty">{data.course.description}</p>
 
