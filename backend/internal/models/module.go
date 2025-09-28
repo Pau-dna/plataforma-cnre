@@ -10,8 +10,8 @@ type Module struct {
 
 	// Relaciones
 	Course      *Course       `json:"course" gorm:"foreignKey:CourseID;constraint:OnDelete:CASCADE"`
-	Contents    []*Content    `json:"contents" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
-	Evaluations []*Evaluation `json:"evaluations" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
+	Contents    []*Content    `json:"contents" gorm:"foreignKey:ModuleID"`
+	Evaluations []*Evaluation `json:"evaluations" gorm:"foreignKey:ModuleID"`
 }
 
 func (Module) TableName() string {
