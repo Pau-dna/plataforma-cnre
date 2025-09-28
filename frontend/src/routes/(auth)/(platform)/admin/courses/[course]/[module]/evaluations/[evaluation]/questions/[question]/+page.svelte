@@ -187,7 +187,7 @@
 			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`/admin/courses/${courseID}/${moduleID}/evaluations/${evaluationID}`);
 		} catch (error) {
-			console.error('Error updating question:', error);
+			console.error('Error al actualizar la pregunta:', error);
 			toast.error('Error al actualizar la pregunta', {
 				description: error instanceof Error ? error.message : String(error)
 			});

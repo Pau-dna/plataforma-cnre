@@ -49,7 +49,7 @@
 				onProgressChange(contentId, completed);
 			}
 		} catch (error) {
-			console.error('Error updating progress:', error);
+			console.error('Error al actualizar el progreso:', error);
 			toast.error('Error al actualizar el progreso');
 		} finally {
 			loading = false;

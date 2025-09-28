@@ -27,7 +27,7 @@
 			<Avatar.Fallback>
 				{getInitials(authStore.user?.fullname || 'N/A')}
 			</Avatar.Fallback>
-			<Avatar.Image src={authStore.user?.avatar_url} alt="User Avatar" />
+			<Avatar.Image src={authStore.user?.avatar_url} alt="Avatar de usuario" />
 		</Avatar.Root>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-64">
@@ -37,7 +37,7 @@
 					<Avatar.Fallback>
 						{getInitials(authStore.user?.fullname || '')}
 					</Avatar.Fallback>
-					<Avatar.Image src={authStore.user?.avatar_url} alt="User Avatar" />
+					<Avatar.Image src={authStore.user?.avatar_url} alt="Avatar de usuario" />
 				</Avatar.Root>
 				<div class="grid flex-1 text-left text-sm leading-tight">
 					<span class="truncate font-semibold"

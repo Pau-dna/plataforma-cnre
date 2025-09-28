@@ -69,7 +69,7 @@
 
 			toast.success('Contenido movido hacia arriba correctamente.');
 		} catch (error) {
-			console.error('Error moving content up:', error);
+			console.error('Error al mover el contenido hacia arriba:', error);
 			toast.error('Error al mover el contenido.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
@@ -101,7 +101,7 @@
 
 			toast.success('Contenido movido hacia abajo correctamente.');
 		} catch (error) {
-			console.error('Error moving content down:', error);
+			console.error('Error al mover el contenido hacia abajo:', error);
 			toast.error('Error al mover el contenido.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
@@ -135,7 +135,7 @@
 
 			toast.success('Evaluación movida hacia arriba correctamente.');
 		} catch (error) {
-			console.error('Error moving evaluation up:', error);
+			console.error('Error al mover la evaluación hacia arriba:', error);
 			toast.error('Error al mover la evaluación.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
@@ -169,7 +169,7 @@
 
 			toast.success('Evaluación movida hacia abajo correctamente.');
 		} catch (error) {
-			console.error('Error moving evaluation down:', error);
+			console.error('Error al mover la evaluación hacia abajo:', error);
 			toast.error('Error al mover la evaluación.', {
 				description: error instanceof Error ? error.message : String(error)
 			});

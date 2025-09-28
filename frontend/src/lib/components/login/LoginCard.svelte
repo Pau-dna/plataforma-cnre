@@ -39,7 +39,7 @@
 </script>
 
 <Card.Root class="w-md border-sky-500/25 shadow-lg shadow-sky-500/25">
-	<img src="/images/logo.png" alt="CNRE Logo" class="mx-auto h-40 w-auto" />
+	<img src="/images/logo.png" alt="Logo CNRE" class="mx-auto h-40 w-auto" />
 	<Card.Content class="flex flex-col items-center gap-4 p-6">
 		<Card.Title class="text-h2 text-center"
 			>Bienvenido(a) a la Plataforma de Cursos del CNRE</Card.Title

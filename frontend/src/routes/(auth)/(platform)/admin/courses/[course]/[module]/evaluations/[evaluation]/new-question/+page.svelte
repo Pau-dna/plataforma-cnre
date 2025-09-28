@@ -128,7 +128,7 @@
 			toast.success('Pregunta creada exitosamente');
 			goto(`/admin/courses/${courseId}/${moduleId}/evaluations/${evaluation.id}`);
 		} catch (error) {
-			console.error('Error creating question:', error);
+			console.error('Error al crear la pregunta:', error);
 			toast.error('Error al crear la pregunta', {
 				description: error instanceof Error ? error.message : String(error)
 			});

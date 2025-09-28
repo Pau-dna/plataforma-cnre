@@ -25,7 +25,7 @@
 	<div class="flex items-center gap-x-8 md:gap-x-20">
 		<div class="flex shrink-0 text-lg font-semibold">
 			<a href="/home" class="flex shrink-0 gap-4 py-0">
-				<img src="/images/logo.png" alt="CNRE Logo" class="h-12 w-auto md:h-14" />
+				<img src="/images/logo.png" alt="Logo CNRE" class="h-12 w-auto md:h-14" />
 			</a>
 		</div>
 

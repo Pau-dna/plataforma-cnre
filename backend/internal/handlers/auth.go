@@ -80,7 +80,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 // @Tags		auth
 // @Produce		json
 // @Success		200	{object}	models.User	"Authenticated user's
-// @Failure		401	{object}	responses.ErrorResponse	"Unauthorized"
+// @Failure		401	{object}	responses.ErrorResponse	"No autorizado"
 // @Failure		500	{object}	responses.ErrorResponse	"Internal Server Error
 // @Security     BearerAuth
 func (h *AuthHandler) GetUserInfo(c *gin.Context) {
