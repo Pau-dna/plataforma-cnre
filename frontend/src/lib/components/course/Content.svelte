@@ -9,6 +9,7 @@
 
 	type Props = {
 		content: ModuleContent;
+		completed?: boolean;
 		active?: boolean;
 	};
 
@@ -46,7 +47,7 @@
 		return FileText; // Default icon
 	};
 
-	const { content, active }: Props = $props();
+	const { content, active, completed }: Props = $props();
 </script>
 
 <Card class="group cursor-pointer transition-shadow hover:shadow-md">
@@ -66,6 +67,15 @@
 						<Badge variant="outline" class="text-xs">
 							{getContentTypeLabel(content.type)}
 						</Badge>
+
+						{#if completed}
+							<Badge
+								class="max-w-max flex justify-center items-center gap-2 bg-green-100 text-xs"
+							>
+								<div class="h-2 w-2 rounded-full bg-green-600"></div>
+								<span class="font-medium text-green-800">Completado</span>
+							</Badge>
+						{/if}
 					</div>
 					<CardTitle class="group-hover:text-primary text-pretty text-lg transition-colors">
 						{content.title}

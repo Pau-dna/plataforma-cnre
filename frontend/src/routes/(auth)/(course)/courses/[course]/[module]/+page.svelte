@@ -7,6 +7,7 @@
 	let { data }: PageProps = $props();
 
 	const modulo = $derived(data.modules.find((m) => m.id === data.moduleID) as Module);
+	const contentsCompleted = $derived<Record<string, boolean>>(Object.fromEntries(data.progress.map((p) => [p.id.toString(), p.completed])));
 </script>
 
 <div class="flex flex-col gap-y-4 px-4 md:px-0">
@@ -26,7 +27,7 @@
 		{:else}
 			<div class="flex flex-col gap-y-2">
 				{#each data.contents as content (content.id)}
-					<Content {content} active={false} />
+					<Content completed={contentsCompleted[content.id.toString()]} {content} active={false} />
 				{/each}
 			</div>
 		{/if}
