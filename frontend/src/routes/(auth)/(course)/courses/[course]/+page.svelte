@@ -14,7 +14,7 @@
 	<h1 class="text-h1">{data.course.title}</h1>
 	<p class="text-muted-foreground max-w-prose text-pretty">{data.course.description}</p>
 
-	<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+	<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
 		<div class="col-span-1 lg:col-span-8">
 			<!-- svelte-ignore a11y_media_has_caption -->
 			<video
@@ -24,7 +24,7 @@
 			></video>
 		</div>
 
-		<div class="col-span-1 lg:col-span-4 flex flex-col gap-y-2">
+		<div class="col-span-1 flex flex-col gap-y-2 lg:col-span-4">
 			<h2 class="text-h2">Módulos</h2>
 
 			{#each data.modules as modulo}
@@ -41,11 +41,11 @@
 
 		<div class="col-span-4 flex flex-col gap-y-4">
 			<h2 class="text-h2">Tu progreso</h2>
-			
+
 			<!-- Overall Course Progress -->
-			<div class="bg-white border rounded-lg p-4">
-				<ProgressBar 
-					progress={data.courseProgressPercentage} 
+			<div class="rounded-lg border bg-white p-4">
+				<ProgressBar
+					progress={data.courseProgressPercentage}
 					title="Progreso del curso"
 					subtitle="{data.courseProgressPercentage}% completado"
 					size="lg"
@@ -65,13 +65,13 @@
 								{/if}
 								<p class="text-sm font-medium">{modulo.title}</p>
 							</div>
-							<span class="text-xs text-muted-foreground">{modulo.progressPercentage}%</span>
+							<span class="text-muted-foreground text-xs">{modulo.progressPercentage}%</span>
 						</div>
-						
+
 						<!-- Module Progress Bar -->
-						<div class="w-full bg-gray-200 rounded-full h-2">
+						<div class="h-2 w-full rounded-full bg-gray-200">
 							<div
-								class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+								class="h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300"
 								style="width: {modulo.progressPercentage}%"
 							></div>
 						</div>
@@ -95,10 +95,7 @@
 								<!-- Evaluation items -->
 								{#each modulo.evaluations || [] as evaluation}
 									<div class="ml-1">
-										<EvaluationStatus 
-											{evaluation} 
-											size="sm"
-										/>
+										<EvaluationStatus {evaluation} size="sm" />
 									</div>
 								{/each}
 							</div>
@@ -109,18 +106,20 @@
 
 			<!-- Course Completion Status -->
 			{#if data.courseProgressPercentage >= 100 && data.enrollment.completed_at}
-				<CourseCompletion 
+				<CourseCompletion
 					courseName={data.course.title}
 					completedAt={data.enrollment.completed_at}
 					progressPercentage={data.courseProgressPercentage}
 				/>
 			{:else if data.courseProgressPercentage >= 100}
-				<div class="bg-green-50 border border-green-200 rounded-lg p-4">
+				<div class="rounded-lg border border-green-200 bg-green-50 p-4">
 					<div class="flex items-center gap-2">
 						<CheckCircle class="h-5 w-5 text-green-600" />
 						<div>
 							<p class="text-sm font-medium text-green-800">¡Curso completado!</p>
-							<p class="text-xs text-green-600">Has visto todo el contenido y aprobado todas las evaluaciones</p>
+							<p class="text-xs text-green-600">
+								Has visto todo el contenido y aprobado todas las evaluaciones
+							</p>
 						</div>
 					</div>
 				</div>
@@ -129,6 +128,5 @@
 				<CompletionRequirements modules={data.modules} />
 			{/if}
 		</div>
-
 	</div>
 </div>

@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 export const load = (async ({ locals, params, parent }) => {
 	const contentController = new ContentController(locals.accessToken || '');
 	const progressController = new UserProgressController(locals.accessToken || '');
-	
+
 	const contentId = parseInt(params.content);
 	const userId = locals.user.id;
 

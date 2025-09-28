@@ -19,11 +19,11 @@
 		let totalEvaluations = 0;
 		let passedEvaluations = 0;
 
-		modules.forEach(module => {
+		modules.forEach((module) => {
 			totalContent += module.contents?.length || 0;
-			completedContent += module.contents?.filter(c => c.isCompleted).length || 0;
+			completedContent += module.contents?.filter((c) => c.isCompleted).length || 0;
 			totalEvaluations += module.evaluations?.length || 0;
-			passedEvaluations += module.evaluations?.filter(e => e.hasPassed).length || 0;
+			passedEvaluations += module.evaluations?.filter((e) => e.hasPassed).length || 0;
 		});
 
 		return {
@@ -37,9 +37,9 @@
 	});
 </script>
 
-<div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-	<h3 class="text-sm font-medium text-gray-800 mb-3">Requisitos para completar el curso</h3>
-	
+<div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+	<h3 class="mb-3 text-sm font-medium text-gray-800">Requisitos para completar el curso</h3>
+
 	<div class="space-y-2">
 		<!-- Content Requirement -->
 		<div class="flex items-center gap-2">
@@ -75,10 +75,12 @@
 	</div>
 
 	{#if requirements.allContentCompleted && (requirements.totalEvaluations === 0 || requirements.allEvaluationsPassed)}
-		<div class="mt-3 pt-3 border-t border-gray-200">
+		<div class="mt-3 border-t border-gray-200 pt-3">
 			<div class="flex items-center gap-2">
 				<CheckCircle class="h-4 w-4 text-green-600" />
-				<span class="text-sm font-medium text-green-700">¡Listo! Has cumplido todos los requisitos</span>
+				<span class="text-sm font-medium text-green-700"
+					>¡Listo! Has cumplido todos los requisitos</span
+				>
 			</div>
 		</div>
 	{/if}

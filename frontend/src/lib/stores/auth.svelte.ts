@@ -18,7 +18,8 @@ export class AuthStore<T> {
 	login(accessToken: string, refreshToken: string, user: T | null) {
 		if (accessToken == '') throw new Error('El token de acceso no puede estar vacío');
 		if (refreshToken == '') throw new Error('El token de actualización no puede estar vacío');
-		if (user === null || user === undefined) throw new Error('El usuario no puede ser nulo o indefinido');
+		if (user === null || user === undefined)
+			throw new Error('El usuario no puede ser nulo o indefinido');
 
 		this.userData = user;
 		this.tokens = { accessToken, refreshToken };

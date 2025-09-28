@@ -90,7 +90,7 @@
 				<h1 class="text-3xl font-bold">{content.title}</h1>
 				<p class="text-muted-foreground">{content.description}</p>
 			</div>
-			
+
 			<!-- Progress Toggle -->
 			<div class="flex-shrink-0">
 				<ProgressToggle
@@ -155,7 +155,7 @@
 		{:else if isCompleted}
 			<Button
 				href="/courses/{courseId}"
-				class="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+				class="flex items-center gap-2 bg-green-600 hover:bg-green-700"
 			>
 				<span>Volver al curso</span>
 			</Button>

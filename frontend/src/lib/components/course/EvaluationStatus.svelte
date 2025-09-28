@@ -18,7 +18,7 @@
 
 	const sizeClasses = {
 		sm: 'text-xs',
-		md: 'text-sm', 
+		md: 'text-sm',
 		lg: 'text-base'
 	};
 
@@ -33,18 +33,14 @@
 	{#if evaluation.hasPassed}
 		<CheckCircle class="{iconSizes[size]} text-green-600" />
 		<span class="{sizeClasses[size]} font-medium text-green-700">{evaluation.title}</span>
-		<Badge variant="secondary" class="bg-green-100 text-green-800 text-xs">
-			Aprobada
-		</Badge>
+		<Badge variant="secondary" class="bg-green-100 text-xs text-green-800">Aprobada</Badge>
 	{:else}
 		<AlertCircle class="{iconSizes[size]} text-amber-500" />
 		<span class="{sizeClasses[size]} font-medium text-gray-700">{evaluation.title}</span>
-		<Badge variant="secondary" class="bg-amber-100 text-amber-800 text-xs">
-			Pendiente
-		</Badge>
+		<Badge variant="secondary" class="bg-amber-100 text-xs text-amber-800">Pendiente</Badge>
 	{/if}
 </div>
 
 {#if evaluation.description && size !== 'sm'}
-	<p class="text-xs text-gray-500 ml-6 mt-1">{evaluation.description}</p>
+	<p class="ml-6 mt-1 text-xs text-gray-500">{evaluation.description}</p>
 {/if}

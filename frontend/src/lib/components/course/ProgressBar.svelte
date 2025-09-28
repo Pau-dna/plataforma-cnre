@@ -26,15 +26,17 @@
 		<div class="flex flex-col">
 			<h3 class="{textSizeClasses[size]} font-medium">{title}</h3>
 			{#if subtitle}
-				<p class="text-sm text-muted-foreground">{subtitle}</p>
+				<p class="text-muted-foreground text-sm">{subtitle}</p>
 			{/if}
 		</div>
-		<span class="text-sm font-medium text-muted-foreground">{progress}%</span>
+		<span class="text-muted-foreground text-sm font-medium">{progress}%</span>
 	</div>
-	
-	<div class="w-full bg-gray-200 rounded-full {sizeClasses[size]}">
+
+	<div class="w-full rounded-full bg-gray-200 {sizeClasses[size]}">
 		<div
-			class="bg-gradient-to-r from-blue-500 to-purple-600 {sizeClasses[size]} rounded-full transition-all duration-300 ease-out"
+			class="bg-gradient-to-r from-blue-500 to-purple-600 {sizeClasses[
+				size
+			]} rounded-full transition-all duration-300 ease-out"
 			style="width: {progress}%"
 		></div>
 	</div>

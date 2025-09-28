@@ -14,7 +14,15 @@
 		onProgressChange?: (contentId: number, completed: boolean) => void;
 	}
 
-	let { userId, courseId, moduleId, contentId, isCompleted = false, accessToken, onProgressChange }: Props = $props();
+	let {
+		userId,
+		courseId,
+		moduleId,
+		contentId,
+		isCompleted = false,
+		accessToken,
+		onProgressChange
+	}: Props = $props();
 
 	let loading = $state(false);
 	let completed = $state(isCompleted);
@@ -52,7 +60,7 @@
 <Button
 	variant="ghost"
 	size="sm"
-	class="flex items-center gap-2 p-2 h-auto"
+	class="flex h-auto items-center gap-2 p-2"
 	onclick={toggleCompletion}
 	disabled={loading}
 >

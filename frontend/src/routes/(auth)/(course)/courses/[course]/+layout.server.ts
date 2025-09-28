@@ -24,9 +24,12 @@ export const load = (async ({ params, locals }) => {
 	const modulesWithProgress = await Promise.all(
 		modules.map(async (module) => {
 			try {
-				const moduleProgressPercentage = await progressController.calculateModuleProgress(userId, module.id);
+				const moduleProgressPercentage = await progressController.calculateModuleProgress(
+					userId,
+					module.id
+				);
 				const moduleProgress = await progressController.getUserModuleProgress(userId, module.id);
-				
+
 				// Get content completion status
 				const contentsWithProgress = await Promise.all(
 					(module.contents || []).map(async (content) => {
@@ -43,7 +46,10 @@ export const load = (async ({ params, locals }) => {
 				const evaluationsWithStatus = await Promise.all(
 					(module.evaluations || []).map(async (evaluation) => {
 						try {
-							const hasPassed = await progressController.hasUserPassedEvaluation(userId, evaluation.id);
+							const hasPassed = await progressController.hasUserPassedEvaluation(
+								userId,
+								evaluation.id
+							);
 							return { ...evaluation, hasPassed };
 						} catch {
 							return { ...evaluation, hasPassed: false };
@@ -62,8 +68,11 @@ export const load = (async ({ params, locals }) => {
 				return {
 					...module,
 					progressPercentage: 0,
-					contents: (module.contents || []).map(content => ({ ...content, isCompleted: false })),
-					evaluations: (module.evaluations || []).map(evaluation => ({ ...evaluation, hasPassed: false })),
+					contents: (module.contents || []).map((content) => ({ ...content, isCompleted: false })),
+					evaluations: (module.evaluations || []).map((evaluation) => ({
+						...evaluation,
+						hasPassed: false
+					})),
 					progressRecords: []
 				};
 			}
