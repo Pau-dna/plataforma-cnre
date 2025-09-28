@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/imlargo/go-api-template/internal/models"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
