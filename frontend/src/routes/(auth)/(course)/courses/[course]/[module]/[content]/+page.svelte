@@ -7,6 +7,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import type { PageProps } from './$types';
 	import type { Module, ModuleContent } from '$lib/types/models/course';
+	import { UserProgressController } from '$lib';
 
 	let { data }: PageProps = $props();
 
@@ -75,10 +76,17 @@
 
 	const nextContentInfo = $derived(getNextContent());
 
-	// Auto-advance when content is marked complete (optional)
-	function handleCompleteAndNext() {
-		if (nextContentInfo && isCompleted) {
-			goto(nextContentInfo.url);
+	async function handleCompleteAndNext() {
+		// Mark as completed
+		const progressController = new UserProgressController();
+		progressController.markContentComplete(data.userId, courseId, moduleId, content.id).then(() => {
+			isCompleted = true;
+		}).catch((error) => {
+			console.error('Error marking content as complete:', error);
+		});
+
+		if (nextContentInfo) {
+			await goto(nextContentInfo.url);
 		}
 	}
 </script>
