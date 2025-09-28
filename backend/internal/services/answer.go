@@ -73,7 +73,7 @@ func (s *answerService) UpdateAnswerPatch(answerID uint, data map[string]interfa
 		return nil, errors.New("answer ID cannot be zero")
 	}
 
-	var answer dto.UpdateAnswerRequest
+	var answer dto.UpdateAnswerPatchRequest
 	if err := utils.MapToStructStrict(data, &answer); err != nil {
 		return nil, errors.New("datos inválidos: " + err.Error())
 	}

@@ -14,3 +14,10 @@ type UpdateAnswerRequest struct {
 	IsCorrect bool   `json:"is_correct"`
 	Order     int    `json:"order"`
 }
+
+// UpdateAnswerPatchRequest DTO for partially updating answers (PATCH)
+type UpdateAnswerPatchRequest struct {
+	Text      *string `json:"text,omitempty"`
+	IsCorrect *bool   `json:"is_correct,omitempty"`
+	Order     *int    `json:"order,omitempty"`
+}

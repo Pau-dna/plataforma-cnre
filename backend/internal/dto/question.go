@@ -18,3 +18,11 @@ type UpdateQuestionRequest struct {
 	Explanation string             `json:"explanation"`
 	Points      int                `json:"points"`
 }
+
+// UpdateQuestionPatchRequest DTO for partially updating questions (PATCH)
+type UpdateQuestionPatchRequest struct {
+	Text        *string             `json:"text,omitempty"`
+	Type        *enums.QuestionType `json:"type,omitempty"`
+	Explanation *string             `json:"explanation,omitempty"`
+	Points      *int                `json:"points,omitempty"`
+}

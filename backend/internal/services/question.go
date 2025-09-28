@@ -74,7 +74,7 @@ func (s *questionService) UpdateQuestionPatch(questionID uint, data map[string]i
 		return nil, errors.New("question ID cannot be zero")
 	}
 
-	var question dto.UpdateQuestionRequest
+	var question dto.UpdateQuestionPatchRequest
 	if err := utils.MapToStructStrict(data, &question); err != nil {
 		return nil, errors.New("datos inválidos: " + err.Error())
 	}
