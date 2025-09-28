@@ -355,7 +355,7 @@ func (h *UserProgressHandler) GetComprehensiveCourseProgress(c *gin.Context) {
 }
 
 // @Summary Get comprehensive user module progress
-// @Description Get comprehensive progress information for a user in a specific module, including detailed progress for each content item and evaluation
+// @Description Get comprehensive progress information for a user in a specific module, including detailed progress for each content item (excluding evaluations)
 // @Tags user-progress
 // @Produce json
 // @Param userId path int true "User ID"

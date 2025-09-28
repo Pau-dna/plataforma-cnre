@@ -116,7 +116,7 @@ export class UserProgressController extends BaseController {
 
 	/**
 	 * Get comprehensive module progress summary
-	 * Returns overall module progress and detailed progress for each content item and evaluation
+	 * Returns overall module progress and detailed progress for each content item (excluding evaluations)
 	 */
 	async getComprehensiveModuleProgress(userId: number, moduleId: number): Promise<ModuleProgressSummaryDTO> {
 		return this.get<ModuleProgressSummaryDTO>(`/api/v1/users/${userId}/modules/${moduleId}/progress-summary`);

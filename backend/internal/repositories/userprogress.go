@@ -287,7 +287,7 @@ func (r *userprogressRepository) GetModuleProgressSummary(userID, moduleID uint)
 
 	var contentData []ModuleContentData
 	
-	// Complex query that gets all content items and their progress for a module
+	// Simplified query that gets only content items and their progress for a module (no evaluations)
 	query := `
 	WITH module_info AS (
 		-- Get module and course basic info
@@ -295,80 +295,33 @@ func (r *userprogressRepository) GetModuleProgressSummary(userID, moduleID uint)
 		FROM modules m
 		INNER JOIN courses c ON c.id = m.course_id
 		WHERE m.id = ?
-	),
-	content_items AS (
-		-- Get all content items for the module
-		SELECT 
-			mi.module_id,
-			mi.module_title,
-			mi.course_id,
-			mi.course_title,
-			c.id as item_id,
-			c.title as item_title,
-			'content' as item_type,
-			c."order" as item_order,
-			CASE 
-				WHEN up.completed_at IS NOT NULL THEN true 
-				ELSE false 
-			END as is_completed,
-			CASE 
-				WHEN up.completed_at IS NOT NULL THEN up.completed_at::text 
-				ELSE NULL 
-			END as completed_at,
-			up.score
-		FROM module_info mi
-		INNER JOIN contents c ON c.module_id = mi.module_id
-		LEFT JOIN user_progress up ON up.content_id = c.id AND up.user_id = ?
-	),
-	evaluation_items AS (
-		-- Get all evaluation items for the module
-		SELECT 
-			mi.module_id,
-			mi.module_title,
-			mi.course_id,
-			mi.course_title,
-			e.id as item_id,
-			e.title as item_title,
-			'evaluation' as item_type,
-			e."order" as item_order,
-			CASE 
-				WHEN ea.passed = true AND ea.submitted_at IS NOT NULL THEN true 
-				ELSE false 
-			END as is_completed,
-			CASE 
-				WHEN ea.passed = true AND ea.submitted_at IS NOT NULL THEN ea.submitted_at::text 
-				ELSE NULL 
-			END as completed_at,
-			CASE 
-				WHEN ea.passed = true THEN ea.score 
-				ELSE NULL 
-			END as score
-		FROM module_info mi
-		INNER JOIN evaluations e ON e.module_id = mi.module_id
-		LEFT JOIN (
-			-- Get the best attempt for each evaluation
-			SELECT 
-				ea1.evaluation_id,
-				ea1.user_id,
-				ea1.passed,
-				ea1.submitted_at,
-				ea1.score,
-				ROW_NUMBER() OVER (
-					PARTITION BY ea1.evaluation_id, ea1.user_id 
-					ORDER BY ea1.passed DESC, ea1.score DESC, ea1.submitted_at DESC
-				) as rn
-			FROM evaluation_attempts ea1
-			WHERE ea1.user_id = ?
-		) ea ON ea.evaluation_id = e.id AND ea.user_id = ? AND ea.rn = 1
 	)
-	-- Combine content and evaluation items
-	SELECT * FROM content_items
-	UNION ALL
-	SELECT * FROM evaluation_items
-	ORDER BY item_order ASC, item_type ASC
+	-- Get all content items for the module (excluding evaluations)
+	SELECT 
+		mi.module_id,
+		mi.module_title,
+		mi.course_id,
+		mi.course_title,
+		c.id as item_id,
+		c.title as item_title,
+		'content' as item_type,
+		c."order" as item_order,
+		CASE 
+			WHEN up.completed_at IS NOT NULL THEN true 
+			ELSE false 
+		END as is_completed,
+		CASE 
+			WHEN up.completed_at IS NOT NULL THEN up.completed_at::text 
+			ELSE NULL 
+		END as completed_at,
+		up.score
+	FROM module_info mi
+	INNER JOIN contents c ON c.module_id = mi.module_id
+	LEFT JOIN user_progress up ON up.content_id = c.id AND up.user_id = ?
+	ORDER BY c."order" ASC
 	`
 
-	if err := r.db.Raw(query, moduleID, userID, userID, userID).Scan(&contentData).Error; err != nil {
+	if err := r.db.Raw(query, moduleID, userID).Scan(&contentData).Error; err != nil {
 		return nil, err
 	}
 
