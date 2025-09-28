@@ -20,6 +20,7 @@ type UserProgressService interface {
 	CalculateModuleProgress(userID, moduleID uint) (float64, error)
 	GetUserProgressForContent(userID, contentID uint) (*models.UserProgress, error)
 	HasUserPassedEvaluation(userID, evaluationID uint) (bool, error)
+	GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error)
 	GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error)
 }
 
@@ -294,6 +295,11 @@ func (s *userProgressService) HasUserPassedEvaluation(userID, evaluationID uint)
 	}
 
 	return false, nil
+}
+
+func (s *userProgressService) GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error) {
+	// Delegate to repository layer which handles the complex SQL query and data processing
+	return s.store.UserProgresss.GetCourseProgressSummary(userID, courseID)
 }
 
 func (s *userProgressService) GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error) {
