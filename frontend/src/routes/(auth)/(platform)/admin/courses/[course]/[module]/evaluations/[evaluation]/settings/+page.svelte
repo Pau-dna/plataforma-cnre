@@ -29,7 +29,16 @@
 
 	async function handleSubmit() {
 		// Validate data
-		if (!formdata.title || !formdata.question_count || formdata.question_count < 1 || !formdata.answer_options_count || formdata.answer_options_count < 2 || !formdata.passing_score || formdata.passing_score < 0 || formdata.passing_score > 100) {
+		if (
+			!formdata.title ||
+			!formdata.question_count ||
+			formdata.question_count < 1 ||
+			!formdata.answer_options_count ||
+			formdata.answer_options_count < 2 ||
+			!formdata.passing_score ||
+			formdata.passing_score < 0 ||
+			formdata.passing_score > 100
+		) {
 			toast.error('Por favor, complete correctamente todos los campos obligatorios.');
 			return;
 		}
@@ -70,7 +79,8 @@
 		<Card.Header class="flex flex-col gap-3">
 			<Card.Title class="text-h2">Configuración de Evaluación</Card.Title>
 			<Card.Description>
-				Modifique la configuración de la evaluación "{data.evaluation.title}" en el módulo "{data.module.title}".
+				Modifique la configuración de la evaluación "{data.evaluation.title}" en el módulo "{data
+					.module.title}".
 			</Card.Description>
 		</Card.Header>
 		<Card.Content class="flex flex-col gap-6">

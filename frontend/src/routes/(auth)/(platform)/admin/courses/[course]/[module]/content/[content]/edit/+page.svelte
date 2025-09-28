@@ -67,7 +67,8 @@
 		<Card.Header class="flex flex-col gap-3">
 			<Card.Title class="text-h2">Editar contenido</Card.Title>
 			<Card.Description>
-				Modifique los detalles del contenido "{data.content.title}" en el módulo "{data.module.title}".
+				Modifique los detalles del contenido "{data.content.title}" en el módulo "{data.module
+					.title}".
 			</Card.Description>
 		</Card.Header>
 		<Card.Content class="flex flex-col gap-6">
