@@ -52,7 +52,7 @@ func (r *questionRepository) Delete(id uint) error {
 		if err := tx.Where("question_id = ?", id).Delete(&models.Answer{}).Error; err != nil {
 			return err
 		}
-		
+
 		// Then delete the question
 		var question models.Question
 		question.ID = id
