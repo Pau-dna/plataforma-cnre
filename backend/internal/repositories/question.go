@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"github.com/imlargo/go-api-template/internal/models"
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -79,9 +78,7 @@ func (r *questionRepository) GetByEvaluationID(evaluationID uint) ([]*models.Que
 
 func (r *questionRepository) GetWithAnswers(id uint) (*models.Question, error) {
 	var question models.Question
-	if err := r.db.Preload("Answers", func(db *gorm.DB) *gorm.DB {
-		return db.Order("\"order\" ASC")
-	}).First(&question, id).Error; err != nil {
+	if err := r.db.Preload("Answers").First(&question, id).Error; err != nil {
 		return nil, err
 	}
 	return &question, nil
