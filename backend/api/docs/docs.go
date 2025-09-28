@@ -3784,13 +3784,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Petición incorrecta",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Error interno del servidor",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
                         }
@@ -3821,7 +3821,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "No autorizado",
                         "schema": {
                             "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_responses.ErrorResponse"
                         }

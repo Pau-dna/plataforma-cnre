@@ -73,7 +73,7 @@
 		return null; // No more content
 	}
 
-	const nextContentInfo = getNextContent();
+	const nextContentInfo = $derived(getNextContent());
 
 	// Auto-advance when content is marked complete (optional)
 	function handleCompleteAndNext() {
@@ -89,19 +89,6 @@
 			<div class="flex flex-col gap-y-2">
 				<h1 class="text-3xl font-bold">{content.title}</h1>
 				<p class="text-muted-foreground">{content.description}</p>
-			</div>
-
-			<!-- Progress Toggle -->
-			<div class="flex-shrink-0">
-				<ProgressToggle
-					userId={data.userId}
-					courseId={data.courseId}
-					moduleId={data.moduleId}
-					contentId={content.id}
-					{isCompleted}
-					accessToken={data.accessToken}
-					onProgressChange={handleProgressChange}
-				/>
 			</div>
 		</div>
 
