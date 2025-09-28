@@ -20,6 +20,7 @@ type UserProgressService interface {
 	CalculateModuleProgress(userID, moduleID uint) (float64, error)
 	GetUserProgressForContent(userID, contentID uint) (*models.UserProgress, error)
 	HasUserPassedEvaluation(userID, evaluationID uint) (bool, error)
+	GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error)
 }
 
 type userProgressService struct {
@@ -293,4 +294,24 @@ func (s *userProgressService) HasUserPassedEvaluation(userID, evaluationID uint)
 	}
 
 	return false, nil
+}
+
+func (s *userProgressService) GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error) {
+	// Use the optimized repository method to get content progress in a single query
+	results, err := s.store.Contents.GetContentProgressByModule(userID, moduleID)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el progreso de contenidos del módulo: %w", err)
+	}
+
+	// Convert repository results to DTO
+	contentProgress := make([]*dto.ContentProgressResponse, len(results))
+	for i, result := range results {
+		contentProgress[i] = &dto.ContentProgressResponse{
+			ID:        result.ID,
+			Title:     result.Title,
+			Completed: result.Completed,
+		}
+	}
+
+	return contentProgress, nil
 }
