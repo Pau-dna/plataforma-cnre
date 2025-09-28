@@ -42,7 +42,7 @@
 			toast.success('Evaluación eliminada exitosamente.');
 			ondelete?.(evaluation);
 		} catch (error) {
-			console.error('Error deleting evaluation:', error);
+			console.error('Error al eliminar evaluación:', error);
 			toast.error('Error al eliminar la evaluación.', {
 				description: error instanceof Error ? error.message : String(error)
 			});

@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			evaluationId
 		};
 	} catch (error) {
-		console.error('Error loading evaluation for settings:', error);
+		console.error('Error al cargar evaluación para configuración:', error);
 		throw error;
 	}
 };

@@ -37,7 +37,7 @@
 			userAttempts = attemptsResponse;
 			canAttempt = statusResponse.can_attempt;
 		} catch (error) {
-			console.error('Error loading evaluation status:', error);
+			console.error('Error al cargar estado de la evaluación:', error);
 			toast.error('Error cargando estado de la evaluación');
 		}
 	});
@@ -66,7 +66,7 @@
 			// Navigate to the exam taking page
 			await goto(`${getEvaluationUrl()}/attempt/${attempt.id}`);
 		} catch (error: any) {
-			console.error('Error starting attempt:', error);
+			console.error('Error al iniciar intento:', error);
 
 			// More specific error messages
 			if (error?.response?.status === 429) {

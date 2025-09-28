@@ -53,7 +53,7 @@
 			toast.success('Módulo eliminado con éxito.');
 			ondelete?.(modulo);
 		} catch (error) {
-			console.error('Error deleting module:', error);
+			console.error('Error al eliminar módulo:', error);
 			toast.error('Error al eliminar el módulo.', {
 				description: error instanceof Error ? error.message : String(error)
 			});

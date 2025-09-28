@@ -167,7 +167,7 @@
 			// For now, we'll just update the lastSaved timestamp
 			lastSaved = new Date();
 		} catch (error) {
-			console.warn('Failed to save progress:', error);
+			console.warn('Error al guardar progreso:', error);
 		}
 	}
 
@@ -219,7 +219,7 @@
 				`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}/attempt/${page.params.attempt}/results`
 			);
 		} catch (error) {
-			console.error('Error submitting exam:', error);
+			console.error('Error al enviar examen:', error);
 			toast.error('Error al enviar el examen. Por favor intenta de nuevo.');
 		} finally {
 			submitting = false;
