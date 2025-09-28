@@ -34,7 +34,7 @@
 			toast.success('Pregunta eliminada exitosamente.');
 			ondelete?.(question);
 		} catch (error) {
-			console.error('Error deleting question:', error);
+			console.error('Error al eliminar pregunta:', error);
 			toast.error('Error al eliminar la pregunta.', {
 				description: error instanceof Error ? error.message : String(error)
 			});

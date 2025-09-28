@@ -93,7 +93,7 @@ func (s *questionService) UpdateQuestionPatch(questionID uint, data map[string]i
 
 func (s *questionService) DeleteQuestion(id uint) error {
 	if err := s.store.Questions.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete question: %w", err)
+		return fmt.Errorf("error al eliminar la pregunta: %w", err)
 	}
 	return nil
 }
@@ -102,7 +102,7 @@ func (s *questionService) GetQuestionsByEvaluation(evaluationID uint) ([]*models
 	// Use the new repository method to filter by evaluation ID at database level
 	questions, err := s.store.Questions.GetByEvaluationID(evaluationID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get questions: %w", err)
+		return nil, fmt.Errorf("error al obtener las preguntas: %w", err)
 	}
 
 	return questions, nil

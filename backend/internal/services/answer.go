@@ -92,7 +92,7 @@ func (s *answerService) UpdateAnswerPatch(answerID uint, data map[string]interfa
 
 func (s *answerService) DeleteAnswer(id uint) error {
 	if err := s.store.Answers.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete answer: %w", err)
+		return fmt.Errorf("error al eliminar la respuesta: %w", err)
 	}
 	return nil
 }
@@ -101,7 +101,7 @@ func (s *answerService) GetAnswersByQuestion(questionID uint) ([]*models.Answer,
 	// Use the new repository method to filter by question ID at database level
 	answers, err := s.store.Answers.GetByQuestionID(questionID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get answers: %w", err)
+		return nil, fmt.Errorf("error al obtener las respuestas: %w", err)
 	}
 
 	return answers, nil
@@ -117,7 +117,7 @@ func (s *answerService) ValidateAnswers(questionID uint, selectedAnswerIDs []uin
 	// Get all answers for the question
 	answers, err := s.GetAnswersByQuestion(questionID)
 	if err != nil {
-		return false, 0, fmt.Errorf("failed to get answers: %w", err)
+		return false, 0, fmt.Errorf("error al obtener las respuestas: %w", err)
 	}
 
 	// Create maps for easy lookup

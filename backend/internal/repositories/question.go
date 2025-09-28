@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/imlargo/go-api-template/internal/models"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -47,9 +48,17 @@ func (r *questionRepository) Patch(id uint, data map[string]interface{}) error {
 }
 
 func (r *questionRepository) Delete(id uint) error {
-	var question models.Question
-	question.ID = id
-	return r.db.Delete(&question).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// First delete all answers related to this question
+		if err := tx.Where("question_id = ?", id).Delete(&models.Answer{}).Error; err != nil {
+			return err
+		}
+
+		// Then delete the question
+		var question models.Question
+		question.ID = id
+		return tx.Delete(&question).Error
+	})
 }
 
 func (r *questionRepository) GetAll() ([]*models.Question, error) {

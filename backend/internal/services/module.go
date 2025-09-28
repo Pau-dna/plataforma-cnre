@@ -81,7 +81,7 @@ func (s *moduleService) UpdateModule(id uint, moduleData *models.Module) (*model
 
 func (s *moduleService) UpdateModulePatch(moduleID uint, data map[string]interface{}) (*models.Module, error) {
 	if moduleID == 0 {
-		return nil, errors.New("module ID cannot be zero")
+		return nil, errors.New("el ID del módulo no puede ser cero")
 	}
 
 	var module dto.UpdateModuleRequest
@@ -111,7 +111,7 @@ func (s *moduleService) DeleteModule(id uint) error {
 	courseID := module.CourseID
 
 	if err := s.store.Modules.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete module: %w", err)
+		return fmt.Errorf("error al eliminar el módulo: %w", err)
 	}
 
 	// Decrement module count for the course
@@ -124,10 +124,10 @@ func (s *moduleService) DeleteModule(id uint) error {
 }
 
 func (s *moduleService) GetModulesByCourse(courseID uint) ([]*models.Module, error) {
-	// Use the new repository method to filter by course ID at database level
+	// Use the optimized repository method to filter by course ID at database level
 	modules, err := s.store.Modules.GetByCourseID(courseID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get modules: %w", err)
+		return nil, fmt.Errorf("error al obtener los módulos: %w", err)
 	}
 
 	return modules, nil
@@ -166,7 +166,7 @@ func (s *moduleService) ReorderModules(courseID uint, moduleOrders []struct {
 
 		module.Order = order.Order
 		if err := s.store.Modules.Update(module); err != nil {
-			return fmt.Errorf("failed to update module order: %w", err)
+			return fmt.Errorf("error al actualizar el orden del módulo: %w", err)
 		}
 	}
 

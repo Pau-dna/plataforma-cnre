@@ -141,7 +141,7 @@ func (s *notificationService) GetSSESubscriptions() map[string]interface{} {
 
 func (s *notificationService) GetUserNotifications(userID uint) ([]*models.Notification, error) {
 	if userID == 0 {
-		return nil, errors.New("user ID is required")
+		return nil, errors.New("se requiere el ID del usuario")
 	}
 
 	notifications, err := s.store.Notifications.GetByUser(userID)
@@ -154,7 +154,7 @@ func (s *notificationService) GetUserNotifications(userID uint) ([]*models.Notif
 
 func (s *notificationService) MarkNotificationsAsRead(userID uint) error {
 	if userID == 0 {
-		return errors.New("user ID is required")
+		return errors.New("se requiere el ID del usuario")
 	}
 
 	now := time.Now()

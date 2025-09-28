@@ -1,10 +1,17 @@
 package models
 
-import "github.com/imlargo/go-api-template/internal/enums"
+import (
+	"time"
+
+	"github.com/imlargo/go-api-template/internal/enums"
+)
 
 // Content - modelo de contenido (lecciones, videos, lecturas)
 type Content struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	Order       int               `json:"order" gorm:"not null;index:idx_contents_module_order,priority:2"`
 	Title       string            `json:"title" gorm:"not null"`
 	Description string            `json:"description" gorm:"type:text"`

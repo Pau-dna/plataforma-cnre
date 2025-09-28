@@ -49,7 +49,7 @@ func (s *enrollmentService) CreateEnrollment(userID, courseID uint) (*models.Enr
 	// Check if enrollment already exists
 	existing, _ := s.GetUserCourseEnrollment(userID, courseID)
 	if existing != nil {
-		return nil, fmt.Errorf("user is already enrolled in this course")
+		return nil, fmt.Errorf("el usuario ya está inscrito en este curso")
 	}
 
 	enrollment := &models.Enrollment{
@@ -129,7 +129,7 @@ func (s *enrollmentService) DeleteEnrollment(id uint) error {
 	courseID := enrollment.CourseID
 
 	if err := s.store.Enrollments.Delete(id); err != nil {
-		return fmt.Errorf("failed to delete enrollment: %w", err)
+		return fmt.Errorf("error al eliminar la inscripción: %w", err)
 	}
 
 	// Decrement student count for the course
@@ -145,7 +145,7 @@ func (s *enrollmentService) GetUserEnrollments(userID uint) ([]*models.Enrollmen
 	// Use the new repository method to filter by user ID at database level
 	enrollments, err := s.store.Enrollments.GetByUserID(userID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get enrollments: %w", err)
+		return nil, fmt.Errorf("error al obtener las inscripciones: %w", err)
 	}
 
 	return enrollments, nil
@@ -155,7 +155,7 @@ func (s *enrollmentService) GetCourseEnrollments(courseID uint) ([]*models.Enrol
 	// Use the new repository method to filter by course ID at database level
 	enrollments, err := s.store.Enrollments.GetByCourseID(courseID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get enrollments: %w", err)
+		return nil, fmt.Errorf("error al obtener las inscripciones: %w", err)
 	}
 
 	return enrollments, nil
@@ -182,7 +182,7 @@ func (s *enrollmentService) CompleteEnrollment(userID, courseID uint) error {
 	enrollment.Progress = 100.0
 
 	if err := s.store.Enrollments.Update(enrollment); err != nil {
-		return fmt.Errorf("failed to complete enrollment: %w", err)
+		return fmt.Errorf("error al completar la inscripción: %w", err)
 	}
 
 	return nil
@@ -210,7 +210,7 @@ func (s *enrollmentService) UpdateProgress(userID, courseID uint, progress float
 	}
 
 	if err := s.store.Enrollments.Update(enrollment); err != nil {
-		return fmt.Errorf("failed to update enrollment progress: %w", err)
+		return fmt.Errorf("error al actualizar el progreso de la inscripción: %w", err)
 	}
 
 	return nil

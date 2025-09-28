@@ -52,7 +52,7 @@
 
 			toast.success('Módulo movido hacia arriba correctamente.');
 		} catch (error) {
-			console.error('Error moving module up:', error);
+			console.error('Error al mover módulo hacia arriba:', error);
 			toast.error('Error al mover el módulo.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
@@ -84,7 +84,7 @@
 
 			toast.success('Módulo movido hacia abajo correctamente.');
 		} catch (error) {
-			console.error('Error moving module down:', error);
+			console.error('Error al mover módulo hacia abajo:', error);
 			toast.error('Error al mover el módulo.', {
 				description: error instanceof Error ? error.message : String(error)
 			});

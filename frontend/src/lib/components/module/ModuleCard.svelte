@@ -53,12 +53,14 @@
 			toast.success('Módulo eliminado con éxito.');
 			ondelete?.(modulo);
 		} catch (error) {
-			console.error('Error deleting module:', error);
+			console.error('Error al eliminar módulo:', error);
 			toast.error('Error al eliminar el módulo.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
 		}
 	}
+
+	const formattedDate = actDate ? new Date(actDate).toLocaleDateString('es-ES') : 'N/A';
 </script>
 
 <Card.Root>
@@ -118,7 +120,7 @@
 				<span class="text-sm leading-none">Gestionar Contenidos</span>
 			</Button>
 		</div>
-		<span class="text-muted-foreground text-sm leading-none">Actualizado el {actDate}</span>
+		<span class="text-muted-foreground text-sm leading-none">Actualizado el {formattedDate}</span>
 	</Card.Content>
 </Card.Root>
 

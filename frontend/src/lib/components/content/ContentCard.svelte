@@ -12,6 +12,7 @@
 	type Props = {
 		content: Content;
 		actDate?: string;
+		courseId?: number;
 		onupdate?: (content: Content) => void;
 		ondelete?: (content: Content) => void;
 		onmoveup?: (content: Content) => void;
@@ -23,6 +24,7 @@
 	const {
 		content,
 		actDate,
+		courseId,
 		onupdate,
 		ondelete,
 		onmoveup,
@@ -48,7 +50,7 @@
 			toast.success('Contenido eliminado con éxito.');
 			ondelete?.(content);
 		} catch (error) {
-			console.error('Error deleting content:', error);
+			console.error('Error al eliminar contenido:', error);
 			toast.error('Error al eliminar el contenido.', {
 				description: error instanceof Error ? error.message : String(error)
 			});
@@ -77,7 +79,18 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.Group>
 						<DropdownMenu.Item>Ver Detalles</DropdownMenu.Item>
-						<DropdownMenu.Item>Editar</DropdownMenu.Item>
+						{#if courseId}
+							<DropdownMenu.Item>
+								<a
+									href="/admin/courses/{courseId}/{content.module_id}/content/{content.id}/edit"
+									class="flex w-full"
+								>
+									Editar
+								</a>
+							</DropdownMenu.Item>
+						{:else}
+							<DropdownMenu.Item>Editar</DropdownMenu.Item>
+						{/if}
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item class="text-destructive" onclick={() => (openDelete = true)}>
 							Eliminar

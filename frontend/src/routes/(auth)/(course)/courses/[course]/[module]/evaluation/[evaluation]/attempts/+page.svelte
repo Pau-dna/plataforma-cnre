@@ -53,7 +53,7 @@
 			toast.success('Nuevo intento iniciado');
 			await goto(`${evaluationUrl}/attempt/${attempt.id}`);
 		} catch (error) {
-			console.error('Error starting attempt:', error);
+			console.error('Error al iniciar intento:', error);
 			toast.error('No se pudo iniciar el examen. Por favor intenta de nuevo.');
 		} finally {
 			loading = false;

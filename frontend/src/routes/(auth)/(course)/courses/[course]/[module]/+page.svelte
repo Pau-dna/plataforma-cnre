@@ -9,9 +9,9 @@
 	const modulo = $derived(data.modules.find((m) => m.id === data.moduleID) as Module);
 </script>
 
-<div class="flex flex-col gap-y-8">
+<div class="flex flex-col gap-y-4 px-4 md:px-0">
 	<div class="flex flex-col gap-y-2">
-		<h1 class="text-3xl font-bold">{modulo.title}</h1>
+		<h1 class="text-2xl font-bold md:text-3xl">{modulo.title}</h1>
 		<p class="text-muted-foreground">{modulo.description}</p>
 	</div>
 
@@ -43,7 +43,7 @@
 				</p>
 			</div>
 		{:else}
-			<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				{#each data.evaluations as evaluation (evaluation.id)}
 					<StudentEvaluationCard {evaluation} courseId={data.course.id} />
 				{/each}

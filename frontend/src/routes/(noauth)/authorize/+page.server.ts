@@ -23,7 +23,7 @@ export const load = (async ({ url, cookies }) => {
 			redirectTo = atob(redirectParam);
 		} catch (error) {
 			// If base64 decoding fails, ignore the redirect parameter
-			console.warn('Failed to decode redirect parameter.');
+			console.warn('Error al decodificar parámetro de redirección.');
 			redirectTo = null;
 		}
 	}
@@ -61,7 +61,7 @@ export const load = (async ({ url, cookies }) => {
 			const enrollmentController = new EnrollmentController(authData.tokens.access_token);
 			await enrollmentController.enrollInCourse(1, authData.user.id);
 		} catch (error) {
-			console.log('Auto-enrollment failed:', error);
+			console.log('Inscripción automática falló:', error);
 		}
 	}
 

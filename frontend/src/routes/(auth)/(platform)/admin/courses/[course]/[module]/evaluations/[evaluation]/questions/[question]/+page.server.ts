@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			evaluationId
 		};
 	} catch (err) {
-		console.error('Error loading question:', err);
+		console.error('Error al cargar pregunta:', err);
 		throw error(404, 'Question not found');
 	}
 };

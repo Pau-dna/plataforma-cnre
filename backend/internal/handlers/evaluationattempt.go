@@ -91,11 +91,11 @@ func (h *EvaluationAttemptHandler) SubmitAttempt(c *gin.Context) {
 	attempt, err := h.evaluationAttemptService.SubmitAttempt(uint(id), submissionData.Answers)
 	if err != nil {
 		h.logger.Errorf("Failed to submit attempt: %v", err)
-		if err.Error() == "attempt already submitted" || err.Error() == "time limit exceeded" {
+		if err.Error() == "el intento ya fue enviado" || err.Error() == "tiempo límite excedido" {
 			responses.ErrorConflict(c, err.Error())
 			return
 		}
-		responses.ErrorInternalServerWithMessage(c, "Failed to submit attempt")
+		responses.ErrorInternalServerWithMessage(c, "Error al enviar el intento")
 		return
 	}
 

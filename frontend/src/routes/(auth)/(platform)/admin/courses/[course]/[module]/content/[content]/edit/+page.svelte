@@ -1,0 +1,122 @@
+<script lang="ts">
+	import type { PageProps } from './$types';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import type { UpdateContentDTO } from '$lib/types';
+	import { ContentController } from '$lib/controllers';
+	import { ApiError } from '$lib/utils/error';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
+	import Back from '$lib/components/kit/Back.svelte';
+
+	let { data }: PageProps = $props();
+
+	let submitting = $state(false);
+	const formdata = $state<UpdateContentDTO>({
+		title: data.content.title,
+		description: data.content.description || '',
+		body: data.content.body || '',
+		media_url: data.content.media_url || ''
+	});
+
+	const contentController = new ContentController();
+
+	async function handleSubmit() {
+		// Validate data
+		if (!formdata.title || !formdata.body) {
+			toast.error('Por favor, complete los campos obligatorios (Título y Contenido).');
+			return;
+		}
+
+		try {
+			submitting = true;
+			await contentController.updateContent(data.contentId, formdata);
+			toast.success('Contenido actualizado con éxito.');
+			// Redirect back to the module contents page
+			goto(`/admin/courses/${data.courseId}/${data.moduleId}`);
+		} catch (error) {
+			const apiError = ApiError.from(error);
+
+			// Handle specific error types
+			if (apiError.isValidationError()) {
+				toast.error('Datos inválidos', {
+					description: apiError.message
+				});
+			} else if (apiError.isAuthError()) {
+				toast.error('Sin autorización', {
+					description: 'No tienes permisos para editar contenido.'
+				});
+			} else {
+				toast.error('Error al actualizar el contenido', {
+					description: apiError.getUserMessage()
+				});
+			}
+		} finally {
+			submitting = false;
+		}
+	}
+</script>
+
+<Back href="/admin/courses/{data.courseId}/{data.moduleId}" />
+
+<div class="flex items-center justify-center">
+	<Card.Root class="form-card w-full max-w-2xl">
+		<Card.Header class="flex flex-col gap-3">
+			<Card.Title class="text-h2">Editar contenido</Card.Title>
+			<Card.Description>
+				Modifique los detalles del contenido "{data.content.title}" en el módulo "{data.module
+					.title}".
+			</Card.Description>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-6">
+			<div class="flex flex-col gap-2">
+				<Label for="title">Título del contenido *</Label>
+				<Input
+					id="title"
+					placeholder="Ingrese el título del contenido"
+					bind:value={formdata.title}
+				/>
+			</div>
+
+			<div class="flex flex-col gap-2">
+				<Label for="description">Descripción</Label>
+				<Textarea
+					id="description"
+					placeholder="Ingrese una descripción opcional del contenido"
+					bind:value={formdata.description}
+				/>
+			</div>
+
+			<div class="flex flex-col gap-2">
+				<Label for="body">Contenido *</Label>
+				<Textarea
+					id="body"
+					placeholder="Ingrese el contenido principal (texto, HTML, etc.)"
+					bind:value={formdata.body}
+					rows={8}
+				/>
+			</div>
+
+			<div class="flex flex-col gap-2">
+				<Label for="media_url">URL de multimedia (opcional)</Label>
+				<Input
+					id="media_url"
+					placeholder="https://ejemplo.com/video.mp4 o https://ejemplo.com/imagen.jpg"
+					bind:value={formdata.media_url}
+				/>
+			</div>
+		</Card.Content>
+		<Card.Footer>
+			<Button
+				onclick={handleSubmit}
+				disabled={submitting}
+				class="w-full bg-pink-500 hover:bg-pink-900"
+			>
+				{submitting ? 'Guardando...' : 'Guardar cambios'}
+			</Button>
+		</Card.Footer>
+	</Card.Root>
+</div>
