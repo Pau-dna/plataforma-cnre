@@ -43,7 +43,7 @@ func (aq *AttemptQuestions) Scan(value interface{}) error {
 
 	bytes, ok := value.([]byte)
 	if !ok {
-		return errors.New("cannot scan non-[]byte into AttemptQuestions")
+		return errors.New("no se puede escanear datos que no sean []byte en AttemptQuestions")
 	}
 
 	return json.Unmarshal(bytes, aq)
@@ -73,7 +73,7 @@ func (a *AttemptAnswers) Scan(value interface{}) error {
 
 	bytes, ok := value.([]byte)
 	if !ok {
-		return errors.New("cannot scan non-[]byte into AttemptAnswers")
+		return errors.New("no se puede escanear datos que no sean []byte en AttemptAnswers")
 	}
 
 	return json.Unmarshal(bytes, a)
@@ -81,7 +81,10 @@ func (a *AttemptAnswers) Scan(value interface{}) error {
 
 // EvaluationAttempt - modelo de intento de evaluación
 type EvaluationAttempt struct {
-	BaseModel
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	UserID       uint             `json:"user_id" gorm:"not null;index;index:idx_eval_attempts_user_eval,priority:1"`
 	EvaluationID uint             `json:"evaluation_id" gorm:"not null;index;index:idx_eval_attempts_user_eval,priority:2"`
 	Questions    AttemptQuestions `json:"questions" gorm:"type:json"` // Preguntas generadas para este intento
@@ -94,8 +97,8 @@ type EvaluationAttempt struct {
 	TimeSpent    int              `json:"time_spent"` // en minutos
 
 	// Relaciones
-	User       *User       `json:"user" gorm:"foreignKey:UserID"`
-	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID"`
+	User       *User       `json:"user" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Evaluation *Evaluation `json:"evaluation" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
 }
 
 func (EvaluationAttempt) TableName() string {

@@ -35,7 +35,7 @@ func AuthTokenMiddleware(jwtAuthenticator *jwt.JWT) gin.HandlerFunc {
 		tokenData, err := jwtAuthenticator.ParseToken(token)
 		if err != nil {
 			ctx.Abort()
-			responses.ErrorUnauthorized(ctx, err.Error())
+			responses.ErrorUnauthorized(ctx, "token inválido o expirado")
 			return
 		}
 

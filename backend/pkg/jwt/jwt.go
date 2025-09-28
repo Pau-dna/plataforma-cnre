@@ -49,12 +49,12 @@ func (j *JWT) GenerateToken(userID uint, expiresAt time.Time) (string, error) {
 func (j *JWT) ParseToken(tokenString string) (*CustomClaims, error) {
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 	if strings.TrimSpace(tokenString) == "" {
-		return nil, errors.New("token is empty")
+		return nil, errors.New("el token está vacío")
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method %v", token.Header["alg"])
+			return nil, fmt.Errorf("método de firma inesperado %v", token.Header["alg"])
 		}
 
 		return []byte(j.config.Secret), nil

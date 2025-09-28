@@ -48,7 +48,7 @@ func (h *EnrollmentHandler) CreateEnrollment(c *gin.Context) {
 	enrollment, err := h.enrollmentService.CreateEnrollment(enrollmentData.UserID, enrollmentData.CourseID)
 	if err != nil {
 		h.logger.Errorf("Error al crear la inscripción: %v", err)
-		if err.Error() == "user is already enrolled in this course" {
+		if err.Error() == "el usuario ya está inscrito en este curso" {
 			responses.ErrorConflict(c, err.Error())
 			return
 		}
