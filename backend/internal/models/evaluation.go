@@ -18,9 +18,8 @@ type Evaluation struct {
 
 	// Relaciones
 	Module             *Module              `json:"module" gorm:"foreignKey:ModuleID;constraint:OnDelete:CASCADE"`
-	Questions          []*Question          `json:"questions" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
-	EvaluationAttempts []*EvaluationAttempt `json:"evaluation_attempts" gorm:"foreignKey:EvaluationID;constraint:OnDelete:CASCADE"`
-	UserProgress       []*UserProgress      `json:"user_progress" gorm:"foreignKey:ContentID;constraint:OnDelete:CASCADE"`
+	Questions          []*Question          `json:"questions"`
+	EvaluationAttempts []*EvaluationAttempt `json:"evaluation_attempts"`
 }
 
 func (Evaluation) TableName() string {
