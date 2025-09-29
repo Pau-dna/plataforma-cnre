@@ -4,4 +4,4 @@
 	let { data }: PageProps = $props();
 </script>
 
-Se certifica que {data.enrollment.user.name} ha completado el curso {data.enrollment.course.title}. (en proceso mejorar el diseño xd)
+Se certifica que {data?.enrollment?.user?.fullname || "N/A"} ha completado el curso {data?.enrollment?.course?.title || "N/A"}. (en proceso mejorar el diseño xd)
