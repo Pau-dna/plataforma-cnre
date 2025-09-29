@@ -74,7 +74,7 @@
 		value={loading ? '' : courseKPIs?.average_progress ? `${courseKPIs.average_progress.toFixed(2)}%` : '0%'}
 		icon={TrendingUp}
 		color="yellow"
-		subtitle="Estudiantes que completaron"
+		subtitle="Progreso de los estudiantes"
 		isLoading={loading}
 	/>
 </div>
