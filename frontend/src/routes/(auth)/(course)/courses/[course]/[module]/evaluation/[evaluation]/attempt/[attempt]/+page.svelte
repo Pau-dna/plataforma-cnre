@@ -217,7 +217,7 @@
 			toast.success('¡Examen enviado exitosamente!');
 
 			// Redirect to results page
-			goto(
+			await goto(
 				`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}/attempt/${page.params.attempt}/results`
 			);
 		} catch (error) {
