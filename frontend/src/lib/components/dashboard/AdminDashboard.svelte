@@ -1,4 +1,5 @@
 <script lang="ts">
+    import * as Avatar from "$lib/components/ui/avatar/index.js";
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Progress } from '$lib/components/ui/progress/index.js';
@@ -8,9 +9,16 @@
 	import { BookOpen, CircleCheckBig, TrendingUp, Users } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import KPICard from './KPICard.svelte';
+	import { Root } from "../ui/alert";
 	type Props = {};
 
 	const {}: Props = $props();
+
+	function formatDate(date: string | Date | undefined): string {
+		if (!date) return 'N/A';
+		const d = typeof date === 'string' ? new Date(date) : date;
+		return d.toLocaleDateString('es-ES');
+	}
 
 	const enrollmentController = new EnrollmentController();
 	let estudiantes = $state<Enrollment[]>();
@@ -108,11 +116,30 @@
 				{#if estudiantes && estudiantes.length > 0}
 					{#each estudiantes as estudiante (estudiante.id)}
 						<Table.Row>
-							<Table.Cell class="font-medium">{estudiante.user?.fullname}</Table.Cell>
+							<Table.Cell class="flex gap-2 items-center">
+                                <Avatar.Root class="h-8 w-8 mr-2">
+                                    <Avatar.Image src={estudiante.user?.avatar_url} alt={estudiante.user?.fullname || 'Avatar'} />
+                                    <Avatar.Fallback>{estudiante.user?.fullname ? estudiante.user.fullname.charAt(0) : 'U'}</Avatar.Fallback>
+                                </Avatar.Root>
+                                <div class="flex flex-col gap-0">
+                                    <span class="font-medium">{estudiante.user?.fullname}</span>
+                                    <span class="text-muted-foreground">{estudiante.user?.email}</span>
+                                </div>
+                            </Table.Cell>
 							<Table.Cell>{estudiante.course?.title}</Table.Cell>
-							<Table.Cell>{estudiante.progress}</Table.Cell>
-							<Table.Cell>{estudiante.progress === 100 ? 'Completado' : 'En progreso'}</Table.Cell>
-							<Table.Cell>{estudiante.enrolled_at}</Table.Cell>
+							<Table.Cell>
+								<Progress value={estudiante.progress} max={100} class="h-2 w-24" />
+							</Table.Cell>
+							<Table.Cell>
+								<Badge
+									class={estudiante.progress === 100
+										? 'bg-teal-100 text-teal-500'
+										: 'bg-pink-100 text-pink-500'}
+								>
+									{estudiante.progress === 100 ? 'Completado' : 'En progreso'}
+								</Badge>
+							</Table.Cell>
+							<Table.Cell>{formatDate(estudiante.enrolled_at)}</Table.Cell>
 						</Table.Row>
 					{/each}
 				{/if}
