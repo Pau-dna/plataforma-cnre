@@ -56,7 +56,7 @@
 	-->
 	<Sidebar.Content>
 		<NavGroup title="Curso" items={data.main} />
-		{#if enrollment.progress >= 1}
+		{#if enrollment.progress >= 100}
 			<NavGroup title="Certificado" items={data.certificado} />
 		{/if}
 	</Sidebar.Content>
