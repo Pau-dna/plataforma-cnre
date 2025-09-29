@@ -18,7 +18,7 @@
 		const internalLinks = [
 			{
 				name: 'Inicio',
-				href: '/home'
+				href: '/'
 			},
 			{
 				href: '/my-courses',
