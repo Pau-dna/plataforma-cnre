@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as Avatar from "$lib/components/ui/avatar/index.js";
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Progress } from '$lib/components/ui/progress/index.js';
@@ -9,7 +9,7 @@
 	import { BookOpen, CircleCheckBig, TrendingUp, Users } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import KPICard from './KPICard.svelte';
-	import { Root } from "../ui/alert";
+	import { Root } from '../ui/alert';
 	type Props = {};
 
 	const {}: Props = $props();
@@ -21,12 +21,20 @@
 	}
 
 	const enrollmentController = new EnrollmentController();
-	let estudiantes = $state<Enrollment[]>();
+	let students = $state<Enrollment[]>();
 	let courseKPIs = $state<CourseKPIResponse>();
 	let loading = $state(true);
 
+	let studentCount = $derived.by(() => (students ? students.length : 0));
+	let completedCount = $derived.by(() =>
+		students ? students.filter((student) => student.progress === 100).length : 0
+	);
+	let percentageCompleted = $derived.by(() =>
+		studentCount > 0 ? Math.round((completedCount / studentCount) * 100) : 0
+	);
+
 	onMount(async () => {
-		estudiantes = await enrollmentController.getCourseEnrollments(1);
+		students = await enrollmentController.getCourseEnrollments(1);
 		courseKPIs = await enrollmentController.getCourseKPIs(1);
 		loading = false;
 	});
@@ -77,20 +85,23 @@
 			<Card.Header class="flex justify-between">
 				<div class="flex flex-col gap-2">
 					<Card.Title>Capacitación CNRE</Card.Title>
-					<Card.Description class="line-clamp-1">Capacitación de ciudad y sede</Card.Description>
+					<Card.Description class="line-clamp-1"
+						>Capacitación de Ciudad y Sede, Antiracismo, VBG, Anticapacitismo y Funcionamiento del
+						CNRE</Card.Description
+					>
 				</div>
-				<Badge>50% completado</Badge>
+				<Badge class="bg-sky-100 text-sky-500">{percentageCompleted}% completado</Badge>
 			</Card.Header>
 			<Card.Content class="flex flex-col gap-2">
 				<div class="flex items-center justify-between">
 					<span>Estudiantes inscritos:</span>
-					<span>10</span>
+					<span>{studentCount}</span>
 				</div>
 				<div class="flex items-center justify-between">
 					<span>Han completado:</span>
-					<span>5</span>
+					<span>{completedCount}</span>
 				</div>
-				<Progress value={50} class="h-2 w-full" />
+				<Progress value={percentageCompleted} class="h-2 w-full" />
 			</Card.Content>
 		</Card.Root>
 	</Card.Content>
@@ -113,33 +124,40 @@
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
-				{#if estudiantes && estudiantes.length > 0}
-					{#each estudiantes as estudiante (estudiante.id)}
+				{#if students && students.length > 0}
+					{#each students as student (student.id)}
 						<Table.Row>
-							<Table.Cell class="flex gap-2 items-center">
-                                <Avatar.Root class="h-8 w-8 mr-2">
-                                    <Avatar.Image src={estudiante.user?.avatar_url} alt={estudiante.user?.fullname || 'Avatar'} />
-                                    <Avatar.Fallback>{estudiante.user?.fullname ? estudiante.user.fullname.charAt(0) : 'U'}</Avatar.Fallback>
-                                </Avatar.Root>
-                                <div class="flex flex-col gap-0">
-                                    <span class="font-medium">{estudiante.user?.fullname}</span>
-                                    <span class="text-muted-foreground">{estudiante.user?.email}</span>
-                                </div>
-                            </Table.Cell>
-							<Table.Cell>{estudiante.course?.title}</Table.Cell>
+							<Table.Cell class="flex items-center gap-2">
+								<Avatar.Root class="mr-2 h-8 w-8">
+									<Avatar.Image
+										src={student.user?.avatar_url}
+										alt={student.user?.fullname || 'Avatar'}
+									/>
+									<Avatar.Fallback
+										>{student.user?.fullname
+											? student.user.fullname.charAt(0)
+											: 'U'}</Avatar.Fallback
+									>
+								</Avatar.Root>
+								<div class="flex flex-col gap-0">
+									<span class="font-medium">{student.user?.fullname}</span>
+									<span class="text-muted-foreground">{student.user?.email}</span>
+								</div>
+							</Table.Cell>
+							<Table.Cell>{student.course?.title}</Table.Cell>
 							<Table.Cell>
-								<Progress value={estudiante.progress} max={100} class="h-2 w-24" />
+								<Progress value={student.progress} max={100} class="h-2 w-24" />
 							</Table.Cell>
 							<Table.Cell>
 								<Badge
-									class={estudiante.progress === 100
+									class={student.progress === 100
 										? 'bg-teal-100 text-teal-500'
 										: 'bg-pink-100 text-pink-500'}
 								>
-									{estudiante.progress === 100 ? 'Completado' : 'En progreso'}
+									{student.progress === 100 ? 'Completado' : 'En progreso'}
 								</Badge>
 							</Table.Cell>
-							<Table.Cell>{formatDate(estudiante.enrolled_at)}</Table.Cell>
+							<Table.Cell>{formatDate(student.enrolled_at)}</Table.Cell>
 						</Table.Row>
 					{/each}
 				{/if}

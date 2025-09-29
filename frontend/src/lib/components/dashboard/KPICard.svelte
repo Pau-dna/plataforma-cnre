@@ -17,10 +17,10 @@
 	const { title, value, icon: Icon, color = 'sky', subtitle, isLoading = false }: Props = $props();
 
 	const colorClasses: Record<Colors, string> = {
-		sky: 'text-sky-500 bg-sky-100 dark:bg-sky-500/10',
-		pink: 'text-pink-500 bg-pink-100 dark:bg-pink-500/10',
-		teal: 'text-teal-500 bg-teal-100 dark:bg-teal-500/10',
-		yellow: 'text-yellow-500 bg-yellow-100 dark:bg-yellow-500/10'
+		sky: 'text-sky-500 bg-sky-100',
+		pink: 'text-pink-500 bg-pink-100',
+		teal: 'text-teal-500 bg-teal-100',
+		yellow: 'text-yellow-500 bg-yellow-100'
 	};
 </script>
 
