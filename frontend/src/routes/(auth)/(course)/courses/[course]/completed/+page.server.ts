@@ -9,16 +9,17 @@ export const load = (async ({ locals, params }) => {
 
     let enrollment: Enrollment | null = null;
     let redirectPath = "";
+    const fallbackRedirect = "/courses/" + params.course;
     try {
         enrollment = await enrollmentController.getUserCourseEnrollment(
             locals.user?.id as number,
             parseInt(params.course),
         );
         if (!enrollment || enrollment.progress < 100) {
-            redirectPath = "/my-courses";
+            redirectPath = fallbackRedirect;
         }
     } catch (error) {
-        redirectPath = "/my-courses";
+        redirectPath = fallbackRedirect;
     }
 
     if (redirectPath) {
