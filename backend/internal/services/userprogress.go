@@ -20,6 +20,7 @@ type UserProgressService interface {
 	CalculateModuleProgress(userID, moduleID uint) (float64, error)
 	GetUserProgressForContent(userID, contentID uint) (*models.UserProgress, error)
 	HasUserPassedEvaluation(userID, evaluationID uint) (bool, error)
+	UpdateCourseProgress(userID, courseID uint) error
 	GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error)
 	GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error)
 }
@@ -270,6 +271,11 @@ func (s *userProgressService) updateCourseProgress(userID, courseID uint) error 
 	}
 
 	return nil
+}
+
+// UpdateCourseProgress - método público para actualizar el progreso del curso
+func (s *userProgressService) UpdateCourseProgress(userID, courseID uint) error {
+	return s.updateCourseProgress(userID, courseID)
 }
 
 func (s *userProgressService) HasUserPassedEvaluation(userID, evaluationID uint) (bool, error) {

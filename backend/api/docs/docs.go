@@ -1098,6 +1098,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/enrollments/{id}/details": {
+            "get": {
+                "description": "Get an enrollment by its ID with preloaded course and user data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enrollments"
+                ],
+                "summary": "Get enrollment with details by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Enrollment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.Enrollment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/evaluation-attempts/start": {
             "post": {
                 "description": "Start a new evaluation attempt for a user",
@@ -3299,6 +3342,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/users/{userId}/courses/{courseId}/progress-summary": {
+            "get": {
+                "description": "Get comprehensive progress information for a user in a specific course, including overall progress and per-module details",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-progress"
+                ],
+                "summary": "Get comprehensive user course progress",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_dto.CourseProgressSummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/users/{userId}/courses/{id}/complete": {
             "post": {
                 "description": "Mark an enrollment as completed",
@@ -3587,6 +3680,59 @@ const docTemplate = `{
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{userId}/modules/{moduleId}/content-progress": {
+            "get": {
+                "description": "Get all contents in a module with their completion status for a user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-progress"
+                ],
+                "summary": "Get module content progress",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Module ID",
+                        "name": "moduleId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_dto.ContentProgressResponse"
+                            }
                         }
                     },
                     "400": {
@@ -3902,6 +4048,43 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_imlargo_go-api-template_internal_dto.ContentProgressResponse": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.CourseProgressSummary": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "integer"
+                },
+                "course_title": {
+                    "type": "string"
+                },
+                "is_completed": {
+                    "type": "boolean"
+                },
+                "modules_progress": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_dto.ModuleProgressDetail"
+                    }
+                },
+                "total_percentage": {
+                    "type": "number"
+                }
+            }
+        },
         "github_com_imlargo_go-api-template_internal_dto.CreateAnswerRequest": {
             "type": "object",
             "required": [
@@ -3970,6 +4153,23 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.ModuleProgressDetail": {
+            "type": "object",
+            "properties": {
+                "is_completed": {
+                    "type": "boolean"
+                },
+                "module_id": {
+                    "type": "integer"
+                },
+                "module_title": {
+                    "type": "string"
+                },
+                "percentage": {
+                    "type": "number"
                 }
             }
         },

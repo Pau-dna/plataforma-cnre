@@ -327,7 +327,7 @@ func (h *UserProgressHandler) UpdateUserProgressPatch(c *gin.Context) {
 // @Produce json
 // @Param userId path int true "User ID"
 // @Param courseId path int true "Course ID"
-// @Success 200 {object} dto.CourseProgressSummary
+// @Success 200 {object} github_com_imlargo_go-api-template_internal_dto.CourseProgressSummary
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/users/{userId}/courses/{courseId}/progress-summary [get]
@@ -360,7 +360,7 @@ func (h *UserProgressHandler) GetComprehensiveCourseProgress(c *gin.Context) {
 // @Produce json
 // @Param userId path int true "User ID"
 // @Param moduleId path int true "Module ID"
-// @Success 200 {array} dto.ContentProgressResponse
+// @Success 200 {array} github_com_imlargo_go-api-template_internal_dto.ContentProgressResponse
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/users/{userId}/modules/{moduleId}/content-progress [get]
