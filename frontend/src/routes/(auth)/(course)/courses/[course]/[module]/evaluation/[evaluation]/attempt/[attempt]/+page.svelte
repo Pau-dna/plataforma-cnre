@@ -19,7 +19,7 @@
 	import { EvaluationAttemptController } from '$lib/controllers/evaluationAttempt';
 	import { onMount, onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { validateAnswers, calculateRemainingTime, isAttemptActive } from '$lib/utils/examHelpers';
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
@@ -211,6 +211,8 @@
 			const result = await evaluationAttemptController.submitAttempt(Number(page.params.attempt), {
 				answers: submissionAnswers
 			});
+
+			await invalidateAll();
 
 			toast.success('¡Examen enviado exitosamente!');
 
