@@ -72,11 +72,11 @@
 				</Breadcrumb.Root>
 			</div>
 
-			{#if data.enrollment.progress < 100}
+			{#if data.enrollment.progress === 100}
 				<div class="rounded-md bg-green-50 p-4 text-sm text-green-800">
 					¡Felicidades! Has completado el curso. Puedes ver tu certificado{' '}
 					<a
-						href="/courses/{data.course.id}/completed"
+						href="/certificado/{data.enrollment.id}"
 						class="font-medium underline underline-offset-4"
 						> aquí</a
 					>.
