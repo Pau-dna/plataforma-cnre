@@ -14,7 +14,10 @@ export const load = (async ({ params, parent }) => {
 	const [contents, evaluations, progress] = await Promise.all([
 		contentController.getContentsByModule(parseInt(params.module)),
 		evaluationController.getEvaluationsByModule(parseInt(params.module)),
-		progressController.getModuleContentProgress(parentData.user?.id as number, parseInt(params.module)),
+		progressController.getModuleContentProgress(
+			parentData.user?.id as number,
+			parseInt(params.module)
+		)
 	]);
 
 	return {
