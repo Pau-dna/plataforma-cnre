@@ -5,7 +5,6 @@ import { UserProgressController } from '$lib/controllers/userProgress';
 import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ params, locals }) => {
-	
 	const moduleController = new ModuleController(locals?.accessToken || '');
 	const enrollmentController = new EnrollmentController(locals?.accessToken || '');
 
@@ -14,12 +13,12 @@ export const load = (async ({ params, locals }) => {
 
 	const [enrollment, modules] = await Promise.all([
 		enrollmentController.getUserCourseEnrollment(userID, courseId),
-		moduleController.getModulesByCourse(courseId),
+		moduleController.getModulesByCourse(courseId)
 	]);
 
 	return {
 		course: enrollment.course as Course,
 		modules,
-		enrollment,
+		enrollment
 	};
 }) satisfies LayoutServerLoad;

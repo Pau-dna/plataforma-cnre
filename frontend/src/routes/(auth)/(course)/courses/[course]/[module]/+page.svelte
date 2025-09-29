@@ -7,7 +7,9 @@
 	let { data }: PageProps = $props();
 
 	const modulo = $derived(data.modules.find((m) => m.id === data.moduleID) as Module);
-	const contentsCompleted = $derived<Record<string, boolean>>(Object.fromEntries(data.progress.map((p) => [p.id.toString(), p.completed])));
+	const contentsCompleted = $derived<Record<string, boolean>>(
+		Object.fromEntries(data.progress.map((p) => [p.id.toString(), p.completed]))
+	);
 </script>
 
 <div class="flex flex-col gap-y-4 px-4 md:px-0">
