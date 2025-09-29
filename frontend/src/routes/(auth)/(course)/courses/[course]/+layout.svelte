@@ -28,8 +28,7 @@
 		}
 
 		prevIsCompleted = isCompleted;
-	});	
-
+	});
 </script>
 
 <div class="min-h-auto relative h-full overflow-hidden rounded-md border">
@@ -78,7 +77,8 @@
 					<a
 						href="/certificado/{data.enrollment.id}"
 						class="font-medium underline underline-offset-4"
-						> aquí</a
+					>
+						aquí</a
 					>.
 				</div>
 			{/if}
