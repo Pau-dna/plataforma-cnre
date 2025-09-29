@@ -358,3 +358,31 @@ func (h *EnrollmentHandler) UpdateProgress(c *gin.Context) {
 
 	responses.Ok(c, gin.H{"message": "Progress updated successfully"})
 }
+
+// @Summary Get course KPIs for admin dashboard
+// @Description Get KPI metrics for a specific course including student count, completion rate, and average progress
+// @Tags enrollments
+// @Produce json
+// @Param id path int true "Course ID"
+// @Success 200 {object} dto.CourseKPIResponse "Course KPI metrics"
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/courses/{id}/kpis [get]
+func (h *EnrollmentHandler) GetCourseKPIs(c *gin.Context) {
+	courseIDStr := c.Param("id")
+	courseID, err := strconv.ParseUint(courseIDStr, 10, 32)
+	if err != nil {
+		responses.ErrorBadRequest(c, "ID de curso inválido")
+		return
+	}
+
+	kpis, err := h.enrollmentService.GetCourseKPIs(uint(courseID))
+	if err != nil {
+		h.logger.Errorf("Error al obtener KPIs del curso: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "Error al obtener las métricas del curso")
+		return
+	}
+
+	responses.Ok(c, kpis)
+}

@@ -1,5 +1,5 @@
 import { BaseController } from './base';
-import type { Enrollment, CreateEnrollmentDTO, UpdateEnrollmentProgressDTO } from '$lib/types';
+import type { Enrollment, CreateEnrollmentDTO, UpdateEnrollmentProgressDTO, CourseKPIResponse } from '$lib/types';
 
 export class EnrollmentController extends BaseController {
 	/**
@@ -89,5 +89,12 @@ export class EnrollmentController extends BaseController {
 		} catch (error) {
 			return false;
 		}
+	}
+
+	/**
+	 * Get KPI metrics for a course (admin dashboard)
+	 */
+	async getCourseKPIs(courseId: number): Promise<CourseKPIResponse> {
+		return this.get<CourseKPIResponse>(`/api/v1/courses/${courseId}/kpis`);
 	}
 }
