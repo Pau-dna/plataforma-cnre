@@ -17,7 +17,11 @@
 	function formatDate(date: string | Date | undefined): string {
 		if (!date) return 'N/A';
 		const d = typeof date === 'string' ? new Date(date) : date;
-		return d.toLocaleDateString('es-ES');
+		return d.toLocaleDateString('es-ES', {
+			year: 'numeric',
+			month: 'short',
+			day: 'numeric'
+		});
 	}
 
 	const enrollmentController = new EnrollmentController();
