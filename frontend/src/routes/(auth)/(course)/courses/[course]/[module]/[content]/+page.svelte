@@ -79,11 +79,21 @@
 	async function handleCompleteAndNext() {
 		// Mark as completed
 		const progressController = new UserProgressController();
-		progressController.markContentComplete(data.userId, courseId, moduleId, content.id).then(() => {
+
+		try {
+			const result = progressController.markContentComplete(
+				data.userId,
+				courseId,
+				moduleId,
+				content.id
+			);
+
 			isCompleted = true;
-		}).catch((error) => {
+		} catch (error) {
 			console.error('Error marking content as complete:', error);
-		});
+		}
+
+		await invalidateAll();
 
 		if (nextContentInfo) {
 			await goto(nextContentInfo.url);
