@@ -259,7 +259,7 @@ func (s *userProgressService) GetUserProgressForContent(userID, contentID uint) 
 
 func (s *userProgressService) updateCourseProgress(userID, courseID uint) error {
 	// Calculate new course progress
-	progress, err := s.CalculateCourseProgress(userID, courseID)
+	progress, err := s.GetComprehensiveCourseProgress(userID, courseID)
 	if err != nil {
 		s.logger.Warnf("Failed to calculate course progress for user %d, course %d: %v", userID, courseID, err)
 		return err
@@ -267,7 +267,7 @@ func (s *userProgressService) updateCourseProgress(userID, courseID uint) error 
 
 	// Update enrollment progress
 	if s.enrollmentService != nil {
-		err = s.enrollmentService.UpdateProgress(userID, courseID, progress)
+		err = s.enrollmentService.UpdateProgress(userID, courseID, progress.TotalPercentage)
 		if err != nil {
 			s.logger.Warnf("Failed to update enrollment progress: %v", err)
 		}
