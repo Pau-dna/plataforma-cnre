@@ -4,4 +4,4 @@
 	let { data }: PageProps = $props();
 </script>
 
-{JSON.stringify(data.enrollment)}
+Se certifica que {data.enrollment.user.name} ha completado el curso {data.enrollment.course.title}. (en proceso mejorar el diseño xd)
