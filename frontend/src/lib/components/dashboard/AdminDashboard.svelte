@@ -59,7 +59,7 @@
 	/>
 	<KPICard
 		title="Tasa de finalización"
-		value={loading ? '' : courseKPIs?.completion_rate ? `${courseKPIs.completion_rate}%` : '0%'}
+		value={loading ? '' : courseKPIs?.completion_rate ? `${courseKPIs.completion_rate.toFixed(2)}%` : '0%'}
 		icon={CircleCheckBig}
 		color="teal"
 		subtitle="Estudiantes que completaron"
@@ -67,7 +67,7 @@
 	/>
 	<KPICard
 		title="Progreso promedio"
-		value={loading ? '' : courseKPIs?.average_progress ? `${courseKPIs.average_progress}%` : '0%'}
+		value={loading ? '' : courseKPIs?.average_progress ? `${courseKPIs.average_progress.toFixed(2)}%` : '0%'}
 		icon={TrendingUp}
 		color="yellow"
 		subtitle="Estudiantes que completaron"
