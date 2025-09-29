@@ -22,6 +22,7 @@ type UserProgressService interface {
 	HasUserPassedEvaluation(userID, evaluationID uint) (bool, error)
 	GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error)
 	GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error)
+	UpdateCourseProgress(userID, courseID uint) error
 }
 
 type userProgressService struct {
@@ -47,11 +48,9 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 	existing, _ := s.GetUserProgressForContent(userID, contentID)
 	if existing != nil {
 		// Update course progress
-		go func() {
-			if err := s.updateCourseProgress(userID, courseID); err != nil {
-				s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
-			}
-		}()
+		if err := s.updateCourseProgress(userID, courseID); err != nil {
+			s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
+		}
 
 		return existing, nil
 	}
@@ -71,11 +70,9 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 	}
 
 	// Update course progress
-	go func() {
-		if err := s.updateCourseProgress(userID, courseID); err != nil {
-			s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
-		}
-	}()
+	if err := s.updateCourseProgress(userID, courseID); err != nil {
+		s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
+	}
 
 	return progress, nil
 }
@@ -95,11 +92,9 @@ func (s *userProgressService) MarkContentIncomplete(userID, courseID, moduleID, 
 	}
 
 	// Update course progress
-	go func() {
-		if err := s.updateCourseProgress(userID, courseID); err != nil {
-			s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
-		}
-	}()
+	if err := s.updateCourseProgress(userID, courseID); err != nil {
+		s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
+	}
 
 	return nil
 }
@@ -255,6 +250,10 @@ func (s *userProgressService) GetUserProgressForContent(userID, contentID uint) 
 	}
 
 	return progress, nil
+}
+
+func (s *userProgressService) UpdateCourseProgress(userID, courseID uint) error {
+	return s.updateCourseProgress(userID, courseID)
 }
 
 func (s *userProgressService) updateCourseProgress(userID, courseID uint) error {
