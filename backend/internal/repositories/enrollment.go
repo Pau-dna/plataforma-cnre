@@ -101,37 +101,34 @@ func (r *enrollmentRepository) GetCourseKPIs(courseID uint) (int, float64, float
 	if err := r.db.First(&course, courseID).Error; err != nil {
 		return 0, 0, 0, "", err
 	}
-	
+
 	// Count total enrollments for this course
 	var totalEnrollments int64
 	if err := r.db.Model(&models.Enrollment{}).Where("course_id = ?", courseID).Count(&totalEnrollments).Error; err != nil {
 		return 0, 0, 0, course.Title, err
 	}
-	
+
 	if totalEnrollments == 0 {
 		return 0, 0, 0, course.Title, nil
 	}
-	
+
 	// Count completed enrollments (progress = 100)
 	var completedEnrollments int64
 	if err := r.db.Model(&models.Enrollment{}).Where("course_id = ? AND progress = ?", courseID, 100.0).Count(&completedEnrollments).Error; err != nil {
 		return int(totalEnrollments), 0, 0, course.Title, err
 	}
-	
-	// Calculate average progress
-	var avgProgress struct {
-		AverageProgress float64 `db:"avg_progress"`
-	}
-	
+
+	// Calculate average progress - scan directly into float64
+	var avgProgress float64
 	if err := r.db.Model(&models.Enrollment{}).
-		Select("AVG(progress) as avg_progress").
+		Select("AVG(progress)").
 		Where("course_id = ?", courseID).
-		Scan(&avgProgress).Error; err != nil {
+		Row().Scan(&avgProgress); err != nil {
 		return int(totalEnrollments), 0, 0, course.Title, err
 	}
-	
+
 	// Calculate completion rate as percentage
 	completionRate := float64(completedEnrollments) / float64(totalEnrollments) * 100
-	
-	return int(totalEnrollments), completionRate, avgProgress.AverageProgress, course.Title, nil
+
+	return int(totalEnrollments), completionRate, avgProgress, course.Title, nil
 }
