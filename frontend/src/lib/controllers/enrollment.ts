@@ -95,6 +95,8 @@ export class EnrollmentController extends BaseController {
 	 * Get KPI metrics for a course (admin dashboard)
 	 */
 	async getCourseKPIs(courseId: number): Promise<CourseKPIResponse> {
-		return this.get<CourseKPIResponse>(`/api/v1/courses/${courseId}/kpis`);
+		const data = await this.get<CourseKPIResponse>(`/api/v1/courses/${courseId}/kpis`);
+		data.active_courses = 1;
+		return data
 	}
 }
