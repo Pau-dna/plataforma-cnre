@@ -22,6 +22,7 @@ type EnrollmentService interface {
 	GetUserCourseEnrollment(userID, courseID uint) (*models.Enrollment, error)
 	CompleteEnrollment(userID, courseID uint) error
 	UpdateProgress(userID, courseID uint, progress float64) error
+	GetCourseKPIs(courseID uint) (*dto.CourseKPIResponse, error)
 }
 
 type enrollmentService struct {
@@ -223,4 +224,19 @@ func (s *enrollmentService) UpdateProgress(userID, courseID uint, progress float
 	}
 
 	return nil
+}
+
+func (s *enrollmentService) GetCourseKPIs(courseID uint) (*dto.CourseKPIResponse, error) {
+	studentCount, completionRate, avgProgress, courseTitle, err := s.store.Enrollments.GetCourseKPIs(courseID)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener KPIs del curso: %w", err)
+	}
+
+	return &dto.CourseKPIResponse{
+		CourseID:        courseID,
+		CourseTitle:     courseTitle,
+		StudentCount:    studentCount,
+		CompletionRate:  completionRate,
+		AverageProgress: avgProgress,
+	}, nil
 }

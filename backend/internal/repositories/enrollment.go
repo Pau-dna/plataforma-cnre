@@ -16,6 +16,7 @@ type EnrollmentRepository interface {
 	GetAll() ([]*models.Enrollment, error)
 	GetByUserID(userID uint) ([]*models.Enrollment, error)
 	GetByCourseID(courseID uint) ([]*models.Enrollment, error)
+	GetCourseKPIs(courseID uint) (int, float64, float64, string, error)
 }
 
 type enrollmentRepository struct {
@@ -92,4 +93,42 @@ func (r *enrollmentRepository) GetByCourseID(courseID uint) ([]*models.Enrollmen
 		return nil, err
 	}
 	return enrollments, nil
+}
+
+func (r *enrollmentRepository) GetCourseKPIs(courseID uint) (int, float64, float64, string, error) {
+	// Get course title
+	var course models.Course
+	if err := r.db.First(&course, courseID).Error; err != nil {
+		return 0, 0, 0, "", err
+	}
+
+	// Count total enrollments for this course
+	var totalEnrollments int64
+	if err := r.db.Model(&models.Enrollment{}).Where("course_id = ?", courseID).Count(&totalEnrollments).Error; err != nil {
+		return 0, 0, 0, course.Title, err
+	}
+
+	if totalEnrollments == 0 {
+		return 0, 0, 0, course.Title, nil
+	}
+
+	// Count completed enrollments (progress = 100)
+	var completedEnrollments int64
+	if err := r.db.Model(&models.Enrollment{}).Where("course_id = ? AND progress = ?", courseID, 100.0).Count(&completedEnrollments).Error; err != nil {
+		return int(totalEnrollments), 0, 0, course.Title, err
+	}
+
+	// Calculate average progress - scan directly into float64
+	var avgProgress float64
+	if err := r.db.Model(&models.Enrollment{}).
+		Select("AVG(progress)").
+		Where("course_id = ?", courseID).
+		Row().Scan(&avgProgress); err != nil {
+		return int(totalEnrollments), 0, 0, course.Title, err
+	}
+
+	// Calculate completion rate as percentage
+	completionRate := float64(completedEnrollments) / float64(totalEnrollments) * 100
+
+	return int(totalEnrollments), completionRate, avgProgress, course.Title, nil
 }

@@ -192,6 +192,7 @@ func (app *Application) Mount() {
 	v1.DELETE("/enrollments/:id", enrollmentHandler.DeleteEnrollment)
 	v1.GET("/users/:userId/enrollments", enrollmentHandler.GetUserEnrollments)
 	v1.GET("/courses/:id/enrollments", enrollmentHandler.GetCourseEnrollments)
+	v1.GET("/courses/:id/kpis", enrollmentHandler.GetCourseKPIs)
 	v1.GET("/users/:userId/courses/:courseId/enrollment", enrollmentHandler.GetUserCourseEnrollment)
 	v1.POST("/users/:userId/courses/:id/complete", enrollmentHandler.CompleteEnrollment)
 	v1.PUT("/users/:userId/courses/:id/progress", enrollmentHandler.UpdateProgress)
