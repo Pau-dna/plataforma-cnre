@@ -1,5 +1,10 @@
 import { BaseController } from './base';
-import type { Enrollment, CreateEnrollmentDTO, UpdateEnrollmentProgressDTO, CourseKPIResponse } from '$lib/types';
+import type {
+	Enrollment,
+	CreateEnrollmentDTO,
+	UpdateEnrollmentProgressDTO,
+	CourseKPIResponse
+} from '$lib/types';
 
 export class EnrollmentController extends BaseController {
 	/**
@@ -97,6 +102,6 @@ export class EnrollmentController extends BaseController {
 	async getCourseKPIs(courseId: number): Promise<CourseKPIResponse> {
 		const data = await this.get<CourseKPIResponse>(`/api/v1/courses/${courseId}/kpis`);
 		data.active_courses = 1;
-		return data
+		return data;
 	}
 }
