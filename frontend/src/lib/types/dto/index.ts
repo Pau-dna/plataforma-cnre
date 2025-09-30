@@ -145,7 +145,7 @@ export interface CourseKPIResponse {
 	course_id: number;
 	course_title: string;
 	student_count: number;
-	completion_rate: number;   // percentage 0-100
-	average_progress: number;  // percentage 0-100
+	completion_rate: number; // percentage 0-100
+	average_progress: number; // percentage 0-100
 	active_courses: 1;
 }

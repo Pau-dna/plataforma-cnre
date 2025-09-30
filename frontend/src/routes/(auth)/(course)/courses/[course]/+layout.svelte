@@ -34,7 +34,7 @@
 <div class="min-h-auto relative h-full overflow-hidden rounded-md border">
 	<Sidebar.Provider>
 		<CourseSidebar enrollment={data.enrollment} course={data.course} modules={data.modules} />
-		<main class="flex w-full flex-col gap-y-12 p-3 md:p-6 lg:p-8 ">
+		<main class="flex w-full flex-col gap-y-12 p-3 md:p-6 lg:p-8">
 			<div class="flex items-center gap-x-2">
 				<Sidebar.Trigger />
 				<Separator orientation="vertical" class="h-1 max-h-max" />
