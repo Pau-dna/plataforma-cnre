@@ -12,7 +12,7 @@ export const load = (async ({ locals, params, parent }) => {
 	const [content, parentData, completed] = await Promise.all([
 		contentController.getContent(contentID),
 		parent(),
-		progressController.isContentCompleted(userID, contentID),
+		progressController.isContentCompleted(userID, contentID)
 	]);
 
 	return {

@@ -1,12 +1,13 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
-	import { Book, Home } from '@lucide/svelte';
+	import { Book, GraduationCap, Home } from '@lucide/svelte';
 	import NavGroup from './NavGroup.svelte';
-	import type { Course, Module } from '$lib/types/models/course';
+	import type { Course, Enrollment, Module } from '$lib/types/models/course';
 
 	type Props = {
 		course: Course;
+		enrollment: Enrollment;
 		modules: Module[];
 	};
 
@@ -14,6 +15,7 @@
 		ref = $bindable(null),
 		collapsible = 'icon',
 		course,
+		enrollment,
 		modules = [],
 		...restProps
 	}: ComponentProps<typeof Sidebar.Root> & Props = $props();
@@ -36,11 +38,11 @@
 				}))
 			}
 		],
-		info: [
+		certificado: [
 			{
-				title: 'Evaluaciones',
-				url: '#',
-				icon: Book
+				title: 'Certificado',
+				url: `/certificado/${enrollment.id}`,
+				icon: GraduationCap
 			}
 		]
 	});
@@ -54,6 +56,9 @@
 	-->
 	<Sidebar.Content>
 		<NavGroup title="Curso" items={data.main} />
+		{#if enrollment.progress >= 100}
+			<NavGroup title="Certificado" items={data.certificado} />
+		{/if}
 	</Sidebar.Content>
 	<Sidebar.Rail />
 </Sidebar.Root>

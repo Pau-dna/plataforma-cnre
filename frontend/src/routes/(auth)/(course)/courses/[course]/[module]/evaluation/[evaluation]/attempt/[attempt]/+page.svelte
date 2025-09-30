@@ -19,7 +19,7 @@
 	import { EvaluationAttemptController } from '$lib/controllers/evaluationAttempt';
 	import { onMount, onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { validateAnswers, calculateRemainingTime, isAttemptActive } from '$lib/utils/examHelpers';
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
@@ -212,10 +212,12 @@
 				answers: submissionAnswers
 			});
 
+			await invalidateAll();
+
 			toast.success('¡Examen enviado exitosamente!');
 
 			// Redirect to results page
-			goto(
+			await goto(
 				`/courses/${page.params.course}/${page.params.module}/evaluation/${page.params.evaluation}/attempt/${page.params.attempt}/results`
 			);
 		} catch (error) {

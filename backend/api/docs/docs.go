@@ -4112,28 +4112,6 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_imlargo_go-api-template_internal_dto.CourseKPIResponse": {
-            "type": "object",
-            "properties": {
-                "average_progress": {
-                    "description": "percentage 0-100",
-                    "type": "number"
-                },
-                "completion_rate": {
-                    "description": "percentage 0-100",
-                    "type": "number"
-                },
-                "course_id": {
-                    "type": "integer"
-                },
-                "course_title": {
-                    "type": "string"
-                },
-                "student_count": {
-                    "type": "integer"
-                }
-            }
-        },
         "github_com_imlargo_go-api-template_internal_dto.CourseProgressSummary": {
             "type": "object",
             "properties": {

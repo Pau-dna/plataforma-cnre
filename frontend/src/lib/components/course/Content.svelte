@@ -69,9 +69,7 @@
 						</Badge>
 
 						{#if completed}
-							<Badge
-								class="max-w-max flex justify-center items-center gap-2 bg-green-100 text-xs"
-							>
+							<Badge class="flex max-w-max items-center justify-center gap-2 bg-green-100 text-xs">
 								<div class="h-2 w-2 rounded-full bg-green-600"></div>
 								<span class="font-medium text-green-800">Completado</span>
 							</Badge>

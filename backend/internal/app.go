@@ -71,8 +71,8 @@ func (app *Application) Mount() {
 	questionService := services.NewQuestionService(serviceContainer)
 	answerService := services.NewAnswerService(serviceContainer)
 	enrollmentService := services.NewEnrollmentService(serviceContainer)
-	evaluationAttemptService := services.NewEvaluationAttemptService(serviceContainer, answerService)
 	userProgressService := services.NewUserProgressService(serviceContainer, enrollmentService)
+	evaluationAttemptService := services.NewEvaluationAttemptService(serviceContainer, answerService, userProgressService)
 
 	// Handlers
 	handlerContainer := handlers.NewHandler(app.Logger)

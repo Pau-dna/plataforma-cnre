@@ -22,6 +22,7 @@ type UserProgressService interface {
 	HasUserPassedEvaluation(userID, evaluationID uint) (bool, error)
 	GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error)
 	GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error)
+	UpdateCourseProgress(userID, courseID uint) error
 }
 
 type userProgressService struct {
@@ -46,16 +47,10 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 	// Check if progress already exists
 	existing, _ := s.GetUserProgressForContent(userID, contentID)
 	if existing != nil {
-		// Update existing progress
-		existing.CompletedAt = time.Now()
-		existing.Attempts++
-
-		if err := s.store.UserProgresss.Update(existing); err != nil {
-			return nil, fmt.Errorf("error al actualizar el progreso: %w", err)
-		}
-
 		// Update course progress
-		s.updateCourseProgress(userID, courseID)
+		if err := s.updateCourseProgress(userID, courseID); err != nil {
+			s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
+		}
 
 		return existing, nil
 	}
@@ -75,7 +70,9 @@ func (s *userProgressService) MarkContentComplete(userID, courseID, moduleID, co
 	}
 
 	// Update course progress
-	s.updateCourseProgress(userID, courseID)
+	if err := s.updateCourseProgress(userID, courseID); err != nil {
+		s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
+	}
 
 	return progress, nil
 }
@@ -95,7 +92,9 @@ func (s *userProgressService) MarkContentIncomplete(userID, courseID, moduleID, 
 	}
 
 	// Update course progress
-	s.updateCourseProgress(userID, courseID)
+	if err := s.updateCourseProgress(userID, courseID); err != nil {
+		s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", userID, courseID, err)
+	}
 
 	return nil
 }
@@ -187,7 +186,7 @@ func (s *userProgressService) CalculateModuleProgress(userID, moduleID uint) (fl
 	// Count total items in module
 	moduleContents := []*models.Content{}
 	moduleEvaluations := []*models.Evaluation{}
-	
+
 	for _, content := range contents {
 		if content.ModuleID == moduleID {
 			moduleContents = append(moduleContents, content)
@@ -253,9 +252,13 @@ func (s *userProgressService) GetUserProgressForContent(userID, contentID uint) 
 	return progress, nil
 }
 
+func (s *userProgressService) UpdateCourseProgress(userID, courseID uint) error {
+	return s.updateCourseProgress(userID, courseID)
+}
+
 func (s *userProgressService) updateCourseProgress(userID, courseID uint) error {
 	// Calculate new course progress
-	progress, err := s.CalculateCourseProgress(userID, courseID)
+	progress, err := s.GetComprehensiveCourseProgress(userID, courseID)
 	if err != nil {
 		s.logger.Warnf("Failed to calculate course progress for user %d, course %d: %v", userID, courseID, err)
 		return err
@@ -263,7 +266,7 @@ func (s *userProgressService) updateCourseProgress(userID, courseID uint) error 
 
 	// Update enrollment progress
 	if s.enrollmentService != nil {
-		err = s.enrollmentService.UpdateProgress(userID, courseID, progress)
+		err = s.enrollmentService.UpdateProgress(userID, courseID, progress.TotalPercentage)
 		if err != nil {
 			s.logger.Warnf("Failed to update enrollment progress: %v", err)
 		}

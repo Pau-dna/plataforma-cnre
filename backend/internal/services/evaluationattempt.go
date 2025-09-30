@@ -24,13 +24,15 @@ type EvaluationAttemptService interface {
 
 type evaluationAttemptService struct {
 	*Service
-	answerService AnswerService
+	answerService       AnswerService
+	userProgressService UserProgressService
 }
 
-func NewEvaluationAttemptService(service *Service, answerService AnswerService) EvaluationAttemptService {
+func NewEvaluationAttemptService(service *Service, answerService AnswerService, userProgressService UserProgressService) EvaluationAttemptService {
 	return &evaluationAttemptService{
-		Service:       service,
-		answerService: answerService,
+		Service:             service,
+		answerService:       answerService,
+		userProgressService: userProgressService,
 	}
 }
 
@@ -326,6 +328,20 @@ func (s *evaluationAttemptService) SubmitAttempt(attemptID uint, answers []model
 	// Save attempt with all updates (answers + scores) in single transaction
 	if err := s.store.EvaluationAttempts.Update(attempt); err != nil {
 		return nil, fmt.Errorf("error al actualizar el intento: %w", err)
+	}
+
+	// If the attempt was passed, update course progress
+	if attempt.Passed {
+		// Get the module to find the course ID
+		module, err := s.store.Modules.Get(evaluation.ModuleID)
+		if err != nil {
+			s.logger.Warnf("Failed to get module %d to update course progress: %v", evaluation.ModuleID, err)
+		} else {
+			// Update course progress
+			if err := s.userProgressService.UpdateCourseProgress(attempt.UserID, module.CourseID); err != nil {
+				s.logger.Warnf("Failed to update course progress for user %d, course %d: %v", attempt.UserID, module.CourseID, err)
+			}
+		}
 	}
 
 	return attempt, nil
