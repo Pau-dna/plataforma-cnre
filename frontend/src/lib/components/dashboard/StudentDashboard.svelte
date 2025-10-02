@@ -90,38 +90,49 @@
 	/>
 </div>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>Mis Cursos</Card.Title>
-		<Card.Description>Tu progreso en cada curso inscrito</Card.Description>
-	</Card.Header>
-	<Card.Content>
-		{#if enrollments && enrollments.length > 0}
-			{#each enrollments as enrollment (enrollment.id)}
-				<div class="flex items-start gap-3">
-					<div class="size-12 rounded-xl bg-gradient-to-r from-sky-500 to-pink-500">
-						{#if enrollment.course?.image_url}
-							<img src={enrollment.course?.image_url} alt="" class="object-cover" />
-						{/if}
-					</div>
-					<div class="min-w-0 flex-1">
-						<div class="mb-1 flex items-center justify-between">
-							<span class="font-semibold line-clamp-1">{enrollment.course?.title}</span>
-							<Badge
-								class={enrollment.progress === 100
-									? 'bg-teal-100 text-teal-500'
-									: 'bg-pink-100 text-pink-500'}
-								>{enrollment.progress === 100 ? 'completado' : enrollment.progress}</Badge
-							>
+<div class="grid grid-cols-2 gap-4">
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Mis Cursos</Card.Title>
+			<Card.Description>Tu progreso en cada curso inscrito</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			{#if enrollments && enrollments.length > 0}
+				{#each enrollments as enrollment (enrollment.id)}
+					<div class="flex items-start gap-3">
+						<div class="size-12 rounded-xl bg-gradient-to-r from-sky-500 to-pink-500">
+							{#if enrollment.course?.image_url}
+								<img src={enrollment.course?.image_url} alt="" class="object-cover" />
+							{/if}
 						</div>
-						<span class="text-muted-foreground mb-2 line-clamp-1 text-sm"
-							>{enrollment.course?.description}</span
-						>
+						<div class="min-w-0 flex-1">
+							<div class="mb-1 flex items-center justify-between">
+								<span class="line-clamp-1 font-semibold">{enrollment.course?.title}</span>
+								<Badge
+									class={enrollment.progress === 100
+										? 'bg-teal-100 text-teal-500'
+										: 'bg-pink-100 text-pink-500'}
+									>{enrollment.progress === 100 ? 'completado' : enrollment.progress}</Badge
+								>
+							</div>
+							<span class="text-muted-foreground mb-2 line-clamp-1 text-sm"
+								>{enrollment.course?.description}</span
+							>
 
-						<Progress value={enrollment.progress} class="h-2 w-full" />
+							<Progress value={enrollment.progress} class="h-2 w-full" />
+						</div>
 					</div>
-				</div>
-			{/each}
-		{/if}
-	</Card.Content>
-</Card.Root>
+				{/each}
+			{/if}
+		</Card.Content>
+	</Card.Root>
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Actividad Reciente</Card.Title>
+			<Card.Description>Tus últimas acciones en la plataforma</Card.Description>
+		</Card.Header>
+        <Card.Content>
+            
+        </Card.Content>
+	</Card.Root>
+</div>
