@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/imlargo/go-api-template/internal/dto"
+	_ "github.com/imlargo/go-api-template/internal/models"
 	"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
@@ -386,4 +387,30 @@ func (h *UserProgressHandler) GetModuleContentProgress(c *gin.Context) {
 	}
 
 	responses.Ok(c, contentProgress)
+}
+
+// @Summary Get recent user progress
+// @Description Get the 10 most recent progress records for a specific user with preloaded module and content data
+// @Tags user-progress
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 200 {array} models.UserProgress
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/users/{userId}/recent-progress [get]
+func (h *UserProgressHandler) GetRecentUserProgress(c *gin.Context) {
+	userID, err := strconv.ParseUint(c.Param("userId"), 10, 32)
+	if err != nil {
+		responses.ErrorBadRequest(c, "ID de usuario inválido")
+		return
+	}
+
+	progress, err := h.userProgressService.GetRecentUserProgress(uint(userID))
+	if err != nil {
+		h.logger.Errorf("Error al obtener progreso reciente del usuario: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "No se pudo obtener el progreso reciente del usuario")
+		return
+	}
+
+	responses.Ok(c, progress)
 }

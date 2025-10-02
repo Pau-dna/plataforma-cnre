@@ -23,6 +23,7 @@ type UserProgressService interface {
 	GetComprehensiveCourseProgress(userID, courseID uint) (*dto.CourseProgressSummary, error)
 	GetModuleContentProgress(userID, moduleID uint) ([]*dto.ContentProgressResponse, error)
 	UpdateCourseProgress(userID, courseID uint) error
+	GetRecentUserProgress(userID uint) ([]*models.UserProgress, error)
 }
 
 type userProgressService struct {
@@ -323,4 +324,14 @@ func (s *userProgressService) GetModuleContentProgress(userID, moduleID uint) ([
 	}
 
 	return contentProgress, nil
+}
+
+func (s *userProgressService) GetRecentUserProgress(userID uint) ([]*models.UserProgress, error) {
+	// Get the 10 most recent progress records for the user with preloaded relationships
+	progress, err := s.store.UserProgresss.GetRecentByUser(userID, 10)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el progreso reciente del usuario: %w", err)
+	}
+
+	return progress, nil
 }
