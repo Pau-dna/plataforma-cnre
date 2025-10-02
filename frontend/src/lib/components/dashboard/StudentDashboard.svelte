@@ -107,7 +107,11 @@
 					<div class="flex items-start gap-3">
 						<div class="size-12 rounded-lg bg-gradient-to-r from-sky-500 to-pink-500">
 							{#if enrollment.course?.image_url}
-								<img src={enrollment.course?.image_url} alt="" class="object-cover" />
+								<img
+									src={enrollment.course?.image_url}
+									alt=""
+									class="h-full w-full overflow-hidden rounded-lg object-cover"
+								/>
 							{/if}
 						</div>
 						<div class="min-w-0 flex-1">
