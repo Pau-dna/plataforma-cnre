@@ -3,8 +3,8 @@
 	import { onMount } from 'svelte';
 	import KPICard from './KPICard.svelte';
 	import { BookOpen, TrendingUp, Trophy } from '@lucide/svelte';
-	import { EnrollmentController } from '$lib/controllers';
-	import type { Enrollment } from '$lib/types';
+	import { EnrollmentController, UserProgressController } from '$lib/controllers';
+	import type { UserProgress, Enrollment } from '$lib/types';
 	import { authStore } from '$lib/stores/auth.svelte';
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import Badge from '../ui/badge/badge.svelte';
@@ -12,7 +12,9 @@
 	let isLoading = $state(true);
 
 	const enrollmentController = new EnrollmentController();
+	const userProgressController = new UserProgressController();
 	let enrollments = $state<Enrollment[]>();
+	let recentProgress = $state<UserProgress[]>();
 
 	let completedCourses = $derived.by(() =>
 		enrollments ? enrollments.filter((enrollment) => enrollment.progress === 100).length : 0
@@ -51,6 +53,9 @@
 
 	onMount(async () => {
 		enrollments = await enrollmentController.getUserEnrollments(authStore?.user?.id as number);
+		recentProgress = await userProgressController.getRecentUserProgress(
+			authStore?.user?.id as number
+		);
 		isLoading = false;
 	});
 </script>
@@ -96,11 +101,11 @@
 			<Card.Title>Mis Cursos</Card.Title>
 			<Card.Description>Tu progreso en cada curso inscrito</Card.Description>
 		</Card.Header>
-		<Card.Content>
+		<Card.Content class="flex flex-col gap-2">
 			{#if enrollments && enrollments.length > 0}
 				{#each enrollments as enrollment (enrollment.id)}
 					<div class="flex items-start gap-3">
-						<div class="size-12 rounded-xl bg-gradient-to-r from-sky-500 to-pink-500">
+						<div class="size-12 rounded-lg bg-gradient-to-r from-sky-500 to-pink-500">
 							{#if enrollment.course?.image_url}
 								<img src={enrollment.course?.image_url} alt="" class="object-cover" />
 							{/if}
@@ -131,8 +136,24 @@
 			<Card.Title>Actividad Reciente</Card.Title>
 			<Card.Description>Tus últimas acciones en la plataforma</Card.Description>
 		</Card.Header>
-        <Card.Content>
-            
-        </Card.Content>
+		<Card.Content class="flex flex-col gap-2">
+			{#if recentProgress && recentProgress.length > 0}
+				{#each recentProgress as progress (progress.id)}
+					<a
+						href="/courses/{progress.module?.course_id}/{progress.module_id}/{progress.content_id}"
+					>
+						<div class="bg-muted flex items-center gap-3 rounded-lg p-3 hover:shadow-sm transition-shadow">
+							<div class="h-2 w-2 rounded-full bg-sky-500"></div>
+							<div class="min-w-0 flex-1">
+								<span class="line-clamp-1 font-semibold">{progress.content?.title}</span>
+								<span class="text-muted-foreground line-clamp-1 text-sm"
+									>{progress.module?.title}</span
+								>
+							</div>
+						</div>
+					</a>
+				{/each}
+			{/if}
+		</Card.Content>
 	</Card.Root>
 </div>
