@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/imlargo/go-api-template/internal/dto"
+	_ "github.com/imlargo/go-api-template/internal/models"
 	"github.com/imlargo/go-api-template/internal/responses"
 	"github.com/imlargo/go-api-template/internal/services"
 )
