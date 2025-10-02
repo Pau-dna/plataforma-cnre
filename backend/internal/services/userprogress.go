@@ -16,6 +16,7 @@ type UserProgressService interface {
 	UpdateUserProgressPatch(id uint, data map[string]interface{}) (*models.UserProgress, error)
 	GetUserProgress(userID, courseID uint) ([]*models.UserProgress, error)
 	GetUserModuleProgress(userID, moduleID uint) ([]*models.UserProgress, error)
+	GetAllUserProgress() ([]*models.UserProgress, error)
 	CalculateCourseProgress(userID, courseID uint) (float64, error)
 	CalculateModuleProgress(userID, moduleID uint) (float64, error)
 	GetUserProgressForContent(userID, contentID uint) (*models.UserProgress, error)
@@ -323,4 +324,14 @@ func (s *userProgressService) GetModuleContentProgress(userID, moduleID uint) ([
 	}
 
 	return contentProgress, nil
+}
+
+func (s *userProgressService) GetAllUserProgress() ([]*models.UserProgress, error) {
+	// Get all user progress with preloaded related entities
+	userProgress, err := s.store.UserProgresss.GetAllWithPreloads()
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el progreso de usuarios: %w", err)
+	}
+
+	return userProgress, nil
 }

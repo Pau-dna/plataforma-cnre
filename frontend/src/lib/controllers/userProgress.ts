@@ -130,6 +130,14 @@ export class UserProgressController extends BaseController {
 			`/api/v1/users/${userId}/modules/${moduleId}/content-progress`
 		);
 	}
+
+	/**
+	 * Get all user progress with preloaded relations
+	 * Returns all progress records with User, Course, Module, and Content data preloaded
+	 */
+	async getAllUserProgress(): Promise<UserProgress[]> {
+		return this.get<UserProgress[]>('/api/v1/user-progress');
+	}
 }
 
 // Type definitions

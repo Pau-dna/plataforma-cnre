@@ -13,6 +13,7 @@ type UserProgressRepository interface {
 	Patch(id uint, data map[string]interface{}) error
 	Delete(id uint) error
 	GetAll() ([]*models.UserProgress, error)
+	GetAllWithPreloads() ([]*models.UserProgress, error)
 	GetByUserAndCourse(userID, courseID uint) ([]*models.UserProgress, error)
 	GetByUserAndModule(userID, moduleID uint) ([]*models.UserProgress, error)
 	GetByUserAndContent(userID, contentID uint) (*models.UserProgress, error)
@@ -61,6 +62,19 @@ func (r *userprogressRepository) Delete(id uint) error {
 func (r *userprogressRepository) GetAll() ([]*models.UserProgress, error) {
 	var userprogresss []*models.UserProgress
 	if err := r.db.Find(&userprogresss).Error; err != nil {
+		return nil, err
+	}
+	return userprogresss, nil
+}
+
+func (r *userprogressRepository) GetAllWithPreloads() ([]*models.UserProgress, error) {
+	var userprogresss []*models.UserProgress
+	if err := r.db.
+		Preload("User").
+		Preload("Course").
+		Preload("Module").
+		Preload("Content").
+		Find(&userprogresss).Error; err != nil {
 		return nil, err
 	}
 	return userprogresss, nil

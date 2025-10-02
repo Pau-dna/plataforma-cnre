@@ -387,3 +387,21 @@ func (h *UserProgressHandler) GetModuleContentProgress(c *gin.Context) {
 
 	responses.Ok(c, contentProgress)
 }
+
+// @Summary Get all user progress with preloaded relations
+// @Description Get all user progress records with preloaded User, Course, Module, and Content data
+// @Tags user-progress
+// @Produce json
+// @Success 200 {array} models.UserProgress
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/user-progress [get]
+func (h *UserProgressHandler) GetAllUserProgress(c *gin.Context) {
+	progress, err := h.userProgressService.GetAllUserProgress()
+	if err != nil {
+		h.logger.Errorf("Error al obtener el progreso de usuarios: %v", err)
+		responses.ErrorInternalServerWithMessage(c, "No se pudo obtener el progreso de usuarios")
+		return
+	}
+
+	responses.Ok(c, progress)
+}

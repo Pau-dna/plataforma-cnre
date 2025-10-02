@@ -198,6 +198,7 @@ func (app *Application) Mount() {
 	v1.PUT("/users/:userId/courses/:id/progress", enrollmentHandler.UpdateProgress)
 
 	// User Progress
+	v1.GET("/user-progress", userProgressHandler.GetAllUserProgress)
 	v1.POST("/user-progress/complete", userProgressHandler.MarkContentComplete)
 	v1.POST("/user-progress/incomplete", userProgressHandler.MarkContentIncomplete)
 	v1.GET("/users/:userId/courses/:courseId/progress", userProgressHandler.GetUserCourseProgress)
