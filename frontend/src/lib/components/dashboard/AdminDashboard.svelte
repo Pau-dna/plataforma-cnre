@@ -9,7 +9,6 @@
 	import { BookOpen, CircleCheckBig, TrendingUp, Users } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import KPICard from './KPICard.svelte';
-	import { Root } from '../ui/alert';
 	type Props = {};
 
 	const {}: Props = $props();
