@@ -3309,6 +3309,38 @@ paths:
       summary: Calculate module progress percentage
       tags:
       - user-progress
+  /api/v1/users/{userId}/recent-progress:
+    get:
+      description: Get the 10 most recent progress records for a specific user with
+        preloaded module and content data
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_imlargo_go-api-template_internal_models.UserProgress'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get recent user progress
+      tags:
+      - user-progress
   /auth/google:
     post:
       description: Initiate Google OAuth2 login process

@@ -3906,6 +3906,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/users/{userId}/recent-progress": {
+            "get": {
+                "description": "Get the 10 most recent progress records for a specific user with preloaded module and content data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-progress"
+                ],
+                "summary": "Get recent user progress",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_imlargo_go-api-template_internal_models.UserProgress"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/auth/google": {
             "post": {
                 "security": [
@@ -4109,6 +4155,28 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_imlargo_go-api-template_internal_dto.CourseKPIResponse": {
+            "type": "object",
+            "properties": {
+                "average_progress": {
+                    "description": "percentage 0-100",
+                    "type": "number"
+                },
+                "completion_rate": {
+                    "description": "percentage 0-100",
+                    "type": "number"
+                },
+                "course_id": {
+                    "type": "integer"
+                },
+                "course_title": {
+                    "type": "string"
+                },
+                "student_count": {
+                    "type": "integer"
                 }
             }
         },
