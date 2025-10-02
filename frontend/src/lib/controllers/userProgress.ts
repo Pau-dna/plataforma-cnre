@@ -130,6 +130,14 @@ export class UserProgressController extends BaseController {
 			`/api/v1/users/${userId}/modules/${moduleId}/content-progress`
 		);
 	}
+
+	/**
+	 * Get recent progress for a user
+	 * Returns the 10 most recent progress records with preloaded module and content data
+	 */
+	async getRecentUserProgress(userId: number): Promise<UserProgress[]> {
+		return this.get<UserProgress[]>(`/api/v1/users/${userId}/recent-progress`);
+	}
 }
 
 // Type definitions
