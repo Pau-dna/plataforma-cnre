@@ -208,6 +208,7 @@ func (app *Application) Mount() {
 	v1.GET("/users/:userId/content/:contentId/progress", userProgressHandler.GetUserContentProgress)
 	v1.GET("/users/:userId/evaluations/:evaluationId/passed", userProgressHandler.CheckEvaluationPassed)
 	v1.GET("/users/:userId/modules/:moduleId/content-progress", userProgressHandler.GetModuleContentProgress)
+	v1.GET("/users/:userId/recent-progress", userProgressHandler.GetRecentUserProgress)
 	v1.PATCH("/user-progress/:id", userProgressHandler.UpdateUserProgressPatch)
 
 	// Evaluation Attempts

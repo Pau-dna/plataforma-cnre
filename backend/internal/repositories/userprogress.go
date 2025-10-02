@@ -20,6 +20,7 @@ type UserProgressRepository interface {
 	CountCompletedByUserAndModule(userID, moduleID uint) (int64, error)
 	BatchCreate(progressItems []*models.UserProgress) error
 	GetCourseProgressSummary(userID, courseID uint) (*dto.CourseProgressSummary, error)
+	GetRecentByUser(userID uint, limit int) ([]*models.UserProgress, error)
 }
 
 type userprogressRepository struct {
@@ -266,4 +267,18 @@ func (r *userprogressRepository) GetCourseProgressSummary(userID, courseID uint)
 	}
 
 	return summary, nil
+}
+
+func (r *userprogressRepository) GetRecentByUser(userID uint, limit int) ([]*models.UserProgress, error) {
+	var userProgress []*models.UserProgress
+	if err := r.db.
+		Preload("Module").
+		Preload("Content").
+		Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Limit(limit).
+		Find(&userProgress).Error; err != nil {
+		return nil, err
+	}
+	return userProgress, nil
 }
