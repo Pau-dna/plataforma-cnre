@@ -142,7 +142,9 @@
 					<a
 						href="/courses/{progress.module?.course_id}/{progress.module_id}/{progress.content_id}"
 					>
-						<div class="bg-muted flex items-center gap-3 rounded-lg p-3 hover:shadow-sm transition-shadow">
+						<div
+							class="bg-muted flex items-center gap-3 rounded-lg p-3 transition-shadow hover:shadow-sm"
+						>
 							<div class="h-2 w-2 rounded-full bg-sky-500"></div>
 							<div class="min-w-0 flex-1">
 								<span class="line-clamp-1 font-semibold">{progress.content?.title}</span>

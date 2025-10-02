@@ -12,7 +12,6 @@
 
 {#if authStore.user?.role === UserRole.ADMIN || authStore.user?.role === UserRole.INSTRUCTOR}
 	<AdminDashboard />
-
 {:else}
 	<StudentDashboard />
 {/if}
